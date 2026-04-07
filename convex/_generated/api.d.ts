@@ -8,6 +8,9 @@
  * @module
  */
 
+import type * as crons from "../crons.js";
+import type * as followups from "../followups.js";
+import type * as followupsActions from "../followupsActions.js";
 import type * as leads from "../leads.js";
 
 import type {
@@ -17,6 +20,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
+  followups: typeof followups;
+  followupsActions: typeof followupsActions;
   leads: typeof leads;
 }>;
 

@@ -37,6 +37,11 @@ export const registrar = mutation({
         referrer: args.referrer,
         ultimoEventoEn: Date.now(),
       })
+      // Send welcome immediately after each registration attempt, including re-registrations.
+      await ctx.scheduler.runAfter(0, internal.leads.programarSeguimiento, {
+        leadId: existente._id,
+        step: 0,
+      })
       await ctx.scheduler.runAfter(1000 * 60 * 60 * 24, internal.leads.programarSeguimiento, {
         leadId: existente._id,
         step: 1,
@@ -50,6 +55,10 @@ export const registrar = mutation({
       seguimientoEstado: "active",
       ultimoEventoEn: Date.now(),
       creadoEn: Date.now(),
+    })
+    await ctx.scheduler.runAfter(0, internal.leads.programarSeguimiento, {
+      leadId,
+      step: 0,
     })
     await ctx.scheduler.runAfter(1000 * 60 * 60 * 24, internal.leads.programarSeguimiento, {
       leadId,
@@ -97,9 +106,9 @@ export const programarSeguimiento = internalMutation({
     if (lead.etapa !== "lead_only" || lead.seguimientoEstado !== "active") return null
 
     const templateMap: Record<number, string> = {
+      0: "welcome_immediate",
       1: "followup_reminder_24h",
-      2: "followup_objection_72h",
-      3: "followup_socialproof_120h",
+      2: "followup_objection_78h",
     }
     const templateKey = templateMap[args.step]
     if (!templateKey) return null
@@ -114,11 +123,16 @@ export const programarSeguimiento = internalMutation({
       createdAt: Date.now(),
     })
 
-    if (args.step < 3) {
-      await ctx.scheduler.runAfter(1000 * 60 * 60 * 48, internal.leads.programarSeguimiento, {
+    if (args.step === 1) {
+      // 78h total from registration => 54h after the 24h follow-up.
+      await ctx.scheduler.runAfter(1000 * 60 * 60 * 54, internal.leads.programarSeguimiento, {
         leadId: args.leadId,
-        step: args.step + 1,
+        step: 2,
       })
+    }
+    if (args.step === 0) {
+      // Trigger processing immediately so the welcome email goes out right away.
+      await ctx.scheduler.runAfter(0, internal.followupsActions.processQueue, { limit: 20 })
     }
     return null
   },

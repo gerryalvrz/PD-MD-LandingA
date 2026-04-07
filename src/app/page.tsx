@@ -6,6 +6,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { Banner } from "@/components/ui/banner"
+import { GlowingShadow } from "@/components/ui/glowing-shadow"
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 
@@ -1060,6 +1061,16 @@ function RiskReversal({ dark }: { dark: boolean }) {
         <motion.div variants={fadeUp} style={{ marginBottom: 20 }}>
           <SectionLabel>Riesgo bajo</SectionLabel>
           <SectionHeading tok={tok}>Decides con claridad, no con presión</SectionHeading>
+        </motion.div>
+        <motion.div variants={fadeUp} style={{ marginBottom: 24 }}>
+          <GlowingShadow className="!w-full !max-w-[560px] !aspect-[2.6/1] !cursor-default">
+            <span
+              className="pointer-events-none z-10 text-center text-xl font-semibold tracking-tight"
+              style={{ color: tok.t1, margin: 0 }}
+            >
+              Riesgo controlado, decisión informada
+            </span>
+          </GlowingShadow>
         </motion.div>
         <motion.ul
           variants={fadeUp}
