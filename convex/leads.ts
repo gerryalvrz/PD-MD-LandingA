@@ -123,3 +123,40 @@ export const programarSeguimiento = internalMutation({
     return null
   },
 })
+
+export const trackEvent = mutation({
+  args: {
+    eventName: v.union(
+      v.literal("page_view"),
+      v.literal("cta_click"),
+      v.literal("modal_open"),
+      v.literal("form_started"),
+      v.literal("form_submitted"),
+      v.literal("checkout_click"),
+      v.literal("checkout_complete"),
+      v.literal("calendly_booked")
+    ),
+    sessionId: v.string(),
+    leadId: v.optional(v.id("leads")),
+    email: v.optional(v.string()),
+    page: v.optional(v.string()),
+    section: v.optional(v.string()),
+    ctaLabel: v.optional(v.string()),
+    intent: v.optional(v.union(v.literal("pay"), v.literal("lead"), v.literal("call"))),
+    metadata: v.optional(v.record(v.string(), v.string())),
+  },
+  handler: async (ctx, args) => {
+    const createdAt = Date.now()
+    await ctx.db.insert("funnelEvents", {
+      ...args,
+      createdAt,
+    })
+    if (args.leadId) {
+      const lead = await ctx.db.get(args.leadId)
+      if (lead) {
+        await ctx.db.patch(args.leadId, { ultimoEventoEn: createdAt })
+      }
+    }
+    return { ok: true }
+  },
+})

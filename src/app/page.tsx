@@ -1,7 +1,7 @@
 // Landing page for: MotusDAO — Técnica Avanzada en Psicoterapia
 "use client"
 
-import { useState, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
@@ -43,6 +43,36 @@ const T = {
 type Tok = (typeof T)["dark"] | (typeof T)["light"]
 
 const GRAD = "linear-gradient(to right, #9333EA, #EC4899)"
+
+type FunnelEventName =
+  | "page_view"
+  | "cta_click"
+  | "modal_open"
+  | "form_started"
+  | "form_submitted"
+  | "checkout_click"
+  | "checkout_complete"
+  | "calendly_booked"
+
+function getOrCreateSessionId() {
+  const key = "motus_session_id"
+  const existing = window.localStorage.getItem(key)
+  if (existing) return existing
+  const generated = crypto.randomUUID()
+  window.localStorage.setItem(key, generated)
+  return generated
+}
+
+function getStoredLeadContext() {
+  try {
+    const raw = window.localStorage.getItem("motus_lead_ctx")
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { leadId?: string; email?: string }
+    return parsed
+  } catch {
+    return null
+  }
+}
 
 // ─── Motion variants ─────────────────────────────────────────────────────────
 
@@ -1643,18 +1673,24 @@ function LeadModal({
   dark,
   intent,
   onClose,
+  sessionId,
+  onTrack,
 }: {
   dark: boolean
   intent: ModalIntent
   onClose: () => void
+  sessionId: string
+  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
 }) {
   const tok = dark ? T.dark : T.light
   const registrar = useMutation(api.leads.registrar)
+  const marcarEtapa = useMutation(api.leads.marcarEtapa)
 
   const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
   const [certificado, setCertificado] = useState(false)
   const [estado, setEstado] = useState<"idle" | "loading" | "ok" | "error">("idle")
+  const [formStarted, setFormStarted] = useState(false)
 
   const titulo =
     intent === "llamada"
@@ -1671,8 +1707,37 @@ function LeadModal({
     if (!nombre.trim() || !email.trim()) return
     setEstado("loading")
     try {
-      await registrar({ nombre: nombre.trim(), email: email.trim(), interes: intent, certificado })
+      const utm = new URLSearchParams(window.location.search)
+      const result = await registrar({
+        nombre: nombre.trim(),
+        email: email.trim(),
+        interes: intent,
+        certificado,
+        sessionId,
+        utmSource: utm.get("utm_source") ?? undefined,
+        utmMedium: utm.get("utm_medium") ?? undefined,
+        utmCampaign: utm.get("utm_campaign") ?? undefined,
+        utmContent: utm.get("utm_content") ?? undefined,
+        utmTerm: utm.get("utm_term") ?? undefined,
+        referrer: document.referrer || undefined,
+      })
+      window.localStorage.setItem(
+        "motus_lead_ctx",
+        JSON.stringify({ leadId: result.leadId, email: email.trim() })
+      )
+      onTrack("form_submitted", { intent, email: email.trim() })
+      if (intent === "llamada") {
+        await marcarEtapa({
+          leadId: result.leadId,
+          etapa: "booked_call",
+        })
+        window.location.href = "/gracias?flow=llamada"
+        return
+      }
       setEstado("ok")
+      setTimeout(() => {
+        window.location.href = "/gracias?flow=lead"
+      }, 500)
     } catch {
       setEstado("error")
     }
@@ -1814,7 +1879,13 @@ function LeadModal({
                 style={inputStyle}
                 placeholder="Tu nombre"
                 value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
+                onChange={(e) => {
+                  setNombre(e.target.value)
+                  if (!formStarted) {
+                    setFormStarted(true)
+                    onTrack("form_started", { intent })
+                  }
+                }}
                 required
               />
               <input
@@ -1822,7 +1893,13 @@ function LeadModal({
                 type="email"
                 placeholder="Tu correo"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (!formStarted) {
+                    setFormStarted(true)
+                    onTrack("form_started", { intent })
+                  }
+                }}
                 required
               />
             </div>
@@ -1884,23 +1961,91 @@ function LeadModal({
 export default function Home() {
   const [dark, setDark] = useState(true)
   const [modal, setModal] = useState<ModalIntent | null>(null)
+  const [sessionId, setSessionId] = useState<string>("")
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL
   const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL
+  const trackEvent = useMutation(api.leads.trackEvent)
+  const marcarEtapa = useMutation(api.leads.marcarEtapa)
+
+  const onTrack = (eventName: FunnelEventName, payload: Record<string, string> = {}) => {
+    if (!sessionId) return
+    const leadCtx = getStoredLeadContext()
+    const args: Parameters<typeof trackEvent>[0] = {
+      eventName,
+      sessionId,
+      page: window.location.pathname,
+      section: payload.section,
+      ctaLabel: payload.ctaLabel,
+      intent:
+        payload.intent === "pay" || payload.intent === "lead" || payload.intent === "call"
+          ? payload.intent
+          : undefined,
+      metadata: payload,
+    }
+    if (leadCtx?.email) args.email = leadCtx.email
+    if (leadCtx?.leadId) args.leadId = leadCtx.leadId as Parameters<typeof trackEvent>[0]["leadId"]
+    void trackEvent(args)
+  }
+
+  const openModal = (intent: ModalIntent, section: string) => {
+    onTrack("modal_open", { intent: intent === "programa" ? "lead" : "call", section })
+    setModal(intent)
+  }
+
+  useEffect(() => {
+    const id = getOrCreateSessionId()
+    setSessionId(id)
+  }, [])
+
+  useEffect(() => {
+    if (!sessionId) return
+    onTrack("page_view", { section: "landing" })
+    const params = new URLSearchParams(window.location.search)
+    const checkout = params.get("checkout")
+    const calendly = params.get("calendly")
+    const leadCtx = getStoredLeadContext()
+    if (checkout === "success") {
+      onTrack("checkout_complete", { section: "return" })
+      void marcarEtapa({
+        ...(leadCtx?.leadId ? { leadId: leadCtx.leadId as Parameters<typeof marcarEtapa>[0]["leadId"] } : {}),
+        ...(leadCtx?.email ? { email: leadCtx.email } : {}),
+        etapa: "purchased",
+      })
+      window.location.href = "/gracias?flow=compra"
+      return
+    }
+    if (calendly === "booked") {
+      onTrack("calendly_booked", { section: "return" })
+      void marcarEtapa({
+        ...(leadCtx?.leadId ? { leadId: leadCtx.leadId as Parameters<typeof marcarEtapa>[0]["leadId"] } : {}),
+        ...(leadCtx?.email ? { email: leadCtx.email } : {}),
+        etapa: "booked_call",
+      })
+      window.location.href = "/gracias?flow=llamada"
+    }
+  }, [sessionId])
+
   const handleCheckoutCta = () => {
+    onTrack("cta_click", { section: "global", ctaLabel: "Pagar ahora", intent: "pay" })
+    onTrack("checkout_click", { section: "global", ctaLabel: "Pagar ahora", intent: "pay" })
     if (checkoutUrl) {
       window.open(checkoutUrl, "_blank", "noopener,noreferrer")
       return
     }
-    setModal("programa")
+    openModal("programa", "checkout_fallback")
   }
   const handleCallCta = () => {
+    onTrack("cta_click", { section: "final", ctaLabel: "Agendar llamada", intent: "call" })
     if (calendlyUrl) {
       window.open(calendlyUrl, "_blank", "noopener,noreferrer")
       return
     }
-    setModal("llamada")
+    openModal("llamada", "final")
   }
-  const handleLeadCta = () => setModal("programa")
+  const handleLeadCta = () => {
+    onTrack("cta_click", { section: "global", ctaLabel: "Inscribirme", intent: "lead" })
+    openModal("programa", "lead")
+  }
 
   return (
     <div
@@ -1946,7 +2091,13 @@ export default function Home() {
 
       <AnimatePresence>
         {modal && (
-          <LeadModal dark={dark} intent={modal} onClose={() => setModal(null)} />
+          <LeadModal
+            dark={dark}
+            intent={modal}
+            sessionId={sessionId}
+            onTrack={onTrack}
+            onClose={() => setModal(null)}
+          />
         )}
       </AnimatePresence>
     </div>
