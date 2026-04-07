@@ -1,4 +1,5 @@
-import { mutation } from "./_generated/server"
+import { internalMutation, mutation } from "./_generated/server"
+import { internal } from "./_generated/api"
 import { v } from "convex/values"
 
 export const registrar = mutation({
@@ -7,6 +8,13 @@ export const registrar = mutation({
     email: v.string(),
     interes: v.union(v.literal("programa"), v.literal("llamada")),
     certificado: v.boolean(),
+    sessionId: v.optional(v.string()),
+    utmSource: v.optional(v.string()),
+    utmMedium: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
+    utmContent: v.optional(v.string()),
+    utmTerm: v.optional(v.string()),
+    referrer: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // Evitar duplicados por email
@@ -16,14 +24,102 @@ export const registrar = mutation({
       .first()
 
     if (existente) {
-      return { ok: true, duplicate: true }
+      await ctx.db.patch(existente._id, {
+        nombre: args.nombre,
+        interes: args.interes,
+        certificado: args.certificado,
+        sessionId: args.sessionId,
+        utmSource: args.utmSource,
+        utmMedium: args.utmMedium,
+        utmCampaign: args.utmCampaign,
+        utmContent: args.utmContent,
+        utmTerm: args.utmTerm,
+        referrer: args.referrer,
+        ultimoEventoEn: Date.now(),
+      })
+      await ctx.scheduler.runAfter(1000 * 60 * 60 * 24, internal.leads.programarSeguimiento, {
+        leadId: existente._id,
+        step: 1,
+      })
+      return { ok: true, duplicate: true, leadId: existente._id }
     }
 
-    await ctx.db.insert("leads", {
+    const leadId = await ctx.db.insert("leads", {
       ...args,
+      etapa: "lead_only",
+      seguimientoEstado: "active",
+      ultimoEventoEn: Date.now(),
       creadoEn: Date.now(),
     })
+    await ctx.scheduler.runAfter(1000 * 60 * 60 * 24, internal.leads.programarSeguimiento, {
+      leadId,
+      step: 1,
+    })
 
-    return { ok: true, duplicate: false }
+    return { ok: true, duplicate: false, leadId }
+  },
+})
+
+export const marcarEtapa = mutation({
+  args: {
+    leadId: v.optional(v.id("leads")),
+    email: v.optional(v.string()),
+    etapa: v.union(v.literal("lead_only"), v.literal("booked_call"), v.literal("purchased")),
+  },
+  handler: async (ctx, args) => {
+    let leadId = args.leadId ?? null
+    if (!leadId && args.email) {
+      const lead = await ctx.db
+        .query("leads")
+        .withIndex("by_email", (q) => q.eq("email", args.email!))
+        .first()
+      if (lead) leadId = lead._id
+    }
+    if (!leadId) return { ok: false }
+    const seguimientoEstado = args.etapa === "lead_only" ? "active" : "completed"
+    await ctx.db.patch(leadId, {
+      etapa: args.etapa,
+      seguimientoEstado,
+      ultimoEventoEn: Date.now(),
+    })
+    return { ok: true, leadId }
+  },
+})
+
+export const programarSeguimiento = internalMutation({
+  args: {
+    leadId: v.id("leads"),
+    step: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const lead = await ctx.db.get(args.leadId)
+    if (!lead) return null
+    if (lead.etapa !== "lead_only" || lead.seguimientoEstado !== "active") return null
+
+    const templateMap: Record<number, string> = {
+      1: "followup_reminder_24h",
+      2: "followup_objection_72h",
+      3: "followup_socialproof_120h",
+    }
+    const templateKey = templateMap[args.step]
+    if (!templateKey) return null
+
+    await ctx.db.insert("followupQueue", {
+      leadId: args.leadId,
+      channel: "email",
+      step: args.step,
+      status: "queued",
+      templateKey,
+      scheduledAt: Date.now(),
+      createdAt: Date.now(),
+    })
+
+    if (args.step < 3) {
+      await ctx.scheduler.runAfter(1000 * 60 * 60 * 48, internal.leads.programarSeguimiento, {
+        leadId: args.leadId,
+        step: args.step + 1,
+      })
+    }
+    return null
   },
 })

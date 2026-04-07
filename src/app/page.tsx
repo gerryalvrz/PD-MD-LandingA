@@ -5,6 +5,7 @@ import { useState, useRef } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
+import { Banner } from "@/components/ui/banner"
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 
@@ -179,23 +180,17 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
       }}
     >
       {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: GRAD,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M6 1L11 9.5H1L6 1Z" fill="white" fillOpacity="0.95" />
-          </svg>
-        </div>
+      <a
+        href="http://motusdao.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}
+      >
+        <img
+          src="/logo.svg"
+          alt="MotusDAO logo"
+          style={{ width: 28, height: 28, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
+        />
         <span
           style={{
             fontFamily: "var(--font-jura)",
@@ -207,7 +202,7 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
         >
           MotusDAO
         </span>
-      </div>
+      </a>
 
       {/* Right */}
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -242,7 +237,7 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
           />
         </button>
 
-        <div onClick={onCta}><GradientButton small>Inscribirme</GradientButton></div>
+        <div onClick={onCta}><GradientButton small>Pagar ahora</GradientButton></div>
       </div>
     </nav>
   )
@@ -250,13 +245,21 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
+function Hero({
+  dark,
+  onCta,
+  onLeadCta,
+}: {
+  dark: boolean
+  onCta: () => void
+  onLeadCta: () => void
+}) {
   const tok = dark ? T.dark : T.light
 
   const stats = [
-    { value: "100+", label: "psicólogos formados" },
+    { value: "100+", label: "psicólogos entrenados" },
     { value: "10+", label: "países en LATAM" },
-    { value: "8", label: "semanas intensivas" },
+    { value: "8", label: "semanas para implementar" },
   ]
 
   return (
@@ -340,15 +343,15 @@ function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
           style={{
             fontFamily: "var(--font-jura)",
             fontWeight: 700,
-            fontSize: "clamp(36px, 6vw, 72px)",
+            fontSize: "clamp(34px, 5.4vw, 64px)",
             lineHeight: 1.1,
             letterSpacing: "-0.02em",
             color: tok.t1,
             marginBottom: 24,
           }}
         >
-          Actualiza tu práctica.{" "}
-          <GradientText>Lidera la psicología digital.</GradientText>
+          Domina intervención clínica avanzada en 8 semanas.{" "}
+          <GradientText>Sin improvisar en tu consulta.</GradientText>
         </motion.h1>
 
         {/* Subhead */}
@@ -363,9 +366,9 @@ function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             margin: "0 auto 40px",
           }}
         >
-          El programa que integra análisis clínico avanzado e inteligencia
-          artificial — para psicólogos que saben que su práctica tiene más
-          potencial.
+          Formación aplicada para psicólogos y psicoterapeutas que quieren
+          mejorar resultados clínicos, integrar IA con criterio ético y cobrar
+          con más confianza por una práctica de mayor nivel.
         </motion.p>
 
         {/* CTAs */}
@@ -379,11 +382,11 @@ function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             marginBottom: 72,
           }}
         >
-          <div onClick={onCta}><GradientButton>Inscribirme</GradientButton></div>
+          <div onClick={onCta}><GradientButton>Pagar ahora</GradientButton></div>
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={onCta}
+            onClick={onLeadCta}
             style={{
               background: "transparent",
               border: `1px solid ${tok.cardBorder}`,
@@ -396,7 +399,7 @@ function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
               fontFamily: "var(--font-inter)",
             }}
           >
-            Ver el programa
+            Inscribirme
           </motion.button>
         </motion.div>
 
@@ -436,6 +439,68 @@ function Hero({ dark, onCta }: { dark: boolean; onCta: () => void }) {
               </div>
             </div>
           ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+function UrgencyAndScarcity({ dark, onCta }: { dark: boolean; onCta: () => void }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  return (
+    <section
+      style={{
+        background: tok.bg,
+        padding: "clamp(48px, 7vh, 80px) clamp(24px, 6vw, 120px)",
+      }}
+    >
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        style={{
+          background: tok.card,
+          border: `1px solid ${tok.cardBorder}`,
+          borderRadius: 18,
+          padding: "clamp(24px, 4vw, 36px)",
+          maxWidth: 980,
+          margin: "0 auto",
+        }}
+      >
+        <motion.div variants={fadeUp} style={{ marginBottom: 14 }}>
+          <SectionLabel>Cupo limitado</SectionLabel>
+          <SectionHeading tok={tok}>Cohorte próxima: inicio en mayo 2026</SectionHeading>
+        </motion.div>
+        <motion.p
+          variants={fadeUp}
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 15,
+            color: tok.t2,
+            lineHeight: 1.7,
+            maxWidth: 760,
+            marginBottom: 24,
+          }}
+        >
+          Para mantener supervisión real y feedback clínico de calidad, abrimos
+          lugares limitados por generación. Cuando se llena el cupo, pasas a
+          lista de espera para la siguiente cohorte.
+        </motion.p>
+        <motion.div variants={fadeUp} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <div onClick={onCta}><GradientButton>Reservar mi lugar</GradientButton></div>
+          <span
+            style={{
+              fontFamily: "var(--font-inter)",
+              fontSize: 13,
+              color: tok.t3,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            Cierre de inscripciones sujeto a disponibilidad.
+          </span>
         </motion.div>
       </motion.div>
     </section>
@@ -712,10 +777,22 @@ function EightWeeks({ dark }: { dark: boolean }) {
                     i === 0
                       ? GRAD
                       : dark
-                      ? "rgba(147,51,234,0.12)"
-                      : "rgba(147,51,234,0.09)",
+                      ? "linear-gradient(145deg, rgba(255,255,255,0.12), rgba(147,51,234,0.2))"
+                      : "linear-gradient(145deg, rgba(255,255,255,0.8), rgba(147,51,234,0.16))",
                   border:
-                    i === 0 ? "none" : "1px solid rgba(147,51,234,0.28)",
+                    i === 0
+                      ? "none"
+                      : dark
+                      ? "1px solid rgba(147,51,234,0.42)"
+                      : "1px solid rgba(147,51,234,0.5)",
+                  boxShadow:
+                    i === 0
+                      ? "0 10px 22px rgba(147,51,234,0.35)"
+                      : dark
+                      ? "inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 24px rgba(0,0,0,0.25)"
+                      : "inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 20px rgba(76,29,149,0.16)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -728,7 +805,13 @@ function EightWeeks({ dark }: { dark: boolean }) {
                     fontFamily: "var(--font-jura)",
                     fontWeight: 700,
                     fontSize: 13,
-                    color: i === 0 ? "#fff" : "#A855F7",
+                    color: i === 0 ? "#fff" : dark ? "#C084FC" : "#6D28D9",
+                    textShadow:
+                      i === 0
+                        ? "none"
+                        : dark
+                        ? "0 0 6px rgba(0,0,0,0.35)"
+                        : "0 0 1px rgba(255,255,255,0.6)",
                   }}
                 >
                   {w.n}
@@ -775,18 +858,18 @@ function Testimonials({ dark }: { dark: boolean }) {
 
   const testimonials = [
     {
-      initials: "MR",
-      name: "M. Rodríguez",
-      role: "Psicóloga clínica · México",
+      initials: "P1",
+      name: "Testimonio verificado #1",
+      role: "Psicóloga clínica · Placeholder temporal",
       quote:
-        "Este programa cambió la manera en que conceptualizo mis casos. El nivel técnico es real, no superficial. Salí con herramientas que aplico desde la primera sesión.",
+        "Aquí irá un testimonio real sobre resultados clínicos, seguridad técnica y cambios concretos en consulta.",
     },
     {
-      initials: "AG",
-      name: "A. González",
-      role: "Psicoterapeuta · Colombia",
+      initials: "P2",
+      name: "Testimonio verificado #2",
+      role: "Psicoterapeuta · Placeholder temporal",
       quote:
-        "Por fin un programa que integra IA sin perder el foco clínico. Benjamin enseña con un rigor y una claridad que no encontré en ninguna otra formación de posgrado.",
+        "Aquí irá un testimonio real sobre integración ética de IA, estructura de casos y mejora de práctica.",
     },
   ]
 
@@ -806,6 +889,17 @@ function Testimonials({ dark }: { dark: boolean }) {
         <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
           <SectionLabel>Testimonios</SectionLabel>
           <SectionHeading tok={tok}>Lo que dicen quienes lo vivieron</SectionHeading>
+          <p
+            style={{
+              marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 13,
+              color: tok.t3,
+            }}
+          >
+            Sección en actualización: placeholders temporales hasta publicar
+            testimonios clínicos verificados.
+          </p>
         </motion.div>
 
         <div
@@ -904,9 +998,80 @@ function Testimonials({ dark }: { dark: boolean }) {
   )
 }
 
+function RiskReversal({ dark }: { dark: boolean }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  const bullets = [
+    "Garantía de satisfacción de 7 días desde el inicio del programa.",
+    "Si no es el fit adecuado, puedes solicitar baja y reembolso según política vigente.",
+    "Todas las condiciones se comparten antes de pagar para decisión informada.",
+  ]
+  return (
+    <section
+      style={{
+        background: tok.bgAlt,
+        padding: "clamp(56px, 8vh, 92px) clamp(24px, 6vw, 120px)",
+      }}
+    >
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        style={{
+          maxWidth: 920,
+          margin: "0 auto",
+          background: tok.cardHighBg,
+          border: `1px solid ${tok.cardHighBorder}`,
+          borderRadius: 18,
+          padding: "clamp(24px, 4vw, 36px)",
+        }}
+      >
+        <motion.div variants={fadeUp} style={{ marginBottom: 20 }}>
+          <SectionLabel>Riesgo bajo</SectionLabel>
+          <SectionHeading tok={tok}>Decides con claridad, no con presión</SectionHeading>
+        </motion.div>
+        <motion.ul
+          variants={fadeUp}
+          style={{
+            listStyle: "none",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          {bullets.map((item) => (
+            <li key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <span style={{ color: "#9333EA", fontSize: 18, lineHeight: 1 }}>•</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 15,
+                  color: tok.t1,
+                  lineHeight: 1.7,
+                }}
+              >
+                {item}
+              </span>
+            </li>
+          ))}
+        </motion.ul>
+      </motion.div>
+    </section>
+  )
+}
+
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
-function Pricing({ dark, onCta }: { dark: boolean; onCta: () => void }) {
+function Pricing({
+  dark,
+  onCta,
+  onLeadCta,
+}: {
+  dark: boolean
+  onCta: () => void
+  onLeadCta: () => void
+}) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
 
@@ -916,6 +1081,16 @@ function Pricing({ dark, onCta }: { dark: boolean; onCta: () => void }) {
     "Acceso a la comunidad LATAM",
     "Sesiones de supervisión grupal",
     "Grabaciones disponibles 12 meses",
+  ]
+  const fit = [
+    "Psicólogos/as y psicoterapeutas en práctica activa.",
+    "Profesionales que quieren estructura de caso y criterio técnico.",
+    "Quienes buscan integrar IA sin comprometer ética clínica.",
+  ]
+  const noFit = [
+    "Si buscas soluciones rápidas sin estudio ni aplicación semanal.",
+    "Si no puedes comprometer tiempo para práctica y supervisión.",
+    "Si no trabajas con pacientes actualmente.",
   ]
 
   return (
@@ -1083,7 +1258,26 @@ function Pricing({ dark, onCta }: { dark: boolean; onCta: () => void }) {
               ))}
             </ul>
 
-            <div onClick={onCta}><GradientButton full>Inscribirme ahora</GradientButton></div>
+            <div onClick={onCta}><GradientButton full>Pagar ahora</GradientButton></div>
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={onLeadCta}
+              style={{
+                marginTop: 10,
+                background: "transparent",
+                border: "none",
+                color: tok.t2,
+                textDecoration: "underline",
+                textUnderlineOffset: 3,
+                fontFamily: "var(--font-inter)",
+                fontSize: 14,
+                cursor: "pointer",
+                width: "100%",
+              }}
+            >
+              Aun no estoy listo para pagar, quiero inscribirme
+            </motion.button>
           </motion.div>
 
           {/* Secondary */}
@@ -1202,6 +1396,125 @@ function Pricing({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             </motion.button>
           </motion.div>
         </div>
+        <motion.div
+          variants={fadeUp}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gap: 16,
+            marginTop: 16,
+          }}
+        >
+          <div
+            style={{
+              background: tok.card,
+              border: `1px solid ${tok.cardBorder}`,
+              borderRadius: 16,
+              padding: 24,
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "var(--font-jura)",
+                fontWeight: 700,
+                fontSize: 18,
+                color: tok.t1,
+                marginBottom: 10,
+              }}
+            >
+              Este programa es para ti si...
+            </h3>
+            {fit.map((item) => (
+              <p key={item} style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.7 }}>
+                • {item}
+              </p>
+            ))}
+          </div>
+          <div
+            style={{
+              background: tok.card,
+              border: `1px solid ${tok.cardBorder}`,
+              borderRadius: 16,
+              padding: 24,
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "var(--font-jura)",
+                fontWeight: 700,
+                fontSize: 18,
+                color: tok.t1,
+                marginBottom: 10,
+              }}
+            >
+              No es para ti si...
+            </h3>
+            {noFit.map((item) => (
+              <p key={item} style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.7 }}>
+                • {item}
+              </p>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+function ObjectionFaq({ dark }: { dark: boolean }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  const faqs = [
+    {
+      q: "No tengo mucho tiempo, ¿podré seguir el programa?",
+      a: "Si apartas de 3 a 4 horas por semana para sesiones y aplicación clínica, sí. El programa está diseñado para profesionales en consulta activa.",
+    },
+    {
+      q: "¿Necesito experiencia previa en IA?",
+      a: "No. Cubrimos herramientas desde cero y su uso responsable en contexto clínico.",
+    },
+    {
+      q: "¿Esto reemplaza supervisión o terapia personal?",
+      a: "No. Es formación técnica y estratégica para mejorar práctica clínica; no sustituye procesos terapéuticos personales ni supervisión individual especializada.",
+    },
+    {
+      q: "¿Cuándo recupero la inversión?",
+      a: "Depende de tu práctica, posicionamiento y adopción. El enfoque está en elevar calidad clínica y valor percibido para sostener honorarios de mayor nivel.",
+    },
+  ]
+  return (
+    <section
+      style={{
+        background: tok.bg,
+        padding: "clamp(64px, 10vh, 120px) clamp(24px, 6vw, 120px)",
+      }}
+    >
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
+        <motion.div variants={fadeUp} style={{ marginBottom: 40 }}>
+          <SectionLabel>Preguntas frecuentes</SectionLabel>
+          <SectionHeading tok={tok}>Resolvemos las objeciones más comunes</SectionHeading>
+        </motion.div>
+        <div style={{ display: "grid", gap: 12, maxWidth: 920 }}>
+          {faqs.map((item) => (
+            <motion.div
+              key={item.q}
+              variants={fadeUp}
+              style={{
+                background: tok.card,
+                border: `1px solid ${tok.cardBorder}`,
+                borderRadius: 14,
+                padding: 22,
+              }}
+            >
+              <h3 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 18, color: tok.t1, marginBottom: 8 }}>
+                {item.q}
+              </h3>
+              <p style={{ fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.7 }}>
+                {item.a}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
     </section>
   )
@@ -1293,21 +1606,11 @@ function Footer({ dark }: { dark: boolean }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <div
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 6,
-            background: GRAD,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-            <path d="M6 1L11 9.5H1L6 1Z" fill="white" fillOpacity="0.95" />
-          </svg>
-        </div>
+        <img
+          src="/logo.svg"
+          alt="MotusDAO logo"
+          style={{ width: 20, height: 20, borderRadius: 6, objectFit: "cover" }}
+        />
         <span
           style={{
             fontFamily: "var(--font-jura)",
@@ -1581,6 +1884,23 @@ function LeadModal({
 export default function Home() {
   const [dark, setDark] = useState(true)
   const [modal, setModal] = useState<ModalIntent | null>(null)
+  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL
+  const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL
+  const handleCheckoutCta = () => {
+    if (checkoutUrl) {
+      window.open(checkoutUrl, "_blank", "noopener,noreferrer")
+      return
+    }
+    setModal("programa")
+  }
+  const handleCallCta = () => {
+    if (calendlyUrl) {
+      window.open(calendlyUrl, "_blank", "noopener,noreferrer")
+      return
+    }
+    setModal("llamada")
+  }
+  const handleLeadCta = () => setModal("programa")
 
   return (
     <div
@@ -1590,14 +1910,38 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onCta={() => setModal("programa")} />
-      <Hero dark={dark} onCta={() => setModal("programa")} />
+      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onCta={handleCheckoutCta} />
+      <Banner
+        variant="rainbow"
+        className="!top-16 border-b border-white/10 px-12"
+        rainbowColors={[
+          "rgba(236,72,153,0.65)",
+          "rgba(147,51,234,0.72)",
+          "rgba(99,102,241,0.62)",
+          "rgba(236,72,153,0.65)",
+        ]}
+      >
+        <div className="flex items-center gap-3">
+          <span>Cupo limitado de la cohorte actual.</span>
+          <button
+            type="button"
+            onClick={handleLeadCta}
+            className="rounded-md border border-white/30 px-2 py-1 text-xs font-semibold hover:bg-white/10"
+          >
+            Inscribirme
+          </button>
+        </div>
+      </Banner>
+      <Hero dark={dark} onCta={handleCheckoutCta} onLeadCta={handleLeadCta} />
       <TrustBar dark={dark} />
       <WhatYouBuild dark={dark} />
       <EightWeeks dark={dark} />
       <Testimonials dark={dark} />
-      <Pricing dark={dark} onCta={() => setModal("programa")} />
-      <FinalCTA dark={dark} onCta={() => setModal("llamada")} />
+      <RiskReversal dark={dark} />
+      <ObjectionFaq dark={dark} />
+      <UrgencyAndScarcity dark={dark} onCta={handleLeadCta} />
+      <Pricing dark={dark} onCta={handleCheckoutCta} onLeadCta={handleLeadCta} />
+      <FinalCTA dark={dark} onCta={handleCallCta} />
       <Footer dark={dark} />
 
       <AnimatePresence>
