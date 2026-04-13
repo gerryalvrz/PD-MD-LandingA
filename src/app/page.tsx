@@ -397,9 +397,11 @@ function Hero({
             margin: "0 auto 40px",
           }}
         >
-          Formación aplicada para psicólogos, recién egresados y terapeutas 
-          independientes que quieren fortalecer su práctica clínica, adaptarse al entorno digital y 
-          ejercer con mayor estructura y criterio.
+          Formación aplicada para psicólogos, recién egresados y terapeutas
+          independientes que quieren fortalecer su práctica clínica. Te
+          acompañamos en tu transición de la psicología tradicional a la
+          psicología digital, para que te adaptes al entorno digital y ejerzas
+          con mayor estructura y criterio.
         </motion.p>
 
         <motion.ul
