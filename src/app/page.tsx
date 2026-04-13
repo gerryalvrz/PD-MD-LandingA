@@ -400,8 +400,7 @@ function Hero({
           Formación aplicada para psicólogos, recién egresados y terapeutas
           independientes que quieren fortalecer su práctica clínica. Te
           acompañamos en tu transición de la psicología tradicional a la
-          psicología digital, para que te adaptes al entorno digital y ejerzas
-          con mayor estructura y criterio.
+          psicología digital.
         </motion.p>
 
         <motion.ul
