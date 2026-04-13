@@ -53,7 +53,16 @@ export const processQueue = internalAction({
     });
 
     for (const item of items) {
-      if (item.etapa !== "lead_only") {
+      // Always send the immediate confirmation email (step 0).
+      // Gate only delayed follow-ups when the lead has already progressed.
+      if (item.step !== 0 && item.etapa !== "lead_only") {
+        console.log("Skipping follow-up for progressed lead", {
+          queueId: item.queueId,
+          leadId: item.leadId,
+          step: item.step,
+          etapa: item.etapa,
+          email: item.email,
+        });
         await ctx.runMutation(internal.followups.markQueueStatus, {
           queueId: item.queueId,
           status: "cancelled",
@@ -62,18 +71,42 @@ export const processQueue = internalAction({
       }
       const tpl = templateFor(item.step, item.nombre);
       try {
-        await resend.emails.send({
+        const result = await resend.emails.send({
           from,
           replyTo,
           to: item.email,
           subject: tpl.subject,
           html: tpl.html,
         });
+        if (result.error) {
+          console.error("Follow-up email rejected by Resend", {
+            queueId: item.queueId,
+            leadId: item.leadId,
+            step: item.step,
+            to: item.email,
+            resendError: result.error,
+          });
+          continue;
+        }
+        console.log("Follow-up email sent", {
+          queueId: item.queueId,
+          leadId: item.leadId,
+          step: item.step,
+          to: item.email,
+          messageId: result.data?.id ?? null,
+        });
         await ctx.runMutation(internal.followups.markQueueStatus, {
           queueId: item.queueId,
           status: "sent",
         });
-      } catch {
+      } catch (error) {
+        console.error("Follow-up email send failed", {
+          queueId: item.queueId,
+          leadId: item.leadId,
+          step: item.step,
+          to: item.email,
+          error,
+        });
         // keep queued to retry
       }
     }

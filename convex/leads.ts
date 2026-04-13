@@ -174,3 +174,56 @@ export const trackEvent = mutation({
     return { ok: true }
   },
 })
+
+export const resetLeadForTesting = mutation({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const lead = await ctx.db
+      .query("leads")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first()
+
+    if (!lead) {
+      return { ok: true, deletedLead: false, deletedQueueItems: 0, deletedEvents: 0 }
+    }
+
+    let deletedQueueItems = 0
+    while (true) {
+      const queueBatch = await ctx.db
+        .query("followupQueue")
+        .withIndex("by_leadId_and_scheduledAt", (q) => q.eq("leadId", lead._id))
+        .take(100)
+      if (queueBatch.length === 0) break
+      for (const item of queueBatch) {
+        await ctx.db.delete(item._id)
+        deletedQueueItems += 1
+      }
+    }
+
+    let deletedEvents = 0
+    while (true) {
+      const eventsBatch = await ctx.db
+        .query("funnelEvents")
+        .withIndex("by_leadId_and_createdAt", (q) => q.eq("leadId", lead._id))
+        .take(100)
+      if (eventsBatch.length === 0) break
+      for (const event of eventsBatch) {
+        await ctx.db.delete(event._id)
+        deletedEvents += 1
+      }
+    }
+
+    await ctx.db.delete(lead._id)
+
+    return {
+      ok: true,
+      deletedLead: true,
+      deletedQueueItems,
+      deletedEvents,
+      leadId: lead._id,
+      email: lead.email,
+    }
+  },
+})

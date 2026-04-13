@@ -7,8 +7,10 @@ export default defineSchema({
     email: v.string(),
     interes: v.union(v.literal("programa"), v.literal("llamada")),
     certificado: v.boolean(),
-    etapa: v.union(v.literal("lead_only"), v.literal("booked_call"), v.literal("purchased")),
-    seguimientoEstado: v.union(v.literal("active"), v.literal("paused"), v.literal("completed")),
+    etapa: v.optional(v.union(v.literal("lead_only"), v.literal("booked_call"), v.literal("purchased"))),
+    seguimientoEstado: v.optional(
+      v.union(v.literal("active"), v.literal("paused"), v.literal("completed"))
+    ),
     sessionId: v.optional(v.string()),
     utmSource: v.optional(v.string()),
     utmMedium: v.optional(v.string()),
@@ -16,7 +18,7 @@ export default defineSchema({
     utmContent: v.optional(v.string()),
     utmTerm: v.optional(v.string()),
     referrer: v.optional(v.string()),
-    ultimoEventoEn: v.number(),
+    ultimoEventoEn: v.optional(v.number()),
     creadoEn: v.number(), // timestamp
   }).index("by_email", ["email"]),
   funnelEvents: defineTable({

@@ -374,15 +374,15 @@ function Hero({
           style={{
             fontFamily: "var(--font-jura)",
             fontWeight: 700,
-            fontSize: "clamp(34px, 5.4vw, 64px)",
+            fontSize: "clamp(30px, 5.4vw, 55px)",
             lineHeight: 1.1,
             letterSpacing: "-0.02em",
             color: tok.t1,
             marginBottom: 24,
           }}
         >
-          Domina intervención clínica avanzada en 8 semanas.{" "}
-          <GradientText>Sin improvisar en tu consulta.</GradientText>
+          Domina intervención clínica avanzada en 8 semanas en{" "}
+          <GradientText>Psicoterapia Digital</GradientText>
         </motion.h1>
 
         {/* Subhead */}
@@ -397,10 +397,59 @@ function Hero({
             margin: "0 auto 40px",
           }}
         >
-          Formación aplicada para psicólogos y psicoterapeutas que quieren
-          mejorar resultados clínicos, integrar IA con criterio ético y cobrar
-          con más confianza por una práctica de mayor nivel.
+          Formación aplicada para psicólogos, recién egresados y terapeutas 
+          independientes que quieren fortalecer su práctica clínica, adaptarse al entorno digital y 
+          ejercer con mayor estructura y criterio.
         </motion.p>
+
+        <motion.ul
+          variants={fadeUp}
+          style={{
+            listStyle: "none",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 12,
+            maxWidth: 920,
+            margin: "0 auto 34px",
+            padding: 0,
+          }}
+        >
+          {[
+            "Fortalece criterio clínico para terapia online",
+            "Mejora encuadre, lectura de caso e intervención",
+            "Accede a formación avanzada, biblioteca y ecosistema Motus",
+          ].map((item) => (
+            <li
+              key={item}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10,
+                padding: "14px 16px",
+                borderRadius: 14,
+                border: dark
+                  ? "1px solid rgba(147,51,234,0.35)"
+                  : "1px solid rgba(147,51,234,0.25)",
+                background: dark
+                  ? "linear-gradient(145deg, rgba(255,255,255,0.09), rgba(147,51,234,0.12))"
+                  : "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(147,51,234,0.09))",
+                boxShadow: dark
+                  ? "inset 0 1px 0 rgba(255,255,255,0.16), 0 10px 28px rgba(0,0,0,0.25)"
+                  : "inset 0 1px 0 rgba(255,255,255,0.92), 0 12px 28px rgba(76,29,149,0.14)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                fontFamily: "var(--font-inter)",
+                fontSize: 15,
+                color: tok.t1,
+                lineHeight: 1.5,
+                textAlign: "left",
+              }}
+            >
+              <span style={{ color: "#A855F7", fontSize: 16, lineHeight: 1.2 }}>✦</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </motion.ul>
 
         {/* CTAs */}
         <motion.div
@@ -413,7 +462,7 @@ function Hero({
             marginBottom: 72,
           }}
         >
-          <div onClick={onCta}><GradientButton>Pagar ahora</GradientButton></div>
+          <div onClick={onCta}><GradientButton>Inscribirme ahora</GradientButton></div>
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -430,7 +479,7 @@ function Hero({
               fontFamily: "var(--font-inter)",
             }}
           >
-            Inscribirme
+            Agendar llamada
           </motion.button>
         </motion.div>
 
@@ -502,7 +551,7 @@ function UrgencyAndScarcity({ dark, onCta }: { dark: boolean; onCta: () => void 
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 14 }}>
           <SectionLabel>Cupo limitado</SectionLabel>
-          <SectionHeading tok={tok}>Cohorte próxima: inicio en mayo 2026</SectionHeading>
+          <SectionHeading tok={tok}>Próximo grupo: inicio en mayo 2026</SectionHeading>
         </motion.div>
         <motion.p
           variants={fadeUp}
@@ -545,7 +594,7 @@ function TrustBar({ dark }: { dark: boolean }) {
   const { ref, inView } = useReveal()
 
   const items = [
-    "Coordinado por Benjamin Buzali",
+    "Coordinado por Mtro. en Psicoterapia Benjamin Buzali",
     "Certificación digital incluida",
     "Comunidad activa LATAM",
   ]
@@ -606,23 +655,23 @@ function WhatYouBuild({ dark }: { dark: boolean }) {
   const features = [
     {
       num: "01",
-      title: "Sistema de evaluación propio",
-      desc: "Desarrollas un protocolo de evaluación clínica estructurado, adaptable a cualquier presentación y fundamentado en evidencia actualizada.",
+      title: "🧠 Clínica digital con protocolo y supervisión real",
+      desc: "Construyes una estructura clínica sostenible, acompañada y orientada a resultados.",
     },
     {
       num: "02",
-      title: "Formulación de caso avanzada",
-      desc: "Dominas la conceptualización de casos complejos desde múltiples marcos teóricos, con la precisión que exige la práctica contemporánea.",
+      title: "📲 Práctica estructurada con integración de IA",
+      desc: "Integras herramientas de IA sin perder criterio clínico ni ética profesional.",
     },
     {
       num: "03",
-      title: "Integración ética de IA",
-      desc: "Incorporas herramientas de inteligencia artificial en tu consulta de forma responsable, sin perder el núcleo clínico y humano del trabajo.",
+      title: "🏛 Participación en investigación y encuentros clínicos internacionales",
+      desc: "Te sumas a talleres, investigación aplicada y espacios colaborativos de alto nivel.",
     },
     {
       num: "04",
-      title: "Red profesional LATAM",
-      desc: "Accedes a una comunidad activa de psicólogos de más de 10 países, con el mismo nivel de exigencia y visión que tú.",
+      title: "🌐 Posicionamiento global como referente de psicología digital",
+      desc: "Fortaleces tu visibilidad profesional en una red internacional de especialistas.",
     },
   ]
 
@@ -640,8 +689,8 @@ function WhatYouBuild({ dark }: { dark: boolean }) {
         animate={inView ? "show" : "hidden"}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
-          <SectionLabel>El programa</SectionLabel>
-          <SectionHeading tok={tok}>Lo que construyes en 8 semanas</SectionHeading>
+          <SectionLabel>Lo que construyes en 8 semanas</SectionLabel>
+          <SectionHeading tok={tok}>Esto es lo que construyes con nosotros</SectionHeading>
         </motion.div>
 
         <div
@@ -714,43 +763,51 @@ function EightWeeks({ dark }: { dark: boolean }) {
   const weeks = [
     {
       n: 1,
-      title: "Evaluación clínica estructurada",
-      desc: "Protocolos multiaxiales, entrevista diagnóstica y formulación de caso inicial.",
+      label: "Semana 1",
+      title: "Activación clínica",
+      desc: "Bloques 00 y 01. Inicias con las bases, alineación y estructura de intervención.",
     },
     {
       n: 2,
-      title: "Marcos teóricos integradores",
-      desc: "Del pensamiento de escuela única al pluralismo técnico informado por evidencia.",
+      label: "Semana 2",
+      title: "Integración clínica",
+      desc: "Encuentro clínico grupal + Bloque 02. Empiezas a trabajar en contexto real con otros clínicos.",
     },
     {
       n: 3,
-      title: "Neurociencia y psicoterapia",
-      desc: "Bases neurobiológicas del cambio terapéutico y su aplicación clínica directa.",
+      label: "Semana 3",
+      title: "Profundización práctica",
+      desc: "Taller clínico + Bloque 03. Desarrollas criterio clínico aplicado.",
     },
     {
       n: 4,
-      title: "Inteligencia artificial en la consulta",
-      desc: "Herramientas actuales, límites éticos y flujos de trabajo para el profesional clínico.",
+      label: "Semana 4",
+      title: "Pre-evaluación",
+      desc: "Encuentro grupal + Bloque 04. Te preparas para tu validación profesional.",
     },
     {
       n: 5,
-      title: "Casos complejos y comorbilidades",
-      desc: "Formulación diferenciada en trauma, trastornos de personalidad y presentaciones atípicas.",
+      label: "Semana 5",
+      title: "Certificación",
+      desc: "Validas tus competencias clínicas. Te conviertes en clínico certificado.",
     },
     {
       n: 6,
-      title: "Intervenciones basadas en evidencia",
-      desc: "ACT, EMDR, TCC y terapias de tercera generación en profundidad.",
+      label: "Semana 6",
+      title: "Formación de líder",
+      desc: "Onboarding al grupo de embajadores. Das el salto de clínico a líder.",
     },
     {
       n: 7,
-      title: "Práctica digital y ética profesional",
-      desc: "Telepsicología, privacidad de datos y marcos deontológicos para el contexto digital.",
+      label: "Fase 7",
+      title: "Membresía activa",
+      desc: "Te integras al ecosistema clínico con comunidad profesional, supervisión continua y estructura de trabajo.",
     },
     {
       n: 8,
-      title: "Integración y proyecto final",
-      desc: "Presentación de caso clínico supervisado y proceso de certificación.",
+      label: "Fase 8",
+      title: "Liderazgo celular",
+      desc: "Escalas tu impacto profesional.",
     },
   ]
 
@@ -768,8 +825,18 @@ function EightWeeks({ dark }: { dark: boolean }) {
         animate={inView ? "show" : "hidden"}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 56 }}>
-          <SectionLabel>El recorrido</SectionLabel>
-          <SectionHeading tok={tok}>8 semanas de formación intensiva</SectionHeading>
+          <SectionLabel>8 semanas de formación</SectionLabel>
+          <SectionHeading tok={tok}>🧠 El recorrido completo</SectionHeading>
+          <p
+            style={{
+              marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+            }}
+          >
+            De formación a liderazgo clínico
+          </p>
         </motion.div>
 
         <div style={{ position: "relative", maxWidth: 660 }}>
@@ -851,6 +918,19 @@ function EightWeeks({ dark }: { dark: boolean }) {
 
               {/* Content */}
               <div style={{ paddingTop: 8 }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-inter)",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: tok.t3,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    marginBottom: 8,
+                  }}
+                >
+                  {w.label}
+                </p>
                 <h3
                   style={{
                     fontFamily: "var(--font-jura)",
@@ -1123,6 +1203,12 @@ function Pricing({
     "Sesiones de supervisión grupal",
     "Grabaciones disponibles 12 meses",
   ]
+  const alCursar = [
+    "80h de clases (asincrono)",
+    "8 bloques con plan de estudio",
+    "Biblioteca virtual y bibliografia por bloque",
+    "Credencial y Certificado",
+  ]
   const fit = [
     "Psicólogos/as y psicoterapeutas en práctica activa.",
     "Profesionales que quieren estructura de caso y criterio técnico.",
@@ -1298,6 +1384,59 @@ function Pricing({
                 </li>
               ))}
             </ul>
+
+            <div style={{ marginBottom: 28 }}>
+              <h3
+                style={{
+                  fontFamily: "var(--font-jura)",
+                  fontWeight: 700,
+                  fontSize: 18,
+                  color: tok.t1,
+                  marginBottom: 10,
+                }}
+              >
+                Al Cursar
+              </h3>
+              <p
+                style={{
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 14,
+                  color: tok.t2,
+                  lineHeight: 1.65,
+                  marginBottom: 14,
+                }}
+              >
+                80 horas de formacion asincrona + biblioteca avanzada +
+                certificado. Para psicologos que quieren fortalecer tecnica,
+                encuadre y analisis clinico en terapia online.
+              </p>
+              <ul
+                style={{
+                  listStyle: "none",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                }}
+              >
+                {alCursar.map((item) => (
+                  <li
+                    key={item}
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <span style={{ color: "#A855F7", fontSize: 14 }}>-</span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-inter)",
+                        fontSize: 14,
+                        color: tok.t1,
+                      }}
+                    >
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <div onClick={onCta}><GradientButton full>Pagar ahora</GradientButton></div>
             <motion.button
@@ -2078,7 +2217,7 @@ export default function Home() {
         ]}
       >
         <div className="flex items-center gap-3">
-          <span>Cupo limitado de la cohorte actual.</span>
+          <span>Cupo limitado para el próximo grupo.</span>
           <button
             type="button"
             onClick={handleLeadCta}
@@ -2088,7 +2227,7 @@ export default function Home() {
           </button>
         </div>
       </Banner>
-      <Hero dark={dark} onCta={handleCheckoutCta} onLeadCta={handleLeadCta} />
+      <Hero dark={dark} onCta={handleCheckoutCta} onLeadCta={handleCallCta} />
       <TrustBar dark={dark} />
       <WhatYouBuild dark={dark} />
       <EightWeeks dark={dark} />

@@ -30,7 +30,8 @@ export const dueQueueItems = internalQuery({
         step: item.step,
         email: lead.email,
         nombre: lead.nombre,
-        etapa: lead.etapa,
+        // Legacy leads may miss etapa before backfill; treat as active lead_only.
+        etapa: lead.etapa ?? "lead_only",
       });
     }
     return enriched;
