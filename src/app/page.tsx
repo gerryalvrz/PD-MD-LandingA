@@ -2,7 +2,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { Banner } from "@/components/ui/banner"
@@ -186,6 +186,198 @@ function SectionHeading({ children, tok }: { children: React.ReactNode; tok: Tok
   )
 }
 
+function scrollToId(id: string, focusFieldId?: string) {
+  const target = document.getElementById(id)
+  if (!target) return
+  target.scrollIntoView({ behavior: "smooth", block: "start" })
+  if (focusFieldId) {
+    setTimeout(() => {
+      const field = document.getElementById(focusFieldId) as HTMLInputElement | null
+      field?.focus()
+    }, 350)
+  }
+}
+
+function MasterclassLeadForm({
+  dark,
+  sessionId,
+  onTrack,
+  section,
+  formId,
+  title,
+  subtitle,
+  buttonLabel = "Reserva tu lugar",
+}: {
+  dark: boolean
+  sessionId: string
+  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
+  section: string
+  formId: string
+  title?: string
+  subtitle?: string
+  buttonLabel?: string
+}) {
+  const tok = dark ? T.dark : T.light
+  const registrar = useMutation(api.leads.registrar)
+  const [nombre, setNombre] = useState("")
+  const [email, setEmail] = useState("")
+  const [whatsapp, setWhatsapp] = useState("")
+  const [estado, setEstado] = useState<"idle" | "loading" | "ok" | "error">("idle")
+  const [formStarted, setFormStarted] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!nombre.trim() || !email.trim() || !whatsapp.trim()) return
+    setEstado("loading")
+    try {
+      const utm = new URLSearchParams(window.location.search)
+      const result = await registrar({
+        nombre: nombre.trim(),
+        email: email.trim(),
+        interes: "programa",
+        certificado: false,
+        sessionId,
+        utmSource: utm.get("utm_source") ?? undefined,
+        utmMedium: utm.get("utm_medium") ?? undefined,
+        utmCampaign: utm.get("utm_campaign") ?? undefined,
+        utmContent: utm.get("utm_content") ?? undefined,
+        utmTerm: utm.get("utm_term") ?? undefined,
+        referrer: document.referrer || undefined,
+      })
+      window.localStorage.setItem(
+        "motus_lead_ctx",
+        JSON.stringify({ leadId: result.leadId, email: email.trim(), whatsapp: whatsapp.trim() })
+      )
+      onTrack("form_submitted", { section, intent: "lead", email: email.trim() })
+      setEstado("ok")
+      setTimeout(() => {
+        window.location.href = "/gracias?flow=lead"
+      }, 450)
+    } catch {
+      setEstado("error")
+    }
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+    border: `1px solid ${tok.cardBorder}`,
+    borderRadius: 10,
+    padding: "12px 14px",
+    fontFamily: "var(--font-inter)",
+    fontSize: 15,
+    color: tok.t1,
+    outline: "none",
+    boxSizing: "border-box",
+  }
+
+  return (
+    <div
+      id={formId}
+      style={{
+        background: tok.cardHighBg,
+        border: `1px solid ${tok.cardHighBorder}`,
+        borderRadius: 16,
+        padding: "clamp(20px, 3vw, 28px)",
+        width: "100%",
+      }}
+    >
+      {title && (
+        <h3
+          style={{
+            fontFamily: "var(--font-jura)",
+            fontWeight: 700,
+            fontSize: "clamp(20px, 2.6vw, 28px)",
+            color: tok.t1,
+            marginBottom: 8,
+          }}
+        >
+          {title}
+        </h3>
+      )}
+      {subtitle && (
+        <p
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 14,
+            color: tok.t2,
+            marginBottom: 18,
+            lineHeight: 1.6,
+          }}
+        >
+          {subtitle}
+        </p>
+      )}
+
+      {estado === "ok" ? (
+        <p
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 15,
+            color: tok.t1,
+            lineHeight: 1.6,
+          }}
+        >
+          Registro enviado. Revisa tu correo y WhatsApp para recibir el acceso.
+        </p>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: "grid", gap: 12, marginBottom: 14 }}>
+            <input
+              id={`${formId}-nombre`}
+              style={inputStyle}
+              placeholder="Nombre"
+              value={nombre}
+              onChange={(e) => {
+                setNombre(e.target.value)
+                if (!formStarted) {
+                  setFormStarted(true)
+                  onTrack("form_started", { section, intent: "lead" })
+                }
+              }}
+              required
+            />
+            <input
+              style={inputStyle}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (!formStarted) {
+                  setFormStarted(true)
+                  onTrack("form_started", { section, intent: "lead" })
+                }
+              }}
+              required
+            />
+            <input
+              style={inputStyle}
+              type="tel"
+              placeholder="WhatsApp"
+              value={whatsapp}
+              onChange={(e) => {
+                setWhatsapp(e.target.value)
+                if (!formStarted) {
+                  setFormStarted(true)
+                  onTrack("form_started", { section, intent: "lead" })
+                }
+              }}
+              required
+            />
+          </div>
+          {estado === "error" && (
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: "#EC4899", marginBottom: 12 }}>
+              Algo salió mal. Intenta de nuevo.
+            </p>
+          )}
+          <GradientButton full>{estado === "loading" ? "Enviando..." : buttonLabel}</GradientButton>
+        </form>
+      )}
+    </div>
+  )
+}
+
 // ─── Nav ─────────────────────────────────────────────────────────────────────
 
 function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; onCta: () => void }) {
@@ -268,7 +460,7 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
           />
         </button>
 
-        <div onClick={onCta}><GradientButton small>Pagar ahora</GradientButton></div>
+        <div onClick={onCta}><GradientButton small>Reserva tu lugar</GradientButton></div>
       </div>
     </nav>
   )
@@ -278,19 +470,23 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
 
 function Hero({
   dark,
-  onCta,
-  onLeadCta,
+  onPrimaryCta,
+  onSecondaryCta,
+  sessionId,
+  onTrack,
 }: {
   dark: boolean
-  onCta: () => void
-  onLeadCta: () => void
+  onPrimaryCta: () => void
+  onSecondaryCta: () => void
+  sessionId: string
+  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
 }) {
   const tok = dark ? T.dark : T.light
 
   const stats = [
-    { value: "100+", label: "psicólogos entrenados" },
-    { value: "10+", label: "países en LATAM" },
-    { value: "8", label: "semanas para implementar" },
+    { value: "Formación", label: "orientada a psicólogos" },
+    { value: "Perspectiva", label: "ética, técnica y lógica" },
+    { value: "Enfoque", label: "en clínica digital" },
   ]
 
   return (
@@ -363,7 +559,7 @@ function Hero({
                 letterSpacing: "0.05em",
               }}
             >
-              TÉCNICA AVANZADA EN PSICOTERAPIA
+              MASTERCLASS GRATUITA
             </span>
           </div>
         </motion.div>
@@ -381,8 +577,8 @@ function Hero({
             marginBottom: 24,
           }}
         >
-          Domina intervención clínica avanzada en 8 semanas en{" "}
-          <GradientText>Psicoterapia Digital</GradientText>
+          Cómo está cambiando la práctica clínica en la{" "}
+          <GradientText>era digital</GradientText>
         </motion.h1>
 
         {/* Subhead */}
@@ -397,10 +593,9 @@ function Hero({
             margin: "0 auto 40px",
           }}
         >
-          Formación aplicada para psicólogos, recién egresados y terapeutas
-          independientes que quieren fortalecer su práctica clínica. Te
-          acompañamos en tu transición de la psicología tradicional a la
-          psicología digital.
+          Transicionar a la clínica digital no es solo atender online: requiere
+          otra estructura ética, técnica y lógica para conducir la práctica
+          clínica.
         </motion.p>
 
         <motion.ul
@@ -416,9 +611,9 @@ function Hero({
           }}
         >
           {[
-            "Fortalece criterio clínico para terapia online",
-            "Mejora encuadre, lectura de caso e intervención",
-            "Accede a formación avanzada, biblioteca y ecosistema Motus",
+            "Comprende qué cambia realmente al pasar de la terapia presencial a la clínica digital",
+            "Replantea la escucha y el encuadre en el contexto online",
+            "Orienta tu práctica más allá de diagnósticos cerrados",
           ].map((item) => (
             <li
               key={item}
@@ -463,11 +658,11 @@ function Hero({
             marginBottom: 72,
           }}
         >
-          <div onClick={onCta}><GradientButton>Inscribirme ahora</GradientButton></div>
+          <div onClick={onPrimaryCta}><GradientButton>Reserva tu lugar en la masterclass gratuita</GradientButton></div>
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={onLeadCta}
+            onClick={onSecondaryCta}
             style={{
               background: "transparent",
               border: `1px solid ${tok.cardBorder}`,
@@ -480,8 +675,36 @@ function Hero({
               fontFamily: "var(--font-inter)",
             }}
           >
-            Agendar llamada
+            Ver lo que aprenderás
           </motion.button>
+        </motion.div>
+
+        <motion.p
+          variants={fadeUp}
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 15,
+            color: tok.t2,
+            maxWidth: 740,
+            margin: "0 auto 32px",
+            lineHeight: 1.7,
+          }}
+        >
+          Descubre por qué el paso de la terapia presencial al contexto digital
+          implica una nueva forma de escuchar, leer el discurso y orientar el
+          trabajo clínico más allá de diagnósticos cerrados.
+        </motion.p>
+
+        <motion.div variants={fadeUp} style={{ maxWidth: 560, margin: "0 auto 60px" }}>
+          <MasterclassLeadForm
+            dark={dark}
+            sessionId={sessionId}
+            onTrack={onTrack}
+            section="hero"
+            formId="registro-principal"
+            title="Reserva tu lugar en la masterclass gratuita"
+            subtitle="Completa tus datos para recibir el acceso por email y/o WhatsApp."
+          />
         </motion.div>
 
         {/* Stats */}
@@ -551,8 +774,8 @@ function UrgencyAndScarcity({ dark, onCta }: { dark: boolean; onCta: () => void 
         }}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 14 }}>
-          <SectionLabel>Cupo limitado</SectionLabel>
-          <SectionHeading tok={tok}>Próximo grupo: inicio en mayo 2026</SectionHeading>
+          <SectionLabel>Masterclass gratuita</SectionLabel>
+          <SectionHeading tok={tok}>Reserva tu lugar en la próxima masterclass</SectionHeading>
         </motion.div>
         <motion.p
           variants={fadeUp}
@@ -565,12 +788,12 @@ function UrgencyAndScarcity({ dark, onCta }: { dark: boolean; onCta: () => void 
             marginBottom: 24,
           }}
         >
-          Para mantener supervisión real y feedback clínico de calidad, abrimos
-          lugares limitados por generación. Cuando se llena el cupo, pasas a
-          lista de espera para la siguiente cohorte.
+          Accede sin costo a una conversación diseñada para psicólogos que
+          quieren comprender hacia dónde se mueve la práctica clínica y cómo
+          transicionar con mayor claridad ética, técnica y lógica.
         </motion.p>
         <motion.div variants={fadeUp} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <div onClick={onCta}><GradientButton>Reservar mi lugar</GradientButton></div>
+          <div onClick={onCta}><GradientButton>Reserva tu lugar en la masterclass gratuita</GradientButton></div>
           <span
             style={{
               fontFamily: "var(--font-inter)",
@@ -580,7 +803,7 @@ function UrgencyAndScarcity({ dark, onCta }: { dark: boolean; onCta: () => void 
               alignItems: "center",
             }}
           >
-            Cierre de inscripciones sujeto a disponibilidad.
+            Fecha por confirmar. Cupo sujeto a disponibilidad.
           </span>
         </motion.div>
       </motion.div>
@@ -595,9 +818,9 @@ function TrustBar({ dark }: { dark: boolean }) {
   const { ref, inView } = useReveal()
 
   const items = [
-    "Coordinado por Mtro. en Psicoterapia Benjamin Buzali",
-    "Certificación digital incluida",
-    "Comunidad activa LATAM",
+    "Formación orientada a psicólogos",
+    "Perspectiva ética, técnica y lógica",
+    "Enfoque en clínica digital",
   ]
 
   return (
@@ -656,23 +879,23 @@ function WhatYouBuild({ dark }: { dark: boolean }) {
   const features = [
     {
       num: "01",
-      title: "🧠 Clínica digital con protocolo y supervisión real",
-      desc: "Construyes una estructura clínica sostenible, acompañada y orientada a resultados.",
+      title: "Comprender qué cambia realmente en la transición clínica",
+      desc: "Para profesionales que quieren claridad sobre qué se transforma al pasar de la terapia presencial a la clínica digital.",
     },
     {
       num: "02",
-      title: "📲 Práctica estructurada con integración de IA",
-      desc: "Integras herramientas de IA sin perder criterio clínico ni ética profesional.",
+      title: "Transicionar con estructura ética, técnica y lógica",
+      desc: "Para quienes buscan ordenar su práctica digital con mayor criterio clínico y conducción del proceso.",
     },
     {
       num: "03",
-      title: "🏛 Participación en investigación y encuentros clínicos internacionales",
-      desc: "Te sumas a talleres, investigación aplicada y espacios colaborativos de alto nivel.",
+      title: "Ir más allá de diagnósticos cerrados",
+      desc: "Para psicólogos que quieren orientar el trabajo clínico con una mirada más conversacional y estructurada.",
     },
     {
       num: "04",
-      title: "🌐 Posicionamiento global como referente de psicología digital",
-      desc: "Fortaleces tu visibilidad profesional en una red internacional de especialistas.",
+      title: "Leer el discurso y conducir procesos en contexto digital",
+      desc: "Para quienes buscan una perspectiva más precisa para escuchar, leer y orientar la práctica en modalidad online.",
     },
   ]
 
@@ -690,8 +913,8 @@ function WhatYouBuild({ dark }: { dark: boolean }) {
         animate={inView ? "show" : "hidden"}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
-          <SectionLabel>Lo que construyes en 8 semanas</SectionLabel>
-          <SectionHeading tok={tok}>Esto es lo que construyes con nosotros</SectionHeading>
+          <SectionLabel>Para quién es</SectionLabel>
+          <SectionHeading tok={tok}>Esta masterclass es para psicólogos que:</SectionHeading>
         </motion.div>
 
         <div
@@ -764,56 +987,27 @@ function EightWeeks({ dark }: { dark: boolean }) {
   const weeks = [
     {
       n: 1,
-      label: "Semana 1",
-      title: "Activación clínica",
-      desc: "Bloques 00 y 01. Inicias con las bases, alineación y estructura de intervención.",
+      label: "Bloque 1",
+      title: "Qué cambia realmente al pasar de la terapia presencial a la clínica digital",
+      desc: "Comprenderás por qué la transición al contexto online no es solo un cambio de formato, sino una transformación en el encuadre, la escucha y la conducción del proceso clínico.",
     },
     {
       n: 2,
-      label: "Semana 2",
-      title: "Integración clínica",
-      desc: "Encuentro clínico grupal + Bloque 02. Empiezas a trabajar en contexto real con otros clínicos.",
+      label: "Bloque 2",
+      title: "Cómo leer y orientar la práctica clínica más allá de diagnósticos cerrados",
+      desc: "Verás una perspectiva que prioriza la psicoterapia conversacional, el síntoma y sus elementos significantes para abrir una orientación clínica más precisa, ética y estructurada.",
     },
     {
       n: 3,
-      label: "Semana 3",
-      title: "Profundización práctica",
-      desc: "Taller clínico + Bloque 03. Desarrollas criterio clínico aplicado.",
-    },
-    {
-      n: 4,
-      label: "Semana 4",
-      title: "Pre-evaluación",
-      desc: "Encuentro grupal + Bloque 04. Te preparas para tu validación profesional.",
-    },
-    {
-      n: 5,
-      label: "Semana 5",
-      title: "Certificación",
-      desc: "Validas tus competencias clínicas. Te conviertes en clínico certificado.",
-    },
-    {
-      n: 6,
-      label: "Semana 6",
-      title: "Formación de líder",
-      desc: "Onboarding al grupo de embajadores. Das el salto de clínico a líder.",
-    },
-    {
-      n: 7,
-      label: "Fase 7",
-      title: "Membresía activa",
-      desc: "Te integras al ecosistema clínico con comunidad profesional, supervisión continua y estructura de trabajo.",
-    },
-    {
-      n: 8,
-      label: "Fase 8",
-      title: "Liderazgo celular",
-      desc: "Escalas tu impacto profesional.",
+      label: "Bloque 3",
+      title: "Qué estructura ética, técnica y lógica exige hoy la práctica clínica digital",
+      desc: "Identificarás los fundamentos que permiten transicionar tu práctica con mayor claridad clínica, y entender mejor cómo conducir procesos en el nuevo contexto digital más allá de diagnósticos cerrados.",
     },
   ]
 
   return (
     <section
+      id="aprendizajes"
       style={{
         background: tok.bgAlt,
         padding: "clamp(64px, 10vh, 120px) clamp(24px, 6vw, 120px)",
@@ -826,8 +1020,8 @@ function EightWeeks({ dark }: { dark: boolean }) {
         animate={inView ? "show" : "hidden"}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 56 }}>
-          <SectionLabel>8 semanas de formación</SectionLabel>
-          <SectionHeading tok={tok}>🧠 El recorrido completo</SectionHeading>
+          <SectionLabel>Contenido central</SectionLabel>
+          <SectionHeading tok={tok}>En esta masterclass aprenderás</SectionHeading>
           <p
             style={{
               marginTop: 12,
@@ -836,7 +1030,7 @@ function EightWeeks({ dark }: { dark: boolean }) {
               color: tok.t2,
             }}
           >
-            De formación a liderazgo clínico
+            Tres ideas clave para comprender la transición clínica digital
           </p>
         </motion.div>
 
@@ -1000,7 +1194,7 @@ function Testimonials({ dark }: { dark: boolean }) {
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
           <SectionLabel>Testimonios</SectionLabel>
-          <SectionHeading tok={tok}>Lo que dicen quienes lo vivieron</SectionHeading>
+          <SectionHeading tok={tok}>Lo que esta conversación puede abrir en tu práctica</SectionHeading>
           <p
             style={{
               marginTop: 12,
@@ -1009,8 +1203,7 @@ function Testimonials({ dark }: { dark: boolean }) {
               color: tok.t3,
             }}
           >
-            Sección en actualización: placeholders temporales hasta publicar
-            testimonios clínicos verificados.
+            Una perspectiva clínica distinta puede cambiar la forma en que orientas tu trabajo.
           </p>
         </motion.div>
 
@@ -1114,9 +1307,9 @@ function RiskReversal({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
   const bullets = [
-    "Garantía de satisfacción de 7 días desde el inicio del programa.",
-    "Si no es el fit adecuado, puedes solicitar baja y reembolso según política vigente.",
-    "Todas las condiciones se comparten antes de pagar para decisión informada.",
+    "Muchos profesionales ya atienden online, pero no siempre han replanteado la estructura clínica que esta transición exige.",
+    "La clínica digital demanda revisar encuadre, escucha y conducción con una base ética y técnica sólida.",
+    "Esta masterclass abre una conversación necesaria para comprender el cambio de fondo en la práctica clínica.",
   ]
   return (
     <section
@@ -1140,8 +1333,8 @@ function RiskReversal({ dark }: { dark: boolean }) {
         }}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 20 }}>
-          <SectionLabel>Riesgo bajo</SectionLabel>
-          <SectionHeading tok={tok}>Decides con claridad, no con presión</SectionHeading>
+          <SectionLabel>Relevancia clínica</SectionLabel>
+          <SectionHeading tok={tok}>La práctica clínica está cambiando</SectionHeading>
         </motion.div>
         <motion.div variants={fadeUp} style={{ marginBottom: 24 }}>
           <GlowingShadow className="!w-full !max-w-[560px] !aspect-[2.6/1] !cursor-default">
@@ -1149,7 +1342,7 @@ function RiskReversal({ dark }: { dark: boolean }) {
               className="pointer-events-none z-10 text-center text-xl font-semibold tracking-tight"
               style={{ color: tok.t1, margin: 0 }}
             >
-              Riesgo controlado, decisión informada
+              Nueva conversación clínica para el contexto digital
             </span>
           </GlowingShadow>
         </motion.div>
@@ -1185,44 +1378,21 @@ function RiskReversal({ dark }: { dark: boolean }) {
 
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
-function Pricing({
+function RegistrationSection({
   dark,
-  onCta,
-  onLeadCta,
+  sessionId,
+  onTrack,
 }: {
   dark: boolean
-  onCta: () => void
-  onLeadCta: () => void
+  sessionId: string
+  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
 }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
 
-  const included = [
-    "8 módulos semanales en vivo",
-    "Material clínico descargable",
-    "Acceso a la comunidad LATAM",
-    "Sesiones de supervisión grupal",
-    "Grabaciones disponibles 12 meses",
-  ]
-  const alCursar = [
-    "80h de clases (asincrono)",
-    "8 bloques con plan de estudio",
-    "Biblioteca virtual y bibliografia por bloque",
-    "Credencial y Certificado",
-  ]
-  const fit = [
-    "Psicólogos/as y psicoterapeutas en práctica activa.",
-    "Profesionales que quieren estructura de caso y criterio técnico.",
-    "Quienes buscan integrar IA sin comprometer ética clínica.",
-  ]
-  const noFit = [
-    "Si buscas soluciones rápidas sin estudio ni aplicación semanal.",
-    "Si no puedes comprometer tiempo para práctica y supervisión.",
-    "Si no trabajas con pacientes actualmente.",
-  ]
-
   return (
     <section
+      id="registro"
       style={{
         background: tok.bgAlt,
         padding: "clamp(64px, 10vh, 120px) clamp(24px, 6vw, 120px)",
@@ -1234,408 +1404,32 @@ function Pricing({
         initial="hidden"
         animate={inView ? "show" : "hidden"}
       >
-        <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
-          <SectionLabel>Inversión</SectionLabel>
-          <SectionHeading tok={tok}>Transparente y sin sorpresas</SectionHeading>
+        <motion.div variants={fadeUp} style={{ marginBottom: 32 }}>
+          <SectionLabel>Registro final</SectionLabel>
+          <SectionHeading tok={tok}>Reserva tu lugar en la masterclass gratuita</SectionHeading>
+          <p
+            style={{
+              marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.7,
+              maxWidth: 640,
+            }}
+          >
+            Recibirás acceso e información por email y/o WhatsApp.
+          </p>
         </motion.div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: 16,
-            flexWrap: "wrap",
-            alignItems: "flex-start",
-          }}
-        >
-          {/* Featured */}
-          <motion.div
-            variants={fadeUp}
-            style={{
-              background: tok.cardHighBg,
-              border: `1px solid ${tok.cardHighBorder}`,
-              borderRadius: 20,
-              padding: 40,
-              flex: "1 1 300px",
-              maxWidth: 460,
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            {/* Corner glow */}
-            <div
-              style={{
-                position: "absolute",
-                top: -60,
-                right: -60,
-                width: 240,
-                height: 240,
-                background:
-                  "radial-gradient(circle, rgba(147,51,234,0.14) 0%, transparent 70%)",
-                pointerEvents: "none",
-              }}
-            />
-
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                padding: "4px 12px",
-                borderRadius: 100,
-                background: "rgba(147,51,234,0.15)",
-                border: "1px solid rgba(147,51,234,0.3)",
-                marginBottom: 28,
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: "#A855F7",
-                  letterSpacing: "0.06em",
-                }}
-              >
-                PROGRAMA COMPLETO
-              </span>
-            </div>
-
-            <div style={{ marginBottom: 8 }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-jura)",
-                  fontWeight: 700,
-                  fontSize: "clamp(44px, 5vw, 60px)",
-                  color: tok.t1,
-                  lineHeight: 1,
-                }}
-              >
-                $2,300
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 16,
-                  color: tok.t2,
-                  marginLeft: 8,
-                }}
-              >
-                MXN
-              </span>
-            </div>
-
-            <p
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 15,
-                color: tok.t2,
-                marginBottom: 32,
-                lineHeight: 1.6,
-              }}
-            >
-              Acceso completo al programa — 8 semanas, materiales, comunidad y
-              seguimiento.
-            </p>
-
-            <ul
-              style={{
-                listStyle: "none",
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-                marginBottom: 36,
-              }}
-            >
-              {included.map((item) => (
-                <li
-                  key={item}
-                  style={{ display: "flex", alignItems: "center", gap: 10 }}
-                >
-                  <div
-                    style={{
-                      width: 18,
-                      height: 18,
-                      borderRadius: "50%",
-                      background: "rgba(147,51,234,0.15)",
-                      border: "1px solid rgba(147,51,234,0.3)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                      <path
-                        d="M1 3L3 5L7 1"
-                        stroke="#A855F7"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-inter)",
-                      fontSize: 14,
-                      color: tok.t1,
-                    }}
-                  >
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            <div style={{ marginBottom: 28 }}>
-              <h3
-                style={{
-                  fontFamily: "var(--font-jura)",
-                  fontWeight: 700,
-                  fontSize: 18,
-                  color: tok.t1,
-                  marginBottom: 10,
-                }}
-              >
-                Al Cursar
-              </h3>
-              <p
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 14,
-                  color: tok.t2,
-                  lineHeight: 1.65,
-                  marginBottom: 14,
-                }}
-              >
-                80 horas de formacion asincrona + biblioteca avanzada +
-                certificado. Para psicologos que quieren fortalecer tecnica,
-                encuadre y analisis clinico en terapia online.
-              </p>
-              <ul
-                style={{
-                  listStyle: "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                }}
-              >
-                {alCursar.map((item) => (
-                  <li
-                    key={item}
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <span style={{ color: "#A855F7", fontSize: 14 }}>-</span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-inter)",
-                        fontSize: 14,
-                        color: tok.t1,
-                      }}
-                    >
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div onClick={onCta}><GradientButton full>Pagar ahora</GradientButton></div>
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={onLeadCta}
-              style={{
-                marginTop: 10,
-                background: "transparent",
-                border: "none",
-                color: tok.t2,
-                textDecoration: "underline",
-                textUnderlineOffset: 3,
-                fontFamily: "var(--font-inter)",
-                fontSize: 14,
-                cursor: "pointer",
-                width: "100%",
-              }}
-            >
-              Aun no estoy listo para pagar, quiero inscribirme
-            </motion.button>
-          </motion.div>
-
-          {/* Secondary */}
-          <motion.div
-            variants={fadeUp}
-            style={{
-              background: tok.card,
-              border: `1px solid ${tok.cardBorder}`,
-              borderRadius: 20,
-              padding: 36,
-              flex: "1 1 240px",
-              maxWidth: 340,
-            }}
-          >
-            <div
-              style={{
-                display: "inline-block",
-                padding: "4px 12px",
-                borderRadius: 100,
-                background: dark
-                  ? "rgba(255,255,255,0.05)"
-                  : "rgba(0,0,0,0.05)",
-                marginBottom: 24,
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: tok.t3,
-                  letterSpacing: "0.06em",
-                }}
-              >
-                OPCIONAL
-              </span>
-            </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 18,
-                  color: tok.t3,
-                }}
-              >
-                +
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-jura)",
-                  fontWeight: 700,
-                  fontSize: "clamp(36px, 4vw, 48px)",
-                  color: tok.t1,
-                  lineHeight: 1,
-                  marginLeft: 4,
-                }}
-              >
-                $400
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 15,
-                  color: tok.t2,
-                  marginLeft: 8,
-                }}
-              >
-                MXN
-              </span>
-            </div>
-
-            <h3
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 20,
-                color: tok.t1,
-                marginBottom: 12,
-              }}
-            >
-              Certificado digital
-            </h3>
-
-            <p
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 15,
-                color: tok.t2,
-                lineHeight: 1.65,
-                marginBottom: 32,
-              }}
-            >
-              Certificado de finalización con validez digital, emitido al
-              completar el programa y el proyecto clínico final. Opcional al
-              finalizar.
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              style={{
-                background: "transparent",
-                border: `1px solid ${tok.cardBorder}`,
-                borderRadius: 10,
-                color: tok.t1,
-                fontWeight: 500,
-                fontSize: 15,
-                padding: "12px 24px",
-                cursor: "pointer",
-                fontFamily: "var(--font-inter)",
-                width: "100%",
-              }}
-            >
-              Añadir certificado
-            </motion.button>
-          </motion.div>
-        </div>
-        <motion.div
-          variants={fadeUp}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: 16,
-            marginTop: 16,
-          }}
-        >
-          <div
-            style={{
-              background: tok.card,
-              border: `1px solid ${tok.cardBorder}`,
-              borderRadius: 16,
-              padding: 24,
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 18,
-                color: tok.t1,
-                marginBottom: 10,
-              }}
-            >
-              Este programa es para ti si...
-            </h3>
-            {fit.map((item) => (
-              <p key={item} style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.7 }}>
-                • {item}
-              </p>
-            ))}
-          </div>
-          <div
-            style={{
-              background: tok.card,
-              border: `1px solid ${tok.cardBorder}`,
-              borderRadius: 16,
-              padding: 24,
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 18,
-                color: tok.t1,
-                marginBottom: 10,
-              }}
-            >
-              No es para ti si...
-            </h3>
-            {noFit.map((item) => (
-              <p key={item} style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.7 }}>
-                • {item}
-              </p>
-            ))}
-          </div>
+        <motion.div variants={fadeUp} style={{ maxWidth: 620 }}>
+          <MasterclassLeadForm
+            dark={dark}
+            sessionId={sessionId}
+            onTrack={onTrack}
+            section="registro_final"
+            formId="registro-final"
+            buttonLabel="Reserva tu lugar"
+          />
         </motion.div>
       </motion.div>
     </section>
@@ -1647,20 +1441,24 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
   const { ref, inView } = useReveal()
   const faqs = [
     {
-      q: "No tengo mucho tiempo, ¿podré seguir el programa?",
-      a: "Si apartas de 3 a 4 horas por semana para sesiones y aplicación clínica, sí. El programa está diseñado para profesionales en consulta activa.",
+      q: "¿La masterclass es gratuita?",
+      a: "Sí, el registro a la masterclass es gratuito.",
     },
     {
-      q: "¿Necesito experiencia previa en IA?",
-      a: "No. Cubrimos herramientas desde cero y su uso responsable en contexto clínico.",
+      q: "¿Esta masterclass es solo para psicólogos?",
+      a: "Está dirigida principalmente a psicólogos y profesionales interesados en comprender el cambio hacia la clínica digital.",
     },
     {
-      q: "¿Esto reemplaza supervisión o terapia personal?",
-      a: "No. Es formación técnica y estratégica para mejorar práctica clínica; no sustituye procesos terapéuticos personales ni supervisión individual especializada.",
+      q: "¿Necesito experiencia previa en clínica digital?",
+      a: "No. Está pensada como una introducción clara y estructurada.",
     },
     {
-      q: "¿Cuándo recupero la inversión?",
-      a: "Depende de tu práctica, posicionamiento y adopción. El enfoque está en elevar calidad clínica y valor percibido para sostener honorarios de mayor nivel.",
+      q: "¿Qué recibiré al registrarme?",
+      a: "Recibirás acceso e información por email y/o WhatsApp.",
+    },
+    {
+      q: "¿La masterclass sustituye al curso completo?",
+      a: "No. La masterclass es una puerta de entrada para entender el enfoque; el curso completo profundiza mucho más.",
     },
   ]
   return (
@@ -1673,7 +1471,7 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
       <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
         <motion.div variants={fadeUp} style={{ marginBottom: 40 }}>
           <SectionLabel>Preguntas frecuentes</SectionLabel>
-          <SectionHeading tok={tok}>Resolvemos las objeciones más comunes</SectionHeading>
+          <SectionHeading tok={tok}>Preguntas frecuentes</SectionHeading>
         </motion.div>
         <div style={{ display: "grid", gap: 12, maxWidth: 920 }}>
           {faqs.map((item) => (
@@ -1748,7 +1546,7 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             marginBottom: 20,
           }}
         >
-          ¿Tienes el perfil que buscamos?
+          Cupos limitados
         </h2>
         <p
           style={{
@@ -1759,10 +1557,11 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             marginBottom: 40,
           }}
         >
-          El programa es selectivo. Agenda una llamada de 20 minutos para
-          evaluar si es el momento adecuado para ti.
+          Si te interesa comprender hacia dónde se mueve la práctica clínica y
+          cómo transicionar con mayor claridad ética, técnica y lógica, reserva
+          tu lugar.
         </p>
-        <div onClick={onCta}><GradientButton>Agendar llamada</GradientButton></div>
+        <div onClick={onCta}><GradientButton>Reserva tu lugar</GradientButton></div>
       </div>
     </motion.section>
   )
@@ -1816,307 +1615,12 @@ function Footer({ dark }: { dark: boolean }) {
   )
 }
 
-// ─── Lead Modal ───────────────────────────────────────────────────────────────
-
-type ModalIntent = "programa" | "llamada"
-
-function LeadModal({
-  dark,
-  intent,
-  onClose,
-  sessionId,
-  onTrack,
-}: {
-  dark: boolean
-  intent: ModalIntent
-  onClose: () => void
-  sessionId: string
-  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
-}) {
-  const tok = dark ? T.dark : T.light
-  const registrar = useMutation(api.leads.registrar)
-  const marcarEtapa = useMutation(api.leads.marcarEtapa)
-
-  const [nombre, setNombre] = useState("")
-  const [email, setEmail] = useState("")
-  const [certificado, setCertificado] = useState(false)
-  const [estado, setEstado] = useState<"idle" | "loading" | "ok" | "error">("idle")
-  const [formStarted, setFormStarted] = useState(false)
-
-  const titulo =
-    intent === "llamada"
-      ? "Agenda tu llamada"
-      : "Reserva tu lugar"
-
-  const subtitulo =
-    intent === "llamada"
-      ? "Cuéntanos quién eres y te escribimos para coordinar."
-      : "Déjanos tus datos y te enviamos toda la información."
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!nombre.trim() || !email.trim()) return
-    setEstado("loading")
-    try {
-      const utm = new URLSearchParams(window.location.search)
-      const result = await registrar({
-        nombre: nombre.trim(),
-        email: email.trim(),
-        interes: intent,
-        certificado,
-        sessionId,
-        utmSource: utm.get("utm_source") ?? undefined,
-        utmMedium: utm.get("utm_medium") ?? undefined,
-        utmCampaign: utm.get("utm_campaign") ?? undefined,
-        utmContent: utm.get("utm_content") ?? undefined,
-        utmTerm: utm.get("utm_term") ?? undefined,
-        referrer: document.referrer || undefined,
-      })
-      window.localStorage.setItem(
-        "motus_lead_ctx",
-        JSON.stringify({ leadId: result.leadId, email: email.trim() })
-      )
-      onTrack("form_submitted", { intent, email: email.trim() })
-      if (intent === "llamada") {
-        await marcarEtapa({
-          leadId: result.leadId,
-          etapa: "booked_call",
-        })
-        window.location.href = "/gracias?flow=llamada"
-        return
-      }
-      setEstado("ok")
-      setTimeout(() => {
-        window.location.href = "/gracias?flow=lead"
-      }, 500)
-    } catch {
-      setEstado("error")
-    }
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
-    border: `1px solid ${tok.cardBorder}`,
-    borderRadius: 10,
-    padding: "12px 14px",
-    fontFamily: "var(--font-inter)",
-    fontSize: 15,
-    color: tok.t1,
-    outline: "none",
-    boxSizing: "border-box",
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 200,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        background: "rgba(0,0,0,0.6)",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
-      }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 16, scale: 0.97 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          background: dark ? T.dark.bgAlt : T.light.bg,
-          border: `1px solid ${tok.cardHighBorder}`,
-          borderRadius: 20,
-          padding: "36px 32px",
-          width: "100%",
-          maxWidth: 440,
-          position: "relative",
-        }}
-      >
-        {/* Close */}
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: tok.t3,
-            fontSize: 20,
-            lineHeight: 1,
-            padding: 4,
-          }}
-        >
-          ✕
-        </button>
-
-        {estado === "ok" ? (
-          <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: "50%",
-                background: GRAD,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 20px",
-              }}
-            >
-              <svg width="20" height="15" viewBox="0 0 20 15" fill="none">
-                <path d="M2 7L8 13L18 2" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h3
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 22,
-                color: tok.t1,
-                marginBottom: 10,
-              }}
-            >
-              Recibido
-            </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 15,
-                color: tok.t2,
-                lineHeight: 1.65,
-              }}
-            >
-              Te escribiremos a <strong style={{ color: tok.t1 }}>{email}</strong> en las próximas 24 horas.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <h3
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 22,
-                color: tok.t1,
-                marginBottom: 8,
-              }}
-            >
-              {titulo}
-            </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 14,
-                color: tok.t2,
-                marginBottom: 28,
-                lineHeight: 1.6,
-              }}
-            >
-              {subtitulo}
-            </p>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
-              <input
-                style={inputStyle}
-                placeholder="Tu nombre"
-                value={nombre}
-                onChange={(e) => {
-                  setNombre(e.target.value)
-                  if (!formStarted) {
-                    setFormStarted(true)
-                    onTrack("form_started", { intent })
-                  }
-                }}
-                required
-              />
-              <input
-                style={inputStyle}
-                type="email"
-                placeholder="Tu correo"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  if (!formStarted) {
-                    setFormStarted(true)
-                    onTrack("form_started", { intent })
-                  }
-                }}
-                required
-              />
-            </div>
-
-            {/* Certificado checkbox */}
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                cursor: "pointer",
-                marginBottom: 28,
-              }}
-            >
-              <div
-                onClick={() => setCertificado((c) => !c)}
-                style={{
-                  width: 18,
-                  height: 18,
-                  borderRadius: 5,
-                  border: `1px solid ${certificado ? "#9333EA" : tok.cardBorder}`,
-                  background: certificado ? "rgba(147,51,234,0.2)" : "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  transition: "all 0.2s",
-                }}
-              >
-                {certificado && (
-                  <svg width="10" height="7" viewBox="0 0 10 7" fill="none">
-                    <path d="M1 3.5L3.5 6L9 1" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </div>
-              <span style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2 }}>
-                Me interesa el certificado digital (+$400 MXN)
-              </span>
-            </label>
-
-            {estado === "error" && (
-              <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: "#EC4899", marginBottom: 12 }}>
-                Algo salió mal. Intenta de nuevo.
-              </p>
-            )}
-
-            <GradientButton full>
-              {estado === "loading" ? "Enviando..." : intent === "llamada" ? "Agendar llamada" : "Reservar mi lugar"}
-            </GradientButton>
-          </form>
-        )}
-      </motion.div>
-    </motion.div>
-  )
-}
-
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   const [dark, setDark] = useState(true)
-  const [modal, setModal] = useState<ModalIntent | null>(null)
   const [sessionId, setSessionId] = useState<string>("")
-  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL
-  const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL
   const trackEvent = useMutation(api.leads.trackEvent)
-  const marcarEtapa = useMutation(api.leads.marcarEtapa)
 
   const onTrack = (eventName: FunnelEventName, payload: Record<string, string> = {}) => {
     if (!sessionId) return
@@ -2138,11 +1642,6 @@ export default function Home() {
     void trackEvent(args)
   }
 
-  const openModal = (intent: ModalIntent, section: string) => {
-    onTrack("modal_open", { intent: intent === "programa" ? "lead" : "call", section })
-    setModal(intent)
-  }
-
   useEffect(() => {
     const id = getOrCreateSessionId()
     setSessionId(id)
@@ -2151,51 +1650,23 @@ export default function Home() {
   useEffect(() => {
     if (!sessionId) return
     onTrack("page_view", { section: "landing" })
-    const params = new URLSearchParams(window.location.search)
-    const checkout = params.get("checkout")
-    const calendly = params.get("calendly")
-    const leadCtx = getStoredLeadContext()
-    if (checkout === "success") {
-      onTrack("checkout_complete", { section: "return" })
-      void marcarEtapa({
-        ...(leadCtx?.leadId ? { leadId: leadCtx.leadId as Parameters<typeof marcarEtapa>[0]["leadId"] } : {}),
-        ...(leadCtx?.email ? { email: leadCtx.email } : {}),
-        etapa: "purchased",
-      })
-      window.location.href = "/gracias?flow=compra"
-      return
-    }
-    if (calendly === "booked") {
-      onTrack("calendly_booked", { section: "return" })
-      void marcarEtapa({
-        ...(leadCtx?.leadId ? { leadId: leadCtx.leadId as Parameters<typeof marcarEtapa>[0]["leadId"] } : {}),
-        ...(leadCtx?.email ? { email: leadCtx.email } : {}),
-        etapa: "booked_call",
-      })
-      window.location.href = "/gracias?flow=llamada"
-    }
   }, [sessionId])
 
-  const handleCheckoutCta = () => {
-    onTrack("cta_click", { section: "global", ctaLabel: "Pagar ahora", intent: "pay" })
-    onTrack("checkout_click", { section: "global", ctaLabel: "Pagar ahora", intent: "pay" })
-    if (checkoutUrl) {
-      window.open(checkoutUrl, "_blank", "noopener,noreferrer")
-      return
-    }
-    openModal("programa", "checkout_fallback")
+  const handlePrimaryCta = () => {
+    onTrack("cta_click", {
+      section: "global",
+      ctaLabel: "Reserva tu lugar en la masterclass gratuita",
+      intent: "lead",
+    })
+    scrollToId("registro-principal", "registro-principal-nombre")
   }
-  const handleCallCta = () => {
-    onTrack("cta_click", { section: "final", ctaLabel: "Agendar llamada", intent: "call" })
-    if (calendlyUrl) {
-      window.open(calendlyUrl, "_blank", "noopener,noreferrer")
-      return
-    }
-    openModal("llamada", "final")
+  const handleLearnCta = () => {
+    onTrack("cta_click", { section: "hero", ctaLabel: "Ver lo que aprenderás", intent: "lead" })
+    scrollToId("aprendizajes")
   }
-  const handleLeadCta = () => {
-    onTrack("cta_click", { section: "global", ctaLabel: "Inscribirme", intent: "lead" })
-    openModal("programa", "lead")
+  const handleFinalRegisterCta = () => {
+    onTrack("cta_click", { section: "final", ctaLabel: "Reserva tu lugar", intent: "lead" })
+    scrollToId("registro", "registro-final-nombre")
   }
 
   return (
@@ -2206,7 +1677,7 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onCta={handleCheckoutCta} />
+      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onCta={handlePrimaryCta} />
       <Banner
         variant="rainbow"
         className="!top-16 border-b border-white/10 px-12"
@@ -2218,39 +1689,33 @@ export default function Home() {
         ]}
       >
         <div className="flex items-center gap-3">
-          <span>Cupo limitado para el próximo grupo.</span>
+          <span>Masterclass gratuita con cupos limitados.</span>
           <button
             type="button"
-            onClick={handleLeadCta}
+            onClick={handlePrimaryCta}
             className="rounded-md border border-white/30 px-2 py-1 text-xs font-semibold hover:bg-white/10"
           >
-            Inscribirme
+            Reservar lugar
           </button>
         </div>
       </Banner>
-      <Hero dark={dark} onCta={handleCheckoutCta} onLeadCta={handleCallCta} />
+      <Hero
+        dark={dark}
+        onPrimaryCta={handlePrimaryCta}
+        onSecondaryCta={handleLearnCta}
+        sessionId={sessionId}
+        onTrack={onTrack}
+      />
       <TrustBar dark={dark} />
       <WhatYouBuild dark={dark} />
       <EightWeeks dark={dark} />
       <Testimonials dark={dark} />
       <RiskReversal dark={dark} />
       <ObjectionFaq dark={dark} />
-      <UrgencyAndScarcity dark={dark} onCta={handleLeadCta} />
-      <Pricing dark={dark} onCta={handleCheckoutCta} onLeadCta={handleLeadCta} />
-      <FinalCTA dark={dark} onCta={handleCallCta} />
+      <UrgencyAndScarcity dark={dark} onCta={handleFinalRegisterCta} />
+      <RegistrationSection dark={dark} sessionId={sessionId} onTrack={onTrack} />
+      <FinalCTA dark={dark} onCta={handleFinalRegisterCta} />
       <Footer dark={dark} />
-
-      <AnimatePresence>
-        {modal && (
-          <LeadModal
-            dark={dark}
-            intent={modal}
-            sessionId={sessionId}
-            onTrack={onTrack}
-            onClose={() => setModal(null)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   )
 }
