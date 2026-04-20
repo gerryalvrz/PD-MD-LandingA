@@ -227,7 +227,7 @@ function MasterclassLeadForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!nombre.trim() || !email.trim() || !whatsapp.trim()) return
+    if (!nombre.trim() || !email.trim()) return
     setEstado("loading")
     try {
       const utm = new URLSearchParams(window.location.search)
@@ -354,7 +354,7 @@ function MasterclassLeadForm({
             <input
               style={inputStyle}
               type="tel"
-              placeholder="WhatsApp"
+              placeholder="WhatsApp (opcional)"
               value={whatsapp}
               onChange={(e) => {
                 setWhatsapp(e.target.value)
@@ -363,7 +363,6 @@ function MasterclassLeadForm({
                   onTrack("form_started", { section, intent: "lead" })
                 }
               }}
-              required
             />
           </div>
           {estado === "error" && (
@@ -484,9 +483,18 @@ function Hero({
   const tok = dark ? T.dark : T.light
 
   const stats = [
-    { value: "Formación", label: "orientada a psicólogos" },
-    { value: "Perspectiva", label: "ética, técnica y lógica" },
-    { value: "Enfoque", label: "en clínica digital" },
+    {
+      value: "Encuadre clínico",
+      label: "Qué cambia realmente al pasar de la clínica presencial al entorno digital.",
+    },
+    {
+      value: "Lectura del síntoma",
+      label: "Una perspectiva que va más allá de diagnósticos cerrados.",
+    },
+    {
+      value: "Ética, técnica y lógica",
+      label: "Fundamentos para orientar la práctica clínica digital con mayor claridad.",
+    },
   ]
 
   return (
@@ -577,8 +585,8 @@ function Hero({
             marginBottom: 24,
           }}
         >
-          Cómo está cambiando la práctica clínica en la{" "}
-          <GradientText>era digital</GradientText>
+          Transicionar a la clínica digital no es solo{" "}
+          <GradientText>atender online</GradientText>
         </motion.h1>
 
         {/* Subhead */}
@@ -593,9 +601,8 @@ function Hero({
             margin: "0 auto 40px",
           }}
         >
-          Transicionar a la clínica digital no es solo atender online: requiere
-          otra estructura ética, técnica y lógica para conducir la práctica
-          clínica.
+          Requiere otra estructura ética, técnica y lógica para conducir la
+          práctica clínica.
         </motion.p>
 
         <motion.ul
@@ -703,7 +710,7 @@ function Hero({
             section="hero"
             formId="registro-principal"
             title="Reserva tu lugar en la masterclass gratuita"
-            subtitle="Completa tus datos para recibir el acceso por email y/o WhatsApp."
+            subtitle="Recibirás acceso e información por email y/o WhatsApp."
           />
         </motion.div>
 
@@ -726,7 +733,7 @@ function Hero({
                   fontSize: "clamp(30px, 4vw, 48px)",
                   color: tok.t1,
                   lineHeight: 1,
-                  marginBottom: 8,
+                  marginBottom: 10,
                 }}
               >
                 {s.value}
@@ -734,9 +741,11 @@ function Hero({
               <div
                 style={{
                   fontFamily: "var(--font-inter)",
-                  fontSize: 13,
-                  color: tok.t3,
-                  letterSpacing: "0.02em",
+                  fontSize: 14,
+                  color: tok.t2,
+                  letterSpacing: "0.01em",
+                  maxWidth: 260,
+                  lineHeight: 1.45,
                 }}
               >
                 {s.label}
@@ -1130,9 +1139,10 @@ function EightWeeks({ dark }: { dark: boolean }) {
                   style={{
                     fontFamily: "var(--font-jura)",
                     fontWeight: 700,
-                    fontSize: 17,
+                    fontSize: 19,
                     color: tok.t1,
-                    marginBottom: 6,
+                    marginBottom: 8,
+                    lineHeight: 1.35,
                   }}
                 >
                   {w.title}
@@ -1140,9 +1150,9 @@ function EightWeeks({ dark }: { dark: boolean }) {
                 <p
                   style={{
                     fontFamily: "var(--font-inter)",
-                    fontSize: 15,
+                    fontSize: 16,
                     color: tok.t2,
-                    lineHeight: 1.65,
+                    lineHeight: 1.7,
                   }}
                 >
                   {w.desc}
@@ -1151,6 +1161,68 @@ function EightWeeks({ dark }: { dark: boolean }) {
             </motion.div>
           ))}
         </div>
+      </motion.div>
+    </section>
+  )
+}
+
+function InstructorBlock({ dark }: { dark: boolean }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+
+  return (
+    <section
+      style={{
+        background: tok.bg,
+        padding: "clamp(32px, 6vh, 64px) clamp(24px, 6vw, 120px)",
+      }}
+    >
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        style={{
+          maxWidth: 920,
+          margin: "0 auto",
+          background: tok.cardHighBg,
+          border: `1px solid ${tok.cardHighBorder}`,
+          borderRadius: 18,
+          padding: "clamp(24px, 4vw, 34px)",
+        }}
+      >
+        <motion.div variants={fadeUp} style={{ marginBottom: 10 }}>
+          <SectionLabel>Conduce esta masterclass</SectionLabel>
+          <SectionHeading tok={tok}>Mtro. Benjamin Buzali</SectionHeading>
+        </motion.div>
+        <motion.p
+          variants={fadeUp}
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 15,
+            color: tok.t2,
+            lineHeight: 1.75,
+            maxWidth: 760,
+            marginBottom: 10,
+          }}
+        >
+          Especialista en psicología clínica digital y maestro en psicoterapia.
+          Su trabajo se enfoca en pensar la práctica clínica, el encuadre y la
+          lectura del síntoma en el contexto digital.
+        </motion.p>
+        <motion.p
+          variants={fadeUp}
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 14,
+            color: tok.t3,
+            lineHeight: 1.65,
+            maxWidth: 760,
+          }}
+        >
+          Una conversación dirigida a psicólogos que buscan actualizar su
+          práctica con mayor estructura clínica.
+        </motion.p>
       </motion.div>
     </section>
   )
@@ -1175,7 +1247,7 @@ function Testimonials({ dark }: { dark: boolean }) {
       name: "Testimonio verificado #2",
       role: "Psicoterapeuta · Placeholder temporal",
       quote:
-        "Aquí irá un testimonio real sobre integración ética de IA, estructura de casos y mejora de práctica.",
+        "Aquí irá un testimonio real sobre lectura clínica, encuadre y conducción de procesos en el contexto digital.",
     },
   ]
 
@@ -1194,16 +1266,29 @@ function Testimonials({ dark }: { dark: boolean }) {
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 48 }}>
           <SectionLabel>Testimonios</SectionLabel>
-          <SectionHeading tok={tok}>Lo que esta conversación puede abrir en tu práctica</SectionHeading>
+          <SectionHeading tok={tok}>Por qué esta conversación importa hoy</SectionHeading>
           <p
             style={{
               marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 14,
+              color: tok.t2,
+              lineHeight: 1.65,
+            }}
+          >
+            Cada vez más profesionales atienden online, pero no siempre han
+            replanteado la estructura clínica que esta transición exige.
+          </p>
+          <p
+            style={{
+              marginTop: 8,
               fontFamily: "var(--font-inter)",
               fontSize: 13,
               color: tok.t3,
             }}
           >
-            Una perspectiva clínica distinta puede cambiar la forma en que orientas tu trabajo.
+            Esta conversación abre una pregunta necesaria sobre la escucha, el
+            encuadre y la conducción clínica en el entorno digital.
           </p>
         </motion.div>
 
@@ -1307,9 +1392,9 @@ function RiskReversal({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
   const bullets = [
-    "Muchos profesionales ya atienden online, pero no siempre han replanteado la estructura clínica que esta transición exige.",
-    "La clínica digital demanda revisar encuadre, escucha y conducción con una base ética y técnica sólida.",
-    "Esta masterclass abre una conversación necesaria para comprender el cambio de fondo en la práctica clínica.",
+    "El entorno modifica la forma en que se presenta y se lee el síntoma.",
+    "La clínica digital demanda revisar encuadre, escucha y decisiones éticas.",
+    "Esta masterclass propone una conversación inicial para comprender ese cambio de forma más precisa.",
   ]
   return (
     <section
@@ -1337,6 +1422,20 @@ function RiskReversal({ dark }: { dark: boolean }) {
           <SectionHeading tok={tok}>La práctica clínica está cambiando</SectionHeading>
         </motion.div>
         <motion.div variants={fadeUp} style={{ marginBottom: 24 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.7,
+              marginBottom: 18,
+              maxWidth: 780,
+            }}
+          >
+            Muchos profesionales ya atienden online, pero pocos han replanteado
+            a fondo qué cambia en la escucha, el encuadre y la conducción del
+            proceso clínico cuando la práctica se desplaza al contexto digital.
+          </p>
           <GlowingShadow className="!w-full !max-w-[560px] !aspect-[2.6/1] !cursor-default">
             <span
               className="pointer-events-none z-10 text-center text-xl font-semibold tracking-tight"
@@ -1428,6 +1527,7 @@ function RegistrationSection({
             onTrack={onTrack}
             section="registro_final"
             formId="registro-final"
+            subtitle="Recibirás acceso e información por email y/o WhatsApp."
             buttonLabel="Reserva tu lugar"
           />
         </motion.div>
@@ -1709,6 +1809,7 @@ export default function Home() {
       <TrustBar dark={dark} />
       <WhatYouBuild dark={dark} />
       <EightWeeks dark={dark} />
+      <InstructorBlock dark={dark} />
       <Testimonials dark={dark} />
       <RiskReversal dark={dark} />
       <ObjectionFaq dark={dark} />
