@@ -105,15 +105,17 @@ const DotField = memo(function DotField({
     }
 
     function doResize() {
-      const rect = canvas.parentElement?.getBoundingClientRect()
+      const currentCanvas = canvasRef.current
+      if (!currentCanvas) return
+      const rect = currentCanvas.parentElement?.getBoundingClientRect()
       if (!rect) return
       const w = rect.width
       const h = rect.height
 
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      canvas.style.width = `${w}px`
-      canvas.style.height = `${h}px`
+      currentCanvas.width = w * dpr
+      currentCanvas.height = h * dpr
+      currentCanvas.style.width = `${w}px`
+      currentCanvas.style.height = `${h}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
       sizeRef.current = {
