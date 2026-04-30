@@ -9,6 +9,8 @@
  */
 
 import type * as crons from "../crons.js";
+import type * as emailTemplateDefaults from "../emailTemplateDefaults.js";
+import type * as emailTemplates from "../emailTemplates.js";
 import type * as followups from "../followups.js";
 import type * as followupsActions from "../followupsActions.js";
 import type * as leads from "../leads.js";
@@ -21,6 +23,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   crons: typeof crons;
+  emailTemplateDefaults: typeof emailTemplateDefaults;
+  emailTemplates: typeof emailTemplates;
   followups: typeof followups;
   followupsActions: typeof followupsActions;
   leads: typeof leads;

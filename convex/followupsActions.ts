@@ -1,14 +1,18 @@
 "use node";
 
 import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const from = process.env.RESEND_FROM_EMAIL || "MotusDAO <onboarding@motusdao.org>";
-const replyTo = process.env.RESEND_REPLY_TO || "motusdao@gmail.com";
+const smtpHost = process.env.SMTP_HOST;
+const smtpPort = Number(process.env.SMTP_PORT || "465");
+const smtpUser = process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASS;
+const from = process.env.MAIL_FROM || "MotusDAO <contact@motusdao.org>";
+const replyTo = process.env.MAIL_REPLY_TO || "contact@motusdao.org";
 
 type DueItem = {
   queueId: Id<"followupQueue">;
@@ -19,34 +23,22 @@ type DueItem = {
   etapa: "lead_only" | "booked_call" | "purchased";
 };
 
-function templateFor(step: number, nombre: string) {
-  if (step === 0) {
-    return {
-      subject: "Recibimos tu registro en MotusDAO",
-      html: `<p>Hola ${nombre},</p><p>Gracias por registrarte. Tu solicitud fue recibida correctamente.</p><p>Si quieres avanzar hoy, puedes <a href="${process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://www.motusdao.org/"}">completar tu inscripción</a> o <a href="${process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/"}">agendar una llamada</a>.</p>`,
-    };
-  }
-  if (step === 1) {
-    return {
-      subject: "Tu lugar en MotusDAO sigue disponible",
-      html: `<p>Hola ${nombre},</p><p>Gracias por registrarte. Tu lugar sigue disponible por tiempo limitado.</p><p><a href="${process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://www.motusdao.org/"}">Pagar ahora</a> o <a href="${process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/"}">agendar llamada</a>.</p>`,
-    };
-  }
-  if (step === 2) {
-    return {
-      subject: "Seguimos disponibles para ayudarte a decidir",
-      html: `<p>Hola ${nombre},</p><p>Si tienes dudas sobre tiempo, ROI o aplicabilidad clínica, responde este correo y te ayudamos.</p><p>También puedes <a href="${process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/"}">agendar una llamada</a>.</p>`,
-    };
-  }
-  return {
-    subject: "Casos reales y siguientes pasos",
-    html: `<p>Hola ${nombre},</p><p>En breve publicaremos más testimonios clínicos verificados. Si quieres entrar en esta cohorte, puedes asegurar tu lugar hoy.</p><p><a href="${process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://www.motusdao.org/"}">Completar inscripción</a>.</p>`,
-  };
-}
-
 export const processQueue = internalAction({
   args: { limit: v.optional(v.number()) },
   handler: async (ctx, args): Promise<{ ok: true; processed: number }> => {
+    if (!smtpHost || !smtpUser || !smtpPass) {
+      throw new Error("SMTP is not configured for followup emails.");
+    }
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
+
     const items: DueItem[] = await ctx.runQuery(internal.followups.dueQueueItems, {
       now: Date.now(),
       limit: args.limit ?? 20,
@@ -69,38 +61,39 @@ export const processQueue = internalAction({
         });
         continue;
       }
-      const tpl = templateFor(item.step, item.nombre);
+      const templateKey = `followup_step_${item.step > 2 ? 3 : item.step}`;
+      const tpl = await ctx.runQuery(api.emailTemplates.getRenderedTemplate, {
+        key: templateKey,
+        vars: {
+          nombre: item.nombre,
+          checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://www.motusdao.org/",
+          calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/",
+          lumaUrl:
+            process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/6s75zejt?tk=pm0S8t",
+        },
+      });
       try {
-        const result = await resend.emails.send({
+        const result = await transporter.sendMail({
           from,
           replyTo,
           to: item.email,
           subject: tpl.subject,
           html: tpl.html,
+          text: tpl.text,
         });
-        if (result.error) {
-          console.error("Follow-up email rejected by Resend", {
-            queueId: item.queueId,
-            leadId: item.leadId,
-            step: item.step,
-            to: item.email,
-            resendError: result.error,
-          });
-          continue;
-        }
-        console.log("Follow-up email sent", {
+        console.log("Follow-up email sent via SMTP", {
           queueId: item.queueId,
           leadId: item.leadId,
           step: item.step,
           to: item.email,
-          messageId: result.data?.id ?? null,
+          messageId: result.messageId ?? null,
         });
         await ctx.runMutation(internal.followups.markQueueStatus, {
           queueId: item.queueId,
           status: "sent",
         });
       } catch (error) {
-        console.error("Follow-up email send failed", {
+        console.error("Follow-up email send failed via SMTP", {
           queueId: item.queueId,
           leadId: item.leadId,
           step: item.step,

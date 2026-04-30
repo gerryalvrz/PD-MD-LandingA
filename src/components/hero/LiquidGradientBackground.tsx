@@ -5,6 +5,7 @@ import * as THREE from "three"
 
 type LiquidGradientBackgroundProps = {
   dark: boolean
+  showControls?: boolean
 }
 
 type ColorScheme = {
@@ -177,7 +178,7 @@ class TouchTexture {
   }
 }
 
-export function LiquidGradientBackground({ dark }: LiquidGradientBackgroundProps) {
+export function LiquidGradientBackground({ dark, showControls = true }: LiquidGradientBackgroundProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const uniformsRef = useRef<Record<string, THREE.IUniform> | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
@@ -187,6 +188,7 @@ export function LiquidGradientBackground({ dark }: LiquidGradientBackgroundProps
     SCHEMES[defaultScheme].hexes
   )
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   const applySchemeToShader = (scheme: ColorScheme) => {
     const uniforms = uniformsRef.current
@@ -227,6 +229,14 @@ export function LiquidGradientBackground({ dark }: LiquidGradientBackgroundProps
     setColorHexes(scheme.hexes)
     applySchemeToShader(scheme)
   }
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 768px)")
+    const updateMobile = () => setIsMobile(media.matches)
+    updateMobile()
+    media.addEventListener("change", updateMobile)
+    return () => media.removeEventListener("change", updateMobile)
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -576,71 +586,83 @@ export function LiquidGradientBackground({ dark }: LiquidGradientBackgroundProps
         }}
       />
 
-      <div
-        style={{
-          position: "absolute",
-          top: 220,
-          right: 24,
-          zIndex: 8,
-          display: "flex",
-          gap: 8,
-          pointerEvents: "auto",
-        }}
-      >
-        {[1, 2, 3, 4, 5].map((id) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => handleSetScheme(id)}
-            style={{
-              minWidth: 44,
-              height: 36,
-              borderRadius: 18,
-              border: "1px solid rgba(255,255,255,0.35)",
-              background: activeScheme === id ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
-              color: "#fff",
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            {id}
-          </button>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => setIsPanelOpen((v) => !v)}
-        style={{
-          position: "absolute",
-          top: 264,
-          right: 24,
-          zIndex: 8,
-          border: "1px solid rgba(255,255,255,0.35)",
-          background: "rgba(255,255,255,0.12)",
-          color: "#fff",
-          borderRadius: 10,
-          padding: "10px 14px",
-          fontSize: 12,
-          fontWeight: 600,
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-          cursor: "pointer",
-          pointerEvents: "auto",
-        }}
-      >
-        {isPanelOpen ? "Cerrar adjuster" : "Adjust colors"}
-      </button>
-
-      {isPanelOpen && (
+      {showControls && (
         <div
           style={{
             position: "absolute",
-            top: 314,
-            right: 24,
-            zIndex: 9,
-            width: "min(420px, calc(100% - 48px))",
+            bottom: isMobile ? 62 : 94,
+            right: 16,
+            zIndex: 8,
+            display: "flex",
+            gap: 6,
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
+            pointerEvents: "auto",
+            width: "min(320px, calc(100% - 16px))",
+          }}
+        >
+          {[1, 2, 3, 4, 5].map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => handleSetScheme(id)}
+              style={{
+                minWidth: 34,
+                height: 30,
+                borderRadius: 14,
+                border: "1px solid rgba(255,255,255,0.35)",
+                background: activeScheme === id ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
+                color: "#fff",
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {id}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {showControls && (
+        <button
+          type="button"
+          onClick={() => setIsPanelOpen((v) => !v)}
+          style={{
+            position: "absolute",
+            bottom: isMobile ? 20 : 48,
+            right: 16,
+            zIndex: 8,
+            border: "1px solid rgba(255,255,255,0.35)",
+            background: "rgba(255,255,255,0.12)",
+            color: "#fff",
+            borderRadius: 8,
+            padding: "7px 10px",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            pointerEvents: "auto",
+            width: "fit-content",
+            maxWidth: "calc(100% - 24px)",
+          }}
+        >
+          {isPanelOpen ? "Cerrar adjuster" : "Adjust colors"}
+        </button>
+      )}
+
+      {showControls && isPanelOpen && (
+        <div
+          style={{
+            position: isMobile ? "fixed" : "absolute",
+            bottom: isMobile ? "auto" : 104,
+            top: "auto",
+            right: 16,
+            zIndex: isMobile ? 40 : 9,
+            width: "min(360px, calc(100% - 16px))",
+            maxHeight: "min(70vh, 520px)",
+            overflowY: "auto",
             borderRadius: 16,
             border: "1px solid rgba(255,255,255,0.26)",
             background: "rgba(255,255,255,0.10)",
@@ -648,6 +670,12 @@ export function LiquidGradientBackground({ dark }: LiquidGradientBackgroundProps
             WebkitBackdropFilter: "blur(18px)",
             padding: 16,
             pointerEvents: "auto",
+            ...(isMobile
+              ? {
+                  top: "auto",
+                  bottom: "calc(env(safe-area-inset-bottom, 0px) + 56px)",
+                }
+              : {}),
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>

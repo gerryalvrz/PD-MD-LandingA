@@ -56,4 +56,12 @@ export default defineSchema({
   })
     .index("by_leadId_and_scheduledAt", ["leadId", "scheduledAt"])
     .index("by_status_and_scheduledAt", ["status", "scheduledAt"]),
+  emailTemplates: defineTable({
+    key: v.string(),
+    subject: v.string(),
+    text: v.string(),
+    html: v.string(),
+    markdown: v.optional(v.string()),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
 })

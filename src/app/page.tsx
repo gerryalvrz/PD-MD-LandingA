@@ -106,6 +106,20 @@ function useReveal() {
   return { ref, inView }
 }
 
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const onChange = () => setIsMobile(media.matches)
+    onChange()
+    media.addEventListener("change", onChange)
+    return () => media.removeEventListener("change", onChange)
+  }, [breakpoint])
+
+  return isMobile
+}
+
 // ─── Shared components ───────────────────────────────────────────────────────
 
 function GradientText({ children }: { children: React.ReactNode }) {
@@ -224,6 +238,7 @@ function MasterclassLeadForm({
   buttonLabel?: string
 }) {
   const tok = dark ? T.dark : T.light
+  const isMobile = useIsMobile()
   const registrar = useMutation(api.leads.registrar)
   const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
@@ -254,6 +269,28 @@ function MasterclassLeadForm({
         "motus_lead_ctx",
         JSON.stringify({ leadId: result.leadId, email: email.trim(), whatsapp: whatsapp.trim() })
       )
+      const leadsResponse = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: nombre.trim(),
+          email: email.trim(),
+          whatsapp: whatsapp.trim() || undefined,
+          interes: "programa",
+          sessionId,
+          leadId: result.leadId,
+          utmSource: utm.get("utm_source") ?? undefined,
+          utmMedium: utm.get("utm_medium") ?? undefined,
+          utmCampaign: utm.get("utm_campaign") ?? undefined,
+          utmContent: utm.get("utm_content") ?? undefined,
+          utmTerm: utm.get("utm_term") ?? undefined,
+          referrer: document.referrer || undefined,
+        }),
+      })
+
+      if (!leadsResponse.ok) {
+        throw new Error("No se pudo enviar la notificacion de lead")
+      }
       onTrack("form_submitted", { section, intent: "lead", email: email.trim() })
       setEstado("ok")
       setTimeout(() => {
@@ -271,7 +308,7 @@ function MasterclassLeadForm({
     borderRadius: 10,
     padding: "12px 14px",
     fontFamily: "var(--font-inter)",
-    fontSize: 15,
+    fontSize: isMobile ? 16 : 15,
     color: tok.t1,
     outline: "none",
     boxSizing: "border-box",
@@ -309,7 +346,7 @@ function MasterclassLeadForm({
           <p
             style={{
               fontFamily: "var(--font-inter)",
-              fontSize: 14,
+              fontSize: isMobile ? 16 : 14,
               color: tok.t2,
               marginBottom: 18,
               lineHeight: 1.6,
@@ -392,16 +429,17 @@ function MasterclassLeadForm({
 
 function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; onCta: () => void }) {
   const tok = dark ? T.dark : T.light
+  const isMobile = useIsMobile()
 
   return (
     <nav
       style={{
         position: "fixed",
-        top: 8,
+        top: `max(8px, env(safe-area-inset-top, 0px))`,
         left: 0,
         right: 0,
         zIndex: 100,
-        padding: "0 clamp(12px, 3vw, 24px)",
+        padding: isMobile ? "0 10px" : "0 clamp(12px, 3vw, 24px)",
       }}
     >
       <GlassEffect
@@ -418,8 +456,8 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
             height: "100%",
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 16,
-            padding: "0 clamp(8px, 2vw, 18px)",
+            gap: isMobile ? 10 : 16,
+            padding: isMobile ? "0 8px" : "0 clamp(8px, 2vw, 18px)",
           }}
         >
           <a
@@ -437,16 +475,17 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
               style={{
                 fontFamily: "var(--font-jura)",
                 fontWeight: 700,
-                fontSize: 17,
+                fontSize: isMobile ? 15 : 17,
                 color: tok.t1,
                 letterSpacing: "-0.01em",
+                display: isMobile ? "none" : "inline",
               }}
             >
               MotusDAO
             </span>
           </a>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 10 : 16 }}>
             <button
               onClick={onToggle}
               aria-label="Cambiar tema"
@@ -502,6 +541,7 @@ function Hero({
 }) {
   const tok = dark ? T.dark : T.light
   const isLight = !dark
+  const isMobile = useIsMobile()
 
   const formatBullets = [
     "En vivo cada 15 días",
@@ -513,13 +553,14 @@ function Hero({
   return (
     <section
       style={{
-        minHeight: "100vh",
+        minHeight: "100svh",
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
         justifyContent: "center",
-        padding:
-          "clamp(96px, 14vh, 130px) clamp(20px, 5vw, 72px) clamp(48px, 7vh, 80px)",
+        padding: isMobile
+          ? `max(92px, calc(env(safe-area-inset-top, 0px) + 82px)) 16px 170px`
+          : "clamp(96px, 14vh, 130px) clamp(20px, 5vw, 72px) clamp(48px, 7vh, 80px)",
         background: tok.bg,
         position: "relative",
         overflow: "hidden",
@@ -569,7 +610,7 @@ function Hero({
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  padding: "7px 14px",
+                  padding: isMobile ? "8px 12px" : "7px 14px",
                   borderRadius: 100,
                   background: dark
                     ? "linear-gradient(135deg, rgba(50,18,72,0.42), rgba(86,34,122,0.26))"
@@ -585,7 +626,7 @@ function Hero({
                 <span
                   style={{
                     fontFamily: "var(--font-inter)",
-                    fontSize: 11,
+                    fontSize: isMobile ? 12 : 11,
                     fontWeight: 600,
                     color: isLight ? "rgba(109,40,217,0.96)" : "rgba(216,180,254,0.98)",
                     textShadow: isLight ? "0 1px 1px rgba(255,255,255,0.35)" : "0 1px 1px rgba(0,0,0,0.28)",
@@ -604,7 +645,7 @@ function Hero({
               style={{
                 fontFamily: "var(--font-jura)",
                 fontWeight: 700,
-                fontSize: "clamp(26px, 4.6vw, 44px)",
+                fontSize: isMobile ? "clamp(30px, 9.2vw, 40px)" : "clamp(26px, 4.6vw, 44px)",
                 lineHeight: 1.12,
                 letterSpacing: "-0.02em",
                 color: tok.t1,
@@ -620,7 +661,7 @@ function Hero({
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "clamp(15px, 1.65vw, 17px)",
+                fontSize: isMobile ? 16 : "clamp(15px, 1.65vw, 17px)",
                 lineHeight: 1.6,
                 color: tok.t2,
                 marginBottom: 20,
@@ -648,7 +689,7 @@ function Hero({
                   key={item}
                   style={{
                     fontFamily: "var(--font-inter)",
-                    fontSize: 13,
+                    fontSize: isMobile ? 14 : 13,
                     fontWeight: 500,
                     color: isLight ? "rgba(14,10,26,0.95)" : tok.t1,
                     padding: "8px 12px",
@@ -1314,11 +1355,11 @@ function TrustSignalsSection({ dark }: { dark: boolean }) {
   const { ref, inView } = useReveal()
 
   const lines = [
-    "Enfoque clínico serio: marco técnico, no discurso genérico de “mindset”.",
-    "Profesor con trayectoria en psicología clínica digital y psicoterapia.",
+    "Enfoque clínico serio: marco técnico y aplicación práctica desde el día uno.",
+    "Maestro en Psicoterapia con trayectoria en psicología clínica digital y casos graves.",
     "Sesión en vivo con interacción; cupo acotado por edición.",
     "Edición recurrente cada 15 días: si no entras ahora, puedes registrarte a la siguiente.",
-    "Pensada como muestra introductoria de un diplomado: rigor, sin humo.",
+    "Pensada como muestra introductoria de un curso más avanzado: Psicología clínica digital con técnicas avanzadas.",
   ]
 
   return (
@@ -1331,7 +1372,7 @@ function TrustSignalsSection({ dark }: { dark: boolean }) {
       <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
         <motion.div variants={fadeUp} style={{ marginBottom: 22 }}>
           <SectionLabel>Confianza</SectionLabel>
-          <SectionHeading tok={tok}>Por qué puedes tomar esta masterclass en serio</SectionHeading>
+          <SectionHeading tok={tok}>Ésta masterclass en el inicio de algo más serio</SectionHeading>
         </motion.div>
         <ul style={{ listStyle: "none", margin: 0, padding: 0, maxWidth: 720, display: "grid", gap: 12 }}>
           {lines.map((line) => (

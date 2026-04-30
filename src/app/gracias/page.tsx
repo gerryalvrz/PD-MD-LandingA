@@ -1,4 +1,10 @@
+import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
+import { LeadRedirectNotice } from "./LeadRedirectNotice"
+
 type Flow = "lead" | "compra" | "llamada"
+
+const LUMA_MASTERCLASS_URL =
+  process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/6s75zejt?tk=pm0S8t"
 
 function getContent(flow: Flow) {
   if (flow === "compra") {
@@ -18,10 +24,9 @@ function getContent(flow: Flow) {
     }
   }
   return {
-    title: "Registro recibido",
-    body: "Gracias. Te contactaremos pronto. Si ya estas listo, puedes asegurar tu lugar ahora.",
-    primary: { label: "Pagar ahora", href: process.env.NEXT_PUBLIC_CHECKOUT_URL || "/" },
-    secondary: { label: "Agendar llamada", href: process.env.NEXT_PUBLIC_CALENDLY_URL || "/" },
+    title: "Falta 1 paso para completar tu registro",
+    body: "Tu registro inicial fue recibido. Para apartar tu lugar y recibir recordatorios, debes confirmar tu asistencia en Luma.",
+    primary: { label: "Completar registro en Luma", href: LUMA_MASTERCLASS_URL },
   }
 }
 
@@ -40,10 +45,23 @@ export default async function GraciasPage({
         minHeight: "100vh",
         display: "grid",
         placeItems: "center",
-        background: "linear-gradient(180deg, #0E0A1A 0%, #130D22 100%)",
+        background: "#000",
         padding: 24,
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      <LiquidGradientBackground dark={true} showControls={false} />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(8,5,14,0.72) 0%, rgba(15,9,24,0.82) 100%)",
+          zIndex: 1,
+          pointerEvents: "none",
+        }}
+      />
       <section
         style={{
           width: "100%",
@@ -54,6 +72,8 @@ export default async function GraciasPage({
           padding: "40px 28px",
           textAlign: "center",
           color: "rgba(255,255,255,0.92)",
+          position: "relative",
+          zIndex: 2,
         }}
       >
         <h1
@@ -92,21 +112,8 @@ export default async function GraciasPage({
           >
             {content.primary.label}
           </a>
-          <a
-            href={content.secondary.href}
-            style={{
-              textDecoration: "none",
-              padding: "12px 20px",
-              borderRadius: 10,
-              color: "rgba(255,255,255,0.9)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              fontFamily: "var(--font-inter)",
-              fontWeight: 500,
-            }}
-          >
-            {content.secondary.label}
-          </a>
         </div>
+        <LeadRedirectNotice enabled={flow === "lead"} href={content.primary.href} seconds={5} />
       </section>
     </main>
   )
