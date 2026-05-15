@@ -73,7 +73,8 @@ export async function POST(request: Request) {
     const smtpPass = process.env.SMTP_PASS
 
     if (!smtpHost || !smtpUser || !smtpPass) {
-      return NextResponse.json({ error: "SMTP no esta configurado correctamente." }, { status: 500 })
+      console.warn("[/api/leads] SMTP no configurado; lead guardado en Convex sin correo inmediato.")
+      return NextResponse.json({ ok: true, emailSent: false, reason: "smtp_not_configured" })
     }
     const mailFrom = process.env.MAIL_FROM ?? "MotusDAO <contact@motusdao.org>"
     const mailReplyTo = process.env.MAIL_REPLY_TO ?? "contact@motusdao.org"

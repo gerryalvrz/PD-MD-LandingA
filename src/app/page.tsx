@@ -239,16 +239,26 @@ function MasterclassLeadForm({
 }) {
   const tok = dark ? T.dark : T.light
   const isMobile = useIsMobile()
+  const convexConfigured = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL)
   const registrar = useMutation(api.leads.registrar)
   const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
   const [estado, setEstado] = useState<"idle" | "loading" | "ok" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [formStarted, setFormStarted] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!nombre.trim() || !email.trim()) return
+    if (!convexConfigured) {
+      setErrorMessage(
+        "El sitio en producción no tiene Convex configurado. Añade NEXT_PUBLIC_CONVEX_URL en Vercel y vuelve a desplegar."
+      )
+      setEstado("error")
+      return
+    }
+    setErrorMessage(null)
     setEstado("loading")
     try {
       const utm = new URLSearchParams(window.location.search)
@@ -269,7 +279,8 @@ function MasterclassLeadForm({
         "motus_lead_ctx",
         JSON.stringify({ leadId: result.leadId, email: email.trim(), whatsapp: whatsapp.trim() })
       )
-      const leadsResponse = await fetch("/api/leads", {
+      // Correos vía /api/leads son opcionales; el lead ya está en Convex.
+      void fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -286,17 +297,17 @@ function MasterclassLeadForm({
           utmTerm: utm.get("utm_term") ?? undefined,
           referrer: document.referrer || undefined,
         }),
+      }).catch((err) => {
+        console.warn("[registro] No se enviaron correos inmediatos:", err)
       })
-
-      if (!leadsResponse.ok) {
-        throw new Error("No se pudo enviar la notificacion de lead")
-      }
       onTrack("form_submitted", { section, intent: "lead", email: email.trim() })
       setEstado("ok")
       setTimeout(() => {
         window.location.href = "/gracias?flow=lead"
       }, 450)
-    } catch {
+    } catch (err) {
+      console.error("[registro] Error al guardar lead:", err)
+      setErrorMessage("No se pudo guardar tu registro. Revisa tu conexión e intenta de nuevo.")
       setEstado("error")
     }
   }
@@ -414,7 +425,7 @@ function MasterclassLeadForm({
             </div>
             {estado === "error" && (
               <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: "#EC4899", marginBottom: 12 }}>
-                Algo salió mal. Intenta de nuevo.
+                {errorMessage ?? "Algo salió mal. Intenta de nuevo."}
               </p>
             )}
             <GradientButton full>{estado === "loading" ? "Enviando..." : buttonLabel}</GradientButton>
