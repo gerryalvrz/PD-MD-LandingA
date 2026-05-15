@@ -69,7 +69,7 @@ export const processQueue = internalAction({
           checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://www.motusdao.org/",
           calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/",
           lumaUrl:
-            process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/6s75zejt?tk=pm0S8t",
+            process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/1sc5em2c?tk=7YOKk3",
         },
       });
       try {
