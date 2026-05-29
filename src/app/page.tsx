@@ -412,7 +412,7 @@ function MasterclassLeadForm({
               <input
                 style={inputStyle}
                 type="tel"
-                placeholder="WhatsApp (opcional)"
+                placeholder="WhatsApp"
                 value={whatsapp}
                 onChange={(e) => {
                   setWhatsapp(e.target.value)
@@ -733,6 +733,21 @@ function Hero({
           </div>
 
           <motion.div variants={fadeUp} style={{ width: "100%", maxWidth: 420, justifySelf: "stretch" }}>
+            <img
+              src="/MAsterclass3.avif"
+              alt="Masterclass gratuita en vivo — 4 de junio, 10am (hora MX)"
+              style={{
+                width: "100%",
+                height: "auto",
+                borderRadius: 16,
+                objectFit: "cover",
+                marginBottom: 20,
+                border: isLight ? "1px solid rgba(147,51,234,0.22)" : "1px solid rgba(192,132,252,0.28)",
+                boxShadow: dark
+                  ? "0 16px 40px rgba(0,0,0,0.35)"
+                  : "0 16px 40px rgba(31,10,56,0.12)",
+              }}
+            />
             <MasterclassLeadForm
               dark={dark}
               sessionId={sessionId}

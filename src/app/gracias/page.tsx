@@ -4,7 +4,7 @@ import { LeadRedirectNotice } from "./LeadRedirectNotice"
 type Flow = "lead" | "compra" | "llamada"
 
 const LUMA_MASTERCLASS_URL =
-  process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/1sc5em2c?tk=7YOKk3"
+  process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL || "https://luma.com/mc1q69io?tk=SoXcZN"
 
 function getContent(flow: Flow) {
   if (flow === "compra") {

@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: "Técnica Avanzada en Psicoterapia — MotusDAO",
   description:
     "El programa que integra análisis clínico avanzado e inteligencia artificial para psicólogos que lideran la psicología digital.",
+  openGraph: {
+    images: ["/MAsterclass3.avif"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/MAsterclass3.avif"],
+  },
   icons: {
     icon: "/logo.svg",
     shortcut: "/logo.svg",

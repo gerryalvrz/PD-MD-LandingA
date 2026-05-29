@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       referrer: normalizedPayload.referrer ?? "-",
       checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "https://www.motusdao.org/",
       calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://calendly.com/",
-      lumaUrl: process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL ?? "https://luma.com/1sc5em2c?tk=7YOKk3",
+      lumaUrl: process.env.NEXT_PUBLIC_LUMA_MASTERCLASS_URL ?? "https://luma.com/mc1q69io?tk=SoXcZN",
     }
     const [userTemplate, internalTemplate] = await Promise.all([
       loadTemplate(convex, "lead_confirmation_user", templateVars),
