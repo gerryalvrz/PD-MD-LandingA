@@ -2,7 +2,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, useScroll, useTransform } from "framer-motion"
+import { Card, CardContent } from "@/components/ui/card"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMutation } from "convex/react"
@@ -1143,6 +1144,405 @@ function WhatYouLearnSection({ dark }: { dark: boolean }) {
   )
 }
 
+// ─── Comunidad (MemeCore: bloque corto) ─────────────────────────────────────
+
+function PsychologistCommunitySection({
+  dark,
+  onCta,
+}: {
+  dark: boolean
+  onCta: () => void
+}) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+
+  const proof = [
+    { label: "Solo psicólogos", line: "Licenciados y perfiles en clínica." },
+    { label: "En vivo", line: "Encuentros con grupo reducido." },
+    { label: "Red global", line: "Colegas en entorno digital con estándar clínico." },
+  ] as const
+
+  return (
+    <section
+      id="comunidad"
+      style={{
+        background: tok.bgAlt,
+        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
+        borderTop: `1px solid ${tok.cardBorder}`,
+        borderBottom: `1px solid ${tok.cardBorder}`,
+      }}
+    >
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}
+      >
+        <motion.div variants={fadeUp}>
+          <SectionLabel>Comunidad</SectionLabel>
+          <SectionHeading tok={tok}>Psicólogos en digital, con criterio clínico</SectionHeading>
+          <p
+            style={{
+              marginTop: 10,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.55,
+            }}
+          >
+            Red profesional de MotusDAO Academy — no foro abierto ni público general.
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={fadeUp}
+          style={{
+            marginTop: 32,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
+            gap: 14,
+            textAlign: "left",
+          }}
+        >
+          {proof.map((item) => (
+            <div
+              key={item.label}
+              style={{
+                background: tok.card,
+                border: `1px solid ${tok.cardBorder}`,
+                borderRadius: 14,
+                padding: "16px 18px",
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--font-jura)",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  color: tok.t1,
+                  lineHeight: 1.35,
+                }}
+              >
+                {item.label}
+              </p>
+              <p
+                style={{
+                  margin: "6px 0 0",
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 14,
+                  color: tok.t2,
+                  lineHeight: 1.5,
+                }}
+              >
+                {item.line}
+              </p>
+            </div>
+          ))}
+        </motion.div>
+
+        <motion.div variants={fadeUp} style={{ marginTop: 28 }}>
+          <div onClick={onCta} style={{ display: "inline-block" }}>
+            <GradientButton>Reservar mi lugar gratis</GradientButton>
+          </div>
+          <p
+            style={{
+              marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 12,
+              color: tok.t3,
+              letterSpacing: "0.02em",
+            }}
+          >
+            Gratis · En vivo · Registro limitado
+          </p>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+// ─── Galería glass (fotos comunidad / academia) ───────────────────────────────
+
+const GALLERY_PHOTOS = [
+  {
+    src: "/photo_4915935373217696687_y.jpg",
+    alt: "Departamento de investigación en psicología: libros, artículos y recursos clínicos",
+    label: "Investigación",
+    caption: "Libros, artículos y recursos para profundizar tu práctica clínica.",
+  },
+  {
+    src: "/photo_4915935373217696688_y.jpg",
+    alt: "Consultorio virtual con videollamada y espacio inmersivo para sesión clínica",
+    label: "Consultorios virtuales",
+    caption:
+      "Sala digital con encuadre claro: sesión, supervisión y trabajo clínico en vivo con colegas, sin perder presencia profesional.",
+  },
+  {
+    src: "/photo_4915935373217696689_y.jpg",
+    alt: "Plataforma de pagos internacionales para honorarios y cobro de consulta",
+    label: "Pagos internacionales",
+    caption:
+      "Tarifas y cobro en distintas monedas y métodos: ordena honorarios cuando tu práctica cruza fronteras.",
+  },
+  {
+    src: "/photo_4915935373217696690_y.jpg",
+    alt: "Eventos y sesiones en vivo de la comunidad MotusDAO",
+    label: "Eventos",
+    caption: "Encuentros en vivo con grupo reducido y conversación clínica.",
+  },
+  {
+    src: "/photo_4915935373217696691_y.jpg",
+    alt: "Comunidad de psicólogos en la red MotusDAO Academy",
+    label: "Comunidad",
+    caption: "Red de psicólogos que operan en digital con criterio clínico.",
+  },
+] as const
+
+function GlassPhotoCard({
+  photo,
+  index,
+  dark,
+  tok,
+}: {
+  photo: (typeof GALLERY_PHOTOS)[number]
+  index: number
+  dark: boolean
+  tok: Tok
+}) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start 0.92", "end 0.12"],
+  })
+  const cardY = useTransform(scrollYProgress, [0, 1], [32, -18])
+  const cardScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.94, 1, 0.98])
+  const imageY = useTransform(scrollYProgress, [0, 1], ["6%", "-6%"])
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.14, 1.02, 1.1])
+
+  return (
+    <motion.div
+      ref={cardRef}
+      variants={fadeUp}
+      style={{
+        flex: "0 0 auto",
+        width: "clamp(280px, 38vw, 400px)",
+        y: cardY,
+        scale: cardScale,
+      }}
+    >
+      <GlassEffect
+        className="rounded-2xl"
+        style={{
+          borderRadius: 16,
+          border: `1px solid ${dark ? "rgba(147,51,234,0.28)" : "rgba(147,51,234,0.22)"}`,
+          boxShadow: dark
+            ? "0 24px 48px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06)"
+            : "0 20px 40px rgba(147,51,234,0.12), 0 0 0 1px rgba(14,10,26,0.06)",
+        }}
+      >
+        <Card className="gap-0 border-0 bg-transparent py-0 shadow-none ring-0">
+          <div
+            className="relative overflow-hidden"
+            style={{
+              aspectRatio: "4 / 5",
+              margin: 10,
+              borderRadius: 12,
+              border: `1px solid ${tok.cardBorder}`,
+            }}
+          >
+            <motion.img
+              src={photo.src}
+              alt={photo.alt}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                y: imageY,
+                scale: imageScale,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to top, rgba(14,10,26,0.72) 0%, rgba(14,10,26,0.08) 48%, transparent 72%)",
+                pointerEvents: "none",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                left: 14,
+                bottom: 14,
+                fontFamily: "var(--font-jura)",
+                fontWeight: 700,
+                fontSize: "clamp(36px, 5vw, 52px)",
+                lineHeight: 1,
+                color: "rgba(255,255,255,0.22)",
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </div>
+          </div>
+          <CardContent className="px-4 pb-4 pt-1">
+            <h3
+              style={{
+                fontFamily: "var(--font-jura)",
+                fontWeight: 700,
+                fontSize: 16,
+                color: tok.t1,
+                marginBottom: 6,
+                lineHeight: 1.35,
+              }}
+            >
+              {photo.label}
+            </h3>
+            <p
+              style={{
+                fontFamily: "var(--font-inter)",
+                fontSize: 14,
+                color: tok.t2,
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              {photo.caption}
+            </p>
+          </CardContent>
+        </Card>
+      </GlassEffect>
+    </motion.div>
+  )
+}
+
+function CommunityGallerySection({ dark }: { dark: boolean }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  const pinWrapRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const pinWrap = pinWrapRef.current
+    const track = trackRef.current
+    if (!pinWrap || !track) return
+
+    gsap.registerPlugin(ScrollTrigger)
+
+    const mm = gsap.matchMedia()
+    mm.add("(min-width: 901px)", () => {
+      const getDistance = () => Math.max(0, track.scrollWidth - pinWrap.clientWidth)
+      if (getDistance() < 8) return
+
+      const tween = gsap.fromTo(
+        track,
+        { x: 0 },
+        {
+          x: () => -getDistance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: pinWrap,
+            start: "top top+=72",
+            end: () => `+=${getDistance()}`,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      )
+
+      return () => {
+        tween.scrollTrigger?.kill()
+        tween.kill()
+      }
+    })
+
+    return () => mm.revert()
+  }, [])
+
+  return (
+    <section
+      id="ecosistema"
+      style={{
+        background: tok.bg,
+        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: "12%",
+          right: "-8%",
+          width: "min(52vw, 480px)",
+          height: "min(52vw, 480px)",
+          background: "radial-gradient(ellipse, rgba(147,51,234,0.14) 0%, transparent 72%)",
+          pointerEvents: "none",
+        }}
+      />
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        style={{ position: "relative" }}
+      >
+        <motion.div variants={fadeUp} style={{ marginBottom: 28, maxWidth: 620 }}>
+          <SectionLabel>Ecosistema</SectionLabel>
+          <SectionHeading tok={tok}>Tu práctica, con respaldo académico</SectionHeading>
+          <p
+            style={{
+              marginTop: 10,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.55,
+            }}
+          >
+            Investigación, contenido y comunidad clínica en un mismo entorno — pensado para psicólogos
+            que trabajan en digital.
+          </p>
+        </motion.div>
+
+        <div
+          ref={pinWrapRef}
+          className="[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{
+            overflowX: "auto",
+            overflowY: "hidden",
+            width: "100%",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          <div
+            ref={trackRef}
+            style={{
+              display: "flex",
+              width: "max-content",
+              gap: 16,
+              paddingRight: 24,
+              paddingBottom: 8,
+              alignItems: "stretch",
+              willChange: "transform",
+            }}
+          >
+            {GALLERY_PHOTOS.map((photo, index) => (
+              <GlassPhotoCard key={photo.src} photo={photo} index={index} dark={dark} tok={tok} />
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  )
+}
+
 // ─── Formato de la sesión ─────────────────────────────────────────────────────
 
 function ExperienceFormatSection({ dark }: { dark: boolean }) {
@@ -1736,6 +2136,10 @@ export default function Home() {
     onTrack("cta_click", { section: "mid_funnel", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
     scrollToId("registro-principal", "registro-principal-nombre")
   }
+  const handleCommunityCta = () => {
+    onTrack("cta_click", { section: "community", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
+    scrollToId("registro-principal", "registro-principal-nombre")
+  }
   const handleFinalRegisterCta = () => {
     onTrack("cta_click", { section: "final", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
     scrollToId("registro-principal", "registro-principal-nombre")
@@ -1756,6 +2160,8 @@ export default function Home() {
       <TrustBar dark={dark} />
       <WhatYouLearnSection dark={dark} />
       <ExperienceFormatSection dark={dark} />
+      <PsychologistCommunitySection dark={dark} onCta={handleCommunityCta} />
+      <CommunityGallerySection dark={dark} />
       <AudienceFitSection dark={dark} />
       <MidCtaBand dark={dark} onCta={handleMidCta} />
       <InstructorBlock dark={dark} />

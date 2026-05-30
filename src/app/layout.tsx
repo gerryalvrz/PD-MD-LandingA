@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
-import { Jura, Inter } from "next/font/google"
+import { Jura, Inter, Geist } from "next/font/google"
 import "./globals.css"
 import ConvexClientProvider from "@/components/ConvexClientProvider"
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const jura = Jura({
   subsets: ["latin"],
@@ -39,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${jura.variable} ${inter.variable}`}>
+    <html lang="es" className={cn(jura.variable, inter.variable, "font-sans", geist.variable)}>
       <body>
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
