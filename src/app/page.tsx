@@ -1,86 +1,21 @@
-// Landing page for: MotusDAO — Técnica Avanzada en Psicoterapia
+// Landing page for: MotusDAO Academy — adquisición (diagnóstico + masterclass)
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { motion, useInView, useScroll, useTransform } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
-import { Banner } from "@/components/ui/banner"
 import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import DotField from "@/components/effects/DotField"
-
-// ─── Color tokens ────────────────────────────────────────────────────────────
-
-const T = {
-  dark: {
-    bg: "#0E0A1A",
-    bgAlt: "#130D22",
-    t1: "rgba(255,255,255,0.92)",
-    t2: "rgba(255,255,255,0.52)",
-    t3: "rgba(255,255,255,0.28)",
-    card: "rgba(255,255,255,0.04)",
-    cardBorder: "rgba(255,255,255,0.08)",
-    cardHighBg: "rgba(147,51,234,0.07)",
-    cardHighBorder: "rgba(147,51,234,0.3)",
-    navBg: "rgba(14,10,26,0.85)",
-    navBorder: "rgba(255,255,255,0.06)",
-    toggleTrack: "rgba(255,255,255,0.10)",
-  },
-  light: {
-    bg: "#F8F6FF",
-    bgAlt: "#F0ECF9",
-    t1: "rgba(14,10,26,0.90)",
-    t2: "rgba(14,10,26,0.55)",
-    t3: "rgba(14,10,26,0.32)",
-    card: "rgba(0,0,0,0.03)",
-    cardBorder: "rgba(0,0,0,0.08)",
-    cardHighBg: "rgba(147,51,234,0.06)",
-    cardHighBorder: "rgba(147,51,234,0.25)",
-    navBg: "rgba(248,246,255,0.88)",
-    navBorder: "rgba(0,0,0,0.07)",
-    toggleTrack: "rgba(0,0,0,0.10)",
-  },
-} as const
-
-type Tok = (typeof T)["dark"] | (typeof T)["light"]
-
-const GRAD = "linear-gradient(to right, #9333EA, #EC4899)"
-
-type FunnelEventName =
-  | "page_view"
-  | "cta_click"
-  | "modal_open"
-  | "form_started"
-  | "form_submitted"
-  | "checkout_click"
-  | "checkout_complete"
-  | "calendly_booked"
-
-function getOrCreateSessionId() {
-  const key = "motus_session_id"
-  const existing = window.localStorage.getItem(key)
-  if (existing) return existing
-  const generated = crypto.randomUUID()
-  window.localStorage.setItem(key, generated)
-  return generated
-}
-
-function getStoredLeadContext() {
-  try {
-    const raw = window.localStorage.getItem("motus_lead_ctx")
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as { leadId?: string; email?: string }
-    return parsed
-  } catch {
-    return null
-  }
-}
-
-// ─── Motion variants ─────────────────────────────────────────────────────────
+import { DIGITAL_PROFILES } from "@/lib/digital-profiles"
+import { getOrCreateSessionId, getStoredLeadContext, type FunnelEventName } from "@/lib/funnel-session"
+import { GRAD, T, type Tok } from "@/lib/landing-theme"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -98,8 +33,6 @@ const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.11 } },
 }
-
-// ─── Custom hook ─────────────────────────────────────────────────────────────
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -121,7 +54,44 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-// ─── Shared components ───────────────────────────────────────────────────────
+function useHorizontalPin(pinWrapRef: React.RefObject<HTMLDivElement | null>, trackRef: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const pinWrap = pinWrapRef.current
+    const track = trackRef.current
+    if (!pinWrap || !track) return
+
+    gsap.registerPlugin(ScrollTrigger)
+    const mm = gsap.matchMedia()
+    mm.add("(min-width: 901px)", () => {
+      const getDistance = () => Math.max(0, track.scrollWidth - pinWrap.clientWidth)
+      if (getDistance() < 8) return
+
+      const tween = gsap.fromTo(
+        track,
+        { x: 0 },
+        {
+          x: () => -getDistance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: pinWrap,
+            start: "top top+=72",
+            end: () => `+=${getDistance()}`,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      )
+
+      return () => {
+        tween.scrollTrigger?.kill()
+        tween.kill()
+      }
+    })
+
+    return () => mm.revert()
+  }, [pinWrapRef, trackRef])
+}
 
 function GradientText({ children }: { children: React.ReactNode }) {
   return (
@@ -142,29 +112,62 @@ function GradientButton({
   children,
   small,
   full,
+  href,
+  onClick,
+  variant = "primary",
+  type = "button",
+  dark = true,
 }: {
   children: React.ReactNode
   small?: boolean
   full?: boolean
+  href?: string
+  onClick?: () => void
+  variant?: "primary" | "outline"
+  type?: "button" | "submit"
+  dark?: boolean
 }) {
+  const isPrimary = variant === "primary"
+  const style: React.CSSProperties = {
+    background: isPrimary ? GRAD : "transparent",
+    border: isPrimary ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.22)" : "rgba(14,10,26,0.18)"}`,
+    borderRadius: 10,
+    color: isPrimary ? "#fff" : dark ? "rgba(255,255,255,0.92)" : "rgba(14,10,26,0.90)",
+    fontWeight: 600,
+    fontSize: small ? 14 : 16,
+    padding: small ? "9px 18px" : "14px 28px",
+    cursor: "pointer",
+    fontFamily: "var(--font-inter)",
+    letterSpacing: "0.01em",
+    width: full ? "100%" : undefined,
+    display: "inline-block",
+    textAlign: "center",
+    textDecoration: "none",
+    boxSizing: "border-box",
+  }
+
+  if (href) {
+    const inner = (
+      <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
+        {children}
+      </motion.span>
+    )
+    if (href.startsWith("/") && !href.startsWith("//")) {
+      return (
+        <Link href={href} style={{ textDecoration: "none", width: full ? "100%" : undefined, display: full ? "block" : "inline-block" }}>
+          {inner}
+        </Link>
+      )
+    }
+    return (
+      <motion.a href={href} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
+        {children}
+      </motion.a>
+    )
+  }
+
   return (
-    <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      style={{
-        background: GRAD,
-        border: "none",
-        borderRadius: 10,
-        color: "#fff",
-        fontWeight: 600,
-        fontSize: small ? 14 : 16,
-        padding: small ? "9px 18px" : "14px 28px",
-        cursor: "pointer",
-        fontFamily: "var(--font-inter)",
-        letterSpacing: "0.01em",
-        width: full ? "100%" : undefined,
-      }}
-    >
+    <motion.button type={type} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
       {children}
     </motion.button>
   )
@@ -226,7 +229,7 @@ function MasterclassLeadForm({
   title,
   subtitle,
   titleFontSize = "clamp(20px, 2.6vw, 28px)",
-  buttonLabel = "Reserva tu lugar",
+  buttonLabel = "Reservar mi lugar gratis",
 }: {
   dark: boolean
   sessionId: string
@@ -280,7 +283,6 @@ function MasterclassLeadForm({
         "motus_lead_ctx",
         JSON.stringify({ leadId: result.leadId, email: email.trim(), whatsapp: whatsapp.trim() })
       )
-      // Correos vía /api/leads son opcionales; el lead ya está en Convex.
       void fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -334,13 +336,7 @@ function MasterclassLeadForm({
         background: dark ? "rgba(18,12,34,0.34)" : "rgba(255,255,255,0.32)",
       }}
     >
-      <div
-        id={formId}
-        style={{
-          padding: "clamp(20px, 3vw, 28px)",
-          width: "100%",
-        }}
-      >
+      <div id={formId} style={{ padding: "clamp(20px, 3vw, 28px)", width: "100%" }}>
         {title && (
           <h3
             style={{
@@ -369,14 +365,7 @@ function MasterclassLeadForm({
         )}
 
         {estado === "ok" ? (
-          <p
-            style={{
-              fontFamily: "var(--font-inter)",
-              fontSize: 15,
-              color: tok.t1,
-              lineHeight: 1.6,
-            }}
-          >
+          <p style={{ fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t1, lineHeight: 1.6 }}>
             Registro enviado. Revisa tu correo y WhatsApp para recibir el acceso.
           </p>
         ) : (
@@ -429,7 +418,9 @@ function MasterclassLeadForm({
                 {errorMessage ?? "Algo salió mal. Intenta de nuevo."}
               </p>
             )}
-            <GradientButton full>{estado === "loading" ? "Enviando..." : buttonLabel}</GradientButton>
+            <GradientButton type="submit" full>
+              {estado === "loading" ? "Enviando..." : buttonLabel}
+            </GradientButton>
           </form>
         )}
       </div>
@@ -437,11 +428,24 @@ function MasterclassLeadForm({
   )
 }
 
-// ─── Nav ─────────────────────────────────────────────────────────────────────
-
-function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; onCta: () => void }) {
+function Nav({
+  dark,
+  onToggle,
+  onDiagnostico,
+}: {
+  dark: boolean
+  onToggle: () => void
+  onDiagnostico: () => void
+}) {
   const tok = dark ? T.dark : T.light
   const isMobile = useIsMobile()
+  const linkStyle: React.CSSProperties = {
+    fontFamily: "var(--font-inter)",
+    fontSize: 13,
+    fontWeight: 500,
+    color: tok.t2,
+    textDecoration: "none",
+  }
 
   return (
     <nav
@@ -472,12 +476,7 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
             padding: isMobile ? "0 8px" : "0 clamp(8px, 2vw, 18px)",
           }}
         >
-          <a
-            href="http://motusdao.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}
-          >
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
             <img
               src="/logo.svg"
               alt="MotusDAO logo"
@@ -495,7 +494,21 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
             >
               MotusDAO
             </span>
-          </a>
+          </Link>
+
+          {!isMobile && (
+            <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+              <a href="#academia" style={linkStyle}>
+                Academia
+              </a>
+              <a href="#comunidad" style={linkStyle}>
+                Comunidad
+              </a>
+              <a href="#ecosistema" style={linkStyle}>
+                Ecosistema
+              </a>
+            </div>
+          )}
 
           <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 10 : 16 }}>
             <button
@@ -528,9 +541,9 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
               />
             </button>
 
-            <div onClick={onCta}>
-              <GradientButton small>Reservar lugar</GradientButton>
-            </div>
+            <GradientButton small href="/diagnostico" onClick={onDiagnostico}>
+              Hacer diagnóstico
+            </GradientButton>
           </div>
         </div>
       </GlassEffect>
@@ -538,29 +551,60 @@ function Nav({ dark, onToggle, onCta }: { dark: boolean; onToggle: () => void; o
   )
 }
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
-
 function Hero({
   dark,
+  claseFirst,
   onPrimaryCta,
-  sessionId,
-  onTrack,
+  onReservar,
 }: {
   dark: boolean
+  claseFirst: boolean
   onPrimaryCta: () => void
-  sessionId: string
-  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
+  onReservar: () => void
 }) {
   const tok = dark ? T.dark : T.light
   const isLight = !dark
   const isMobile = useIsMobile()
 
-  const formatBullets = [
-    "En vivo cada 15 días",
-    "Videollamada en metaverso",
-    "Grupo reducido",
-    "Cupo limitado",
-  ]
+  const badge = claseFirst ? "Masterclass gratuita en vivo para psicólogos" : "Formación · Comunidad · Práctica Digital"
+
+  const diagnosticoCta = (
+    <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
+      <GradientButton href="/diagnostico" onClick={onPrimaryCta} full={isMobile} variant={claseFirst ? "outline" : "primary"} dark={dark}>
+        Descubrir mi perfil
+      </GradientButton>
+      <p
+        style={{
+          fontFamily: "var(--font-inter)",
+          fontSize: 13,
+          color: dark ? "rgba(255,255,255,0.72)" : "#000000",
+          marginTop: 10,
+          letterSpacing: "0.02em",
+        }}
+      >
+        Gratis · 6 preguntas · Resultado inmediato
+      </p>
+    </div>
+  )
+
+  const reservarCta = (
+    <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
+      <GradientButton onClick={onReservar} full={isMobile} variant={claseFirst ? "primary" : "outline"} dark={dark}>
+        Reservar mi lugar gratis
+      </GradientButton>
+      <p
+        style={{
+          fontFamily: "var(--font-inter)",
+          fontSize: 13,
+          color: dark ? "rgba(255,255,255,0.72)" : "#000000",
+          marginTop: 10,
+          letterSpacing: "0.02em",
+        }}
+      >
+        En vivo · 90 min · Grupo reducido
+      </p>
+    </div>
+  )
 
   return (
     <section
@@ -578,7 +622,7 @@ function Hero({
         overflow: "hidden",
       }}
     >
-      <LiquidGradientBackground key={dark ? "dark" : "light"} dark={dark} />
+      <LiquidGradientBackground key={dark ? "dark" : "light"} dark={dark} showControls={false} />
 
       <div
         style={{
@@ -588,8 +632,7 @@ function Hero({
           transform: "translate(-50%, -50%)",
           width: "min(720px, 95vw)",
           height: 420,
-          background:
-            "radial-gradient(ellipse, rgba(147,51,234,0.11) 0%, transparent 72%)",
+          background: "radial-gradient(ellipse, rgba(147,51,234,0.11) 0%, transparent 72%)",
           pointerEvents: "none",
           zIndex: 1,
         }}
@@ -612,7 +655,7 @@ function Hero({
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
             gap: "clamp(28px, 5vw, 48px)",
-            alignItems: "start",
+            alignItems: "center",
           }}
         >
           <div style={{ textAlign: "left" }}>
@@ -630,9 +673,6 @@ function Hero({
                   border: dark ? "1px solid rgba(192,132,252,0.34)" : "1px solid rgba(147,51,234,0.36)",
                   backdropFilter: "blur(10px) saturate(120%)",
                   WebkitBackdropFilter: "blur(10px) saturate(120%)",
-                  boxShadow: dark
-                    ? "0 8px 18px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.16)"
-                    : "0 8px 18px rgba(31,10,56,0.10), inset 0 1px 0 rgba(255,255,255,0.45)",
                 }}
               >
                 <span
@@ -641,13 +681,12 @@ function Hero({
                     fontSize: isMobile ? 12 : 11,
                     fontWeight: 600,
                     color: isLight ? "rgba(109,40,217,0.96)" : "rgba(216,180,254,0.98)",
-                    textShadow: isLight ? "0 1px 1px rgba(255,255,255,0.35)" : "0 1px 1px rgba(0,0,0,0.28)",
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
                     lineHeight: 1.35,
                   }}
                 >
-                  Masterclass gratuita en vivo para psicólogos
+                  {badge}
                 </span>
               </div>
             </motion.div>
@@ -662,11 +701,18 @@ function Hero({
                 letterSpacing: "-0.02em",
                 color: tok.t1,
                 marginBottom: 16,
-                textShadow: isLight ? "0 1px 2px rgba(255,255,255,0.32)" : undefined,
               }}
             >
-              Aprende a adaptar tu práctica clínica al entorno digital con más{" "}
-              <GradientText>claridad, criterio y estructura</GradientText>
+              {claseFirst ? (
+                <>
+                  Psicología clínica en la <GradientText>era digital</GradientText>
+                </>
+              ) : (
+                <>
+                  La psicología está entrando en una nueva era. Aprende a trabajar en digital sin perder el{" "}
+                  <GradientText>criterio clínico</GradientText>
+                </>
+              )}
             </motion.h1>
 
             <motion.p
@@ -676,89 +722,67 @@ function Hero({
                 fontSize: isMobile ? 16 : "clamp(15px, 1.65vw, 17px)",
                 lineHeight: 1.6,
                 color: tok.t2,
-                marginBottom: 20,
+                marginBottom: 10,
                 maxWidth: 560,
-                textShadow: isLight ? "0 1px 2px rgba(255,255,255,0.24)" : undefined,
               }}
             >
-              Una sesión en vivo de 1 hora y media para psicólogos que quieren transicionar a la
-              clínica digital sin reducir su trabajo a solo atender por videollamada.
+              {claseFirst
+                ? "Una sesión en vivo de 90 minutos para psicólogos que quieren comprender qué cambia cuando la práctica clínica pasa al entorno digital."
+                : "MotusDAO Academy es el espacio de formación y comunidad para psicólogos que quieren comprender, adaptar y desarrollar su práctica en entornos digitales."}
             </motion.p>
 
-            <motion.ul
-              variants={fadeUp}
-              style={{
-                listStyle: "none",
-                margin: "0 0 22px",
-                padding: 0,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 8,
-              }}
-            >
-              {formatBullets.map((item) => (
-                <li
-                  key={item}
-                  style={{
-                    fontFamily: "var(--font-inter)",
-                    fontSize: isMobile ? 14 : 13,
-                    fontWeight: 500,
-                    color: isLight ? "rgba(14,10,26,0.95)" : tok.t1,
-                    padding: "8px 12px",
-                    borderRadius: 10,
-                    border: isLight ? "1px solid rgba(255,255,255,0.34)" : `1px solid ${tok.cardBorder}`,
-                    background: isLight ? "rgba(255,255,255,0.24)" : tok.card,
-                  }}
-                >
-                  {item}
-                </li>
-              ))}
-            </motion.ul>
-
-            <motion.div variants={fadeUp} style={{ marginBottom: 10 }}>
-              <div onClick={onPrimaryCta}>
-                <GradientButton>Reservar mi lugar gratis</GradientButton>
-              </div>
-              <p
+            {!claseFirst && (
+              <motion.p
+                variants={fadeUp}
                 style={{
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 13,
-                  color: dark ? "rgba(255,255,255,0.72)" : "#000000",
-                  marginTop: 10,
-                  letterSpacing: "0.02em",
+                  fontFamily: "var(--font-jura)",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  color: tok.t1,
+                  marginBottom: 22,
+                  letterSpacing: "-0.01em",
                 }}
               >
-                Gratis · En vivo · Registro limitado
-              </p>
+                Aprende. Conecta. Experimenta. Evoluciona.
+              </motion.p>
+            )}
+
+            <motion.div
+              variants={fadeUp}
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 16,
+                alignItems: "flex-start",
+                marginTop: claseFirst ? 22 : 0,
+              }}
+            >
+              {claseFirst ? (
+                <>
+                  {reservarCta}
+                  {diagnosticoCta}
+                </>
+              ) : (
+                <>
+                  {diagnosticoCta}
+                  {reservarCta}
+                </>
+              )}
             </motion.div>
           </div>
 
           <motion.div variants={fadeUp} style={{ width: "100%", maxWidth: 420, justifySelf: "stretch" }}>
             <img
               src="/MAsterclass3.avif"
-              alt="Masterclass gratuita en vivo — 4 de junio, 10am (hora MX)"
+              alt="MotusDAO Academy — formación y comunidad para psicólogos en práctica digital"
               style={{
                 width: "100%",
                 height: "auto",
                 borderRadius: 16,
                 objectFit: "cover",
-                marginBottom: 20,
                 border: isLight ? "1px solid rgba(147,51,234,0.22)" : "1px solid rgba(192,132,252,0.28)",
-                boxShadow: dark
-                  ? "0 16px 40px rgba(0,0,0,0.35)"
-                  : "0 16px 40px rgba(31,10,56,0.12)",
+                boxShadow: dark ? "0 16px 40px rgba(0,0,0,0.35)" : "0 16px 40px rgba(31,10,56,0.12)",
               }}
-            />
-            <MasterclassLeadForm
-              dark={dark}
-              sessionId={sessionId}
-              onTrack={onTrack}
-              section="hero"
-              formId="registro-principal"
-              title="Regístrate a la Masterclass gratuita en vivo"
-              titleFontSize="clamp(18px, 2.2vw, 24px)"
-              subtitle="Nombre y correo. Te enviamos el acceso a la sesión en vivo."
-              buttonLabel="Reservar mi lugar gratis"
             />
           </motion.div>
         </div>
@@ -767,142 +791,115 @@ function Hero({
   )
 }
 
-// ─── Trust Bar ────────────────────────────────────────────────────────────────
-
-function TrustBar({ dark }: { dark: boolean }) {
+function AcademyIntroSection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
-
-  const items = [
-    "Solo psicólogos y clínica",
-    "Sesión en vivo (no grabación)",
-    "Grupo reducido · cupo limitado",
-  ]
-
-  return (
-    <motion.section
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.6 }}
-      style={{
-        background: tok.bgAlt,
-        borderTop: `1px solid ${tok.cardBorder}`,
-        borderBottom: `1px solid ${tok.cardBorder}`,
-        padding: "20px clamp(24px, 6vw, 120px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "clamp(20px, 4vw, 56px)",
-        flexWrap: "wrap",
-      }}
-    >
-      {items.map((item, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 5,
-              height: 5,
-              borderRadius: "50%",
-              background: "#9333EA",
-              flexShrink: 0,
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "var(--font-inter)",
-              fontSize: 13,
-              fontWeight: 500,
-              color: tok.t2,
-              letterSpacing: "0.01em",
-              lineHeight: 1.3,
-              textAlign: "center",
-            }}
-          >
-            {item}
-          </span>
-        </div>
-      ))}
-    </motion.section>
-  )
-}
-
-// ─── Para quién es ───────────────────────────────────────────────────────────
-
-function AudienceFitSection({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-
-  const forYou = [
-    "Ya atienden online pero sienten que les falta estructura o criterio clínico.",
-    "Quieren empezar a trabajar en entorno digital sin improvisar la práctica.",
-    "Buscan una mirada seria (no solo tips de “terapia online”).",
-    "Quieren actualizar la práctica sin perder profundidad clínica.",
-    "Quieren entender mejor el paso de lo presencial a lo virtual.",
-  ]
-
-  const notFor = [
-    "Buscas solo hacks rápidos sin reflexión clínica.",
-    "No trabajas en clínica ni te interesa adaptar tu práctica profesional.",
-    "Esperas una charla genérica, sin rigor ni marco técnico.",
+  const pillars = [
+    { label: "Formación", line: "Contenido y experiencias para desarrollar competencias de práctica digital." },
+    { label: "Comunidad", line: "Un espacio para conectar, compartir y discutir los desafíos de la práctica digital." },
+    { label: "Herramientas", line: "Recursos para organizar aspectos de tu práctica profesional." },
+    { label: "Supervisión", line: "Espacios de discusión y desarrollo profesional dentro de la ruta." },
+    { label: "Investigación", line: "Conocimiento para profundizar en psicología, tecnología y práctica digital." },
+    { label: "Entorno digital", line: "Un ecosistema donde formación, comunidad y herramientas conviven." },
   ]
 
   return (
     <section
+      id="academia"
+      style={{
+        background: tok.bgAlt,
+        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
+      }}
+    >
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"} style={{ maxWidth: 920 }}>
+        <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
+          <SectionLabel>Qué es</SectionLabel>
+          <SectionHeading tok={tok}>MotusDAO Academy</SectionHeading>
+          <p
+            style={{
+              marginTop: 12,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.6,
+              maxWidth: 620,
+            }}
+          >
+            La práctica digital no consiste solamente en cambiar el consultorio por una videollamada. Cambian el
+            contexto, el encuadre, la comunicación, la privacidad y la forma de relacionarte con la tecnología.
+            Academia existe para entender esos cambios y desarrollar tu práctica con estructura y criterio profesional.
+          </p>
+        </motion.div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+            gap: 12,
+          }}
+        >
+          {pillars.map((item) => (
+            <motion.div
+              key={item.label}
+              variants={fadeUp}
+              style={{
+                background: tok.card,
+                border: `1px solid ${tok.cardBorder}`,
+                borderRadius: 14,
+                padding: "16px 18px",
+              }}
+            >
+              <p style={{ margin: 0, fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1 }}>
+                {item.label}
+              </p>
+              <p style={{ margin: "6px 0 0", fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5 }}>
+                {item.line}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  )
+}
+
+function DiagnosticSection({ dark, onDiagnostico }: { dark: boolean; onDiagnostico: () => void }) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  const pinWrapRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  useHorizontalPin(pinWrapRef, trackRef)
+
+  const discoveries = [
+    "Tu perfil de práctica digital",
+    "Tus principales fortalezas",
+    "Las áreas que podrías revisar",
+    "Tu siguiente paso dentro de Motus",
+  ]
+
+  const path = ["Diagnóstico", "Perfil", "Next step", "Comunidad", "Formación", "Progresión"]
+
+  return (
+    <section
+      id="diagnostico"
       style={{
         background: tok.bg,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-        position: "relative",
-        overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: dark ? 0.27 : 0.76,
-          pointerEvents: "none",
-        }}
-      >
-        <DotField
-          dotRadius={1.5}
-          dotSpacing={14}
-          cursorRadius={500}
-          cursorForce={0.1}
-          bulgeOnly
-          bulgeStrength={67}
-          glowRadius={dark ? 160 : 0}
-          sparkle={false}
-          waveAmplitude={0}
-          gradientFrom={dark ? "#a855f7" : "rgba(147,51,234,0.85)"}
-          gradientTo={dark ? "#b497cf" : "rgba(99,102,241,0.72)"}
-          glowColor={dark ? "#120f17" : "transparent"}
-          aria-hidden
-        />
-      </div>
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        style={{ position: "relative", zIndex: 1 }}
-      >
-        <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
-          <SectionLabel>Para quién es</SectionLabel>
-          <SectionHeading tok={tok}>Esta masterclass es para psicólogos que…</SectionHeading>
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
+        <motion.div variants={fadeUp} style={{ marginBottom: 28, maxWidth: 640 }}>
+          <SectionLabel>Antes de aprender</SectionLabel>
+          <SectionHeading tok={tok}>¿Qué tipo de psicólogo digital eres?</SectionHeading>
+          <p style={{ marginTop: 12, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.6 }}>
+            Tu práctica no tiene que parecerse a la de nadie más. Hay quienes están comenzando, quienes ya trabajan
+            online y buscan estructura, quienes exploran IA y quienes quieren llevar una práctica consolidada al
+            siguiente nivel.
+          </p>
         </motion.div>
 
-        <ul
-          style={{
-            listStyle: "none",
-            margin: "0 0 36px",
-            padding: 0,
-            display: "grid",
-            gap: 12,
-            maxWidth: 720,
-          }}
-        >
-          {forYou.map((line) => (
+        <ul style={{ listStyle: "none", margin: "0 0 24px", padding: 0, display: "grid", gap: 10, maxWidth: 640 }}>
+          {discoveries.map((line) => (
             <motion.li
               key={line}
               variants={fadeUp}
@@ -922,146 +919,27 @@ function AudienceFitSection({ dark }: { dark: boolean }) {
           ))}
         </ul>
 
-        <motion.div variants={fadeUp}>
-          <h3
-            style={{
-              fontFamily: "var(--font-jura)",
-              fontWeight: 700,
-              fontSize: "clamp(18px, 2.4vw, 22px)",
-              color: tok.t1,
-              marginBottom: 14,
-            }}
-          >
-            No es para ti si…
-          </h3>
-          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 10, maxWidth: 720 }}>
-            {notFor.map((line) => (
-              <li
-                key={line}
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  alignItems: "flex-start",
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 14,
-                  color: tok.t2,
-                  lineHeight: 1.55,
-                }}
-              >
-                <span style={{ color: tok.t3, flexShrink: 0 }}>—</span>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      </motion.div>
-    </section>
-  )
-}
-
-// ─── Qué aprenderás ───────────────────────────────────────────────────────────
-
-function WhatYouLearnSection({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-  const pinWrapRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
-
-  const items = [
-    {
-      title: "Qué cambia al pasar de consulta presencial a práctica digital",
-      desc: "Variables de encuadre, escucha y conducción que no se resuelven solo cambiando de sala a pantalla.",
-    },
-    {
-      title: "Cómo adaptar el encuadre clínico al entorno virtual",
-      desc: "Criterios para sostener la clínica con rigor cuando el dispositivo y el contexto cambian.",
-    },
-    {
-      title: "Errores frecuentes al trabajar online sin estructura",
-      desc: "Señales de improvisación que debilitan la práctica y cómo evitarlas desde el primer contacto.",
-    },
-    {
-      title: "Nuevas variables en psicoterapia en línea",
-      desc: "Qué observar y cómo ordenar decisiones técnicas y éticas en sesión remota.",
-    },
-    {
-      title: "Marcos y técnicas para operar mejor como psicólogo digital",
-      desc: "Introducción aplicable a tu trabajo clínico, con vocabulario claro y orientación práctica.",
-    },
-  ]
-
-  useEffect(() => {
-    const pinWrap = pinWrapRef.current
-    const track = trackRef.current
-    if (!pinWrap || !track) return
-
-    gsap.registerPlugin(ScrollTrigger)
-
-    const mm = gsap.matchMedia()
-    mm.add("(min-width: 901px)", () => {
-      const getDistance = () => {
-        const distance = track.scrollWidth - pinWrap.clientWidth
-        return Math.max(0, distance)
-      }
-      if (getDistance() < 8) return
-
-      const tween = gsap.fromTo(
-        track,
-        { x: 0 },
-        {
-          x: () => -getDistance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: pinWrap,
-            start: "top top+=72",
-            end: () => `+=${getDistance()}`,
-            pin: true,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        }
-      )
-
-      return () => {
-        tween.scrollTrigger?.kill()
-        tween.kill()
-      }
-    })
-
-    return () => mm.revert()
-  }, [])
-
-  return (
-    <section
-      id="aprendizajes"
-      style={{
-        background: tok.bgAlt,
-        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-      }}
-    >
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-      >
-        <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
-          <SectionLabel>Contenido</SectionLabel>
-          <SectionHeading tok={tok}>En esta masterclass aprenderás</SectionHeading>
-          <p
-            style={{
-              marginTop: 10,
-              fontFamily: "var(--font-inter)",
-              fontSize: 15,
-              color: tok.t2,
-              lineHeight: 1.55,
-              maxWidth: 620,
-            }}
-          >
-            Resultados concretos para tu consulta: menos confusión conceptual, más criterio para decidir cómo
-            trabajar en digital.
+        <motion.div variants={fadeUp} style={{ marginBottom: 36 }}>
+          <GradientButton href="/diagnostico" onClick={onDiagnostico}>
+            Descubrir mi perfil
+          </GradientButton>
+          <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 10 }}>
+            Gratis · Orientativo · 6 preguntas · Diseñado para profesionales
           </p>
         </motion.div>
+
+        <motion.p
+          variants={fadeUp}
+          style={{
+            fontFamily: "var(--font-jura)",
+            fontWeight: 700,
+            fontSize: 18,
+            color: tok.t1,
+            marginBottom: 16,
+          }}
+        >
+          Encuentra tu perfil
+        </motion.p>
 
         <div
           ref={pinWrapRef}
@@ -1069,33 +947,21 @@ function WhatYouLearnSection({ dark }: { dark: boolean }) {
             overflowX: "auto",
             overflowY: "hidden",
             width: "100%",
-            minHeight: "min(62vh, 560px)",
-            display: "flex",
-            alignItems: "stretch",
+            WebkitOverflowScrolling: "touch",
           }}
         >
-          <div
-            ref={trackRef}
-            style={{
-              display: "flex",
-              width: "max-content",
-            gap: 14,
-              paddingRight: 24,
-              alignItems: "stretch",
-              willChange: "transform",
-          }}
-        >
-            {items.map((f, index) => (
+          <div ref={trackRef} style={{ display: "flex", width: "max-content", gap: 14, paddingRight: 24, willChange: "transform" }}>
+            {DIGITAL_PROFILES.map((profile, index) => (
               <motion.div
-                key={f.title}
+                key={profile.id}
                 variants={fadeUp}
                 style={{
                   background: tok.card,
                   border: `1px solid ${tok.cardBorder}`,
                   borderRadius: 14,
                   padding: "20px 20px 22px",
-                  width: "clamp(260px, 32vw, 380px)",
-                  minHeight: "min(62vh, 560px)",
+                  width: "clamp(240px, 28vw, 320px)",
+                  minHeight: 260,
                   flex: "0 0 auto",
                 }}
               >
@@ -1103,7 +969,7 @@ function WhatYouLearnSection({ dark }: { dark: boolean }) {
                   style={{
                     fontFamily: "var(--font-jura)",
                     fontWeight: 700,
-                    fontSize: "clamp(42px, 6vw, 68px)",
+                    fontSize: "clamp(36px, 5vw, 52px)",
                     lineHeight: 1,
                     marginBottom: 12,
                     color: dark ? "rgba(255,255,255,0.18)" : "rgba(14,10,26,0.18)",
@@ -1112,102 +978,203 @@ function WhatYouLearnSection({ dark }: { dark: boolean }) {
                 >
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-jura)",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    color: tok.t1,
-                    marginBottom: 8,
-                    lineHeight: 1.35,
-                  }}
-                >
-                  {f.title}
+                <h3 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1, marginBottom: 8 }}>
+                  {profile.name}
                 </h3>
-                <p
-                  style={{
-                    fontFamily: "var(--font-inter)",
-                    fontSize: 14,
-                    color: tok.t2,
-                    lineHeight: 1.55,
-                    margin: 0,
-                  }}
-                >
-                  {f.desc}
+                <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5, margin: "0 0 10px" }}>
+                  {profile.headline}
+                </p>
+                <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t1, lineHeight: 1.45, margin: 0 }}>
+                  Siguiente paso: {profile.nextStep}
                 </p>
               </motion.div>
             ))}
           </div>
+        </div>
+
+        <motion.div variants={fadeUp} style={{ marginTop: 28, maxWidth: 800 }}>
+          <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t3, marginBottom: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            Después del diagnóstico
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+            {path.map((step, i) => (
+              <span key={step} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-jura)",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: tok.t1,
+                    background: tok.card,
+                    border: `1px solid ${tok.cardBorder}`,
+                    borderRadius: 99,
+                    padding: "6px 12px",
+                  }}
+                >
+                  {step}
+                </span>
+                {i < path.length - 1 && <span style={{ color: tok.t3 }}>→</span>}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+function MasterclassSection({
+  dark,
+  sessionId,
+  onTrack,
+}: {
+  dark: boolean
+  sessionId: string
+  onTrack: (eventName: FunnelEventName, payload?: Record<string, string>) => void
+}) {
+  const tok = dark ? T.dark : T.light
+  const { ref, inView } = useReveal()
+  const points = [
+    "Qué cambia al pasar de consulta presencial a práctica digital.",
+    "Cómo pensar el encuadre clínico en un entorno virtual.",
+    "Errores frecuentes de una práctica digital improvisada.",
+    "Nuevas variables técnicas y éticas de la psicoterapia online.",
+    "Cómo comenzar a estructurar tu práctica digital.",
+  ]
+
+  return (
+    <section
+      id="masterclass"
+      style={{
+        background: tok.bgAlt,
+        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
+        scrollMarginTop: 88,
+      }}
+    >
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
+            gap: "clamp(28px, 5vw, 48px)",
+            alignItems: "start",
+          }}
+        >
+          <div>
+            <motion.div variants={fadeUp} style={{ marginBottom: 22 }}>
+              <SectionLabel>Masterclass gratuita</SectionLabel>
+              <SectionHeading tok={tok}>Psicología clínica en la era digital</SectionHeading>
+              <p style={{ marginTop: 12, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.6, maxWidth: 560 }}>
+                Una sesión introductoria en vivo para psicólogos que quieren comprender qué cambia realmente cuando la
+                práctica clínica pasa del entorno presencial al digital.
+              </p>
+            </motion.div>
+
+            <p style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 15, color: tok.t1, marginBottom: 14 }}>
+              En 90 minutos
+            </p>
+            <ol style={{ listStyle: "none", margin: "0 0 22px", padding: 0, display: "grid", gap: 12 }}>
+              {points.map((point, index) => (
+                <motion.li
+                  key={point}
+                  variants={fadeUp}
+                  style={{ display: "flex", gap: 12, alignItems: "flex-start" }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-jura)",
+                      fontWeight: 700,
+                      fontSize: 14,
+                      color: "#A855F7",
+                      minWidth: 28,
+                    }}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t1, lineHeight: 1.5 }}>
+                    {point}
+                  </span>
+                </motion.li>
+              ))}
+            </ol>
+
+            <motion.p variants={fadeUp} style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.55, maxWidth: 520 }}>
+              Conduce: <span style={{ color: tok.t1 }}>Mtro. Benjamín Buzali</span> — especialista en psicología clínica
+              digital. Vocabulario técnico, ejemplos de práctica y criterio para operar en digital sin perder
+              profundidad.
+            </motion.p>
+          </div>
+
+          <motion.div variants={fadeUp} style={{ width: "100%", maxWidth: 420 }}>
+            <MasterclassLeadForm
+              dark={dark}
+              sessionId={sessionId}
+              onTrack={onTrack}
+              section="masterclass"
+              formId="registro-principal"
+              title="Regístrate a la Masterclass gratuita en vivo"
+              titleFontSize="clamp(18px, 2.2vw, 24px)"
+              subtitle="Nombre y correo. Te enviamos el acceso a la sesión en vivo."
+              buttonLabel="Reservar mi lugar gratis"
+            />
+            <p
+              style={{
+                fontFamily: "var(--font-inter)",
+                fontSize: 13,
+                color: tok.t3,
+                marginTop: 12,
+                textAlign: "center",
+              }}
+            >
+              En vivo · 90 min · Grupo reducido
+            </p>
+          </motion.div>
         </div>
       </motion.div>
     </section>
   )
 }
 
-// ─── Comunidad (MemeCore: bloque corto) ─────────────────────────────────────
-
-function PsychologistCommunitySection({
-  dark,
-  onCta,
-}: {
-  dark: boolean
-  onCta: () => void
-}) {
+function CommunityPathSection({ dark, onReservar }: { dark: boolean; onReservar: () => void }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
-
-  const proof = [
-    { label: "Solo psicólogos", line: "Licenciados y perfiles en clínica." },
-    { label: "En vivo", line: "Encuentros con grupo reducido." },
-    { label: "Red global", line: "Colegas en entorno digital con estándar clínico." },
-  ] as const
+  const items = [
+    { label: "Comunidad", line: "Conecta con otros profesionales interesados en práctica digital." },
+    { label: "Formación", line: "Profundiza en fundamentos, herramientas y nuevas competencias." },
+    { label: "Supervisión", line: "Espacios de discusión y desarrollo profesional dentro de la ruta." },
+    { label: "Progresión", line: "Continúa construyendo tu práctica dentro del ecosistema Motus." },
+  ]
 
   return (
     <section
       id="comunidad"
       style={{
-        background: tok.bgAlt,
+        background: tok.bg,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-        borderTop: `1px solid ${tok.cardBorder}`,
-        borderBottom: `1px solid ${tok.cardBorder}`,
       }}
     >
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}
-      >
-        <motion.div variants={fadeUp}>
-          <SectionLabel>Comunidad</SectionLabel>
-          <SectionHeading tok={tok}>Psicólogos en digital, con criterio clínico</SectionHeading>
-          <p
-            style={{
-              marginTop: 10,
-              fontFamily: "var(--font-inter)",
-              fontSize: 15,
-              color: tok.t2,
-              lineHeight: 1.55,
-            }}
-          >
-            Red profesional de MotusDAO Academy — no foro abierto ni público general.
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"} style={{ maxWidth: 800 }}>
+        <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
+          <SectionLabel>Recorrido</SectionLabel>
+          <SectionHeading tok={tok}>No es solamente una clase</SectionHeading>
+          <p style={{ marginTop: 12, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.6, maxWidth: 620 }}>
+            Después de la masterclass puedes continuar tu recorrido dentro de MotusDAO Academy. La sesión en vivo es
+            la entrada a la comunidad profesional.
           </p>
         </motion.div>
 
-        <motion.div
-          variants={fadeUp}
+        <div
           style={{
-            marginTop: 32,
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
-            gap: 14,
-            textAlign: "left",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+            gap: 12,
+            marginBottom: 28,
           }}
         >
-          {proof.map((item) => (
-            <div
+          {items.map((item) => (
+            <motion.div
               key={item.label}
+              variants={fadeUp}
               style={{
                 background: tok.card,
                 border: `1px solid ${tok.cardBorder}`,
@@ -1215,88 +1182,54 @@ function PsychologistCommunitySection({
                 padding: "16px 18px",
               }}
             >
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "var(--font-jura)",
-                  fontWeight: 700,
-                  fontSize: 16,
-                  color: tok.t1,
-                  lineHeight: 1.35,
-                }}
-              >
+              <p style={{ margin: 0, fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1 }}>
                 {item.label}
               </p>
-              <p
-                style={{
-                  margin: "6px 0 0",
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 14,
-                  color: tok.t2,
-                  lineHeight: 1.5,
-                }}
-              >
+              <p style={{ margin: "6px 0 0", fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5 }}>
                 {item.line}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div variants={fadeUp} style={{ marginTop: 28 }}>
-          <div onClick={onCta} style={{ display: "inline-block" }}>
-            <GradientButton>Reservar mi lugar gratis</GradientButton>
-          </div>
-          <p
-            style={{
-              marginTop: 12,
-              fontFamily: "var(--font-inter)",
-              fontSize: 12,
-              color: tok.t3,
-              letterSpacing: "0.02em",
-            }}
-          >
-            Gratis · En vivo · Registro limitado
-          </p>
+        <motion.div variants={fadeUp}>
+          <GradientButton onClick={onReservar}>Reservar mi lugar gratis</GradientButton>
         </motion.div>
       </motion.div>
     </section>
   )
 }
 
-// ─── Galería glass (fotos comunidad / academia) ───────────────────────────────
-
 const GALLERY_PHOTOS = [
   {
     src: "/photo_4915935373217696687_y.jpg",
-    alt: "Departamento de investigación en psicología: libros, artículos y recursos clínicos",
+    alt: "Investigación en psicología digital: publicaciones y recursos clínicos",
     label: "Investigación",
-    caption: "Libros, artículos y recursos para profundizar tu práctica clínica.",
+    caption: "Conocimiento, publicaciones y recursos para profundizar tu práctica.",
   },
   {
     src: "/photo_4915935373217696688_y.jpg",
-    alt: "Consultorio virtual con videollamada y espacio inmersivo para sesión clínica",
+    alt: "Consultorio virtual para sesión clínica e interacción profesional",
     label: "Consultorios virtuales",
-    caption:
-      "Sala digital con encuadre claro: sesión, supervisión y trabajo clínico en vivo con colegas, sin perder presencia profesional.",
+    caption: "Espacios para interacción profesional dentro del ecosistema.",
   },
   {
     src: "/photo_4915935373217696689_y.jpg",
-    alt: "Plataforma de pagos internacionales para honorarios y cobro de consulta",
-    label: "Pagos internacionales",
-    caption:
-      "Tarifas y cobro en distintas monedas y métodos: ordena honorarios cuando tu práctica cruza fronteras.",
+    alt: "Recursos para organizar la práctica digital",
+    label: "Práctica digital",
+    caption: "Recursos para organizar honorarios, procesos y operación profesional.",
   },
   {
     src: "/photo_4915935373217696690_y.jpg",
-    alt: "Eventos y sesiones en vivo de la comunidad MotusDAO",
-    label: "Eventos",
-    caption: "Encuentros en vivo con grupo reducido y conversación clínica.",
+    alt: "Formación y sesiones en vivo de MotusDAO Academy",
+    label: "Academia",
+    caption: "Formación profesional para psicólogos en entorno digital.",
   },
   {
     src: "/photo_4915935373217696691_y.jpg",
-    alt: "Comunidad de psicólogos en la red MotusDAO Academy",
+    alt: "Comunidad de psicólogos en MotusDAO",
     label: "Comunidad",
-    caption: "Red de psicólogos que operan en digital con criterio clínico.",
+    caption: "Red de profesionales que operan en digital con criterio clínico.",
   },
 ] as const
 
@@ -1369,8 +1302,7 @@ function GlassPhotoCard({
               style={{
                 position: "absolute",
                 inset: 0,
-                background:
-                  "linear-gradient(to top, rgba(14,10,26,0.72) 0%, rgba(14,10,26,0.08) 48%, transparent 72%)",
+                background: "linear-gradient(to top, rgba(14,10,26,0.72) 0%, rgba(14,10,26,0.08) 48%, transparent 72%)",
                 pointerEvents: "none",
               }}
             />
@@ -1403,15 +1335,7 @@ function GlassPhotoCard({
             >
               {photo.label}
             </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 14,
-                color: tok.t2,
-                lineHeight: 1.55,
-                margin: 0,
-              }}
-            >
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.55, margin: 0 }}>
               {photo.caption}
             </p>
           </CardContent>
@@ -1421,55 +1345,18 @@ function GlassPhotoCard({
   )
 }
 
-function CommunityGallerySection({ dark }: { dark: boolean }) {
+function EcosystemGallerySection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
   const pinWrapRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const pinWrap = pinWrapRef.current
-    const track = trackRef.current
-    if (!pinWrap || !track) return
-
-    gsap.registerPlugin(ScrollTrigger)
-
-    const mm = gsap.matchMedia()
-    mm.add("(min-width: 901px)", () => {
-      const getDistance = () => Math.max(0, track.scrollWidth - pinWrap.clientWidth)
-      if (getDistance() < 8) return
-
-      const tween = gsap.fromTo(
-        track,
-        { x: 0 },
-        {
-          x: () => -getDistance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: pinWrap,
-            start: "top top+=72",
-            end: () => `+=${getDistance()}`,
-            pin: true,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        }
-      )
-
-      return () => {
-        tween.scrollTrigger?.kill()
-        tween.kill()
-      }
-    })
-
-    return () => mm.revert()
-  }, [])
+  useHorizontalPin(pinWrapRef, trackRef)
 
   return (
     <section
       id="ecosistema"
       style={{
-        background: tok.bg,
+        background: tok.bgAlt,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
         position: "relative",
         overflow: "hidden",
@@ -1487,39 +1374,20 @@ function CommunityGallerySection({ dark }: { dark: boolean }) {
           pointerEvents: "none",
         }}
       />
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        style={{ position: "relative" }}
-      >
+      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"} style={{ position: "relative" }}>
         <motion.div variants={fadeUp} style={{ marginBottom: 28, maxWidth: 620 }}>
           <SectionLabel>Ecosistema</SectionLabel>
-          <SectionHeading tok={tok}>Tu práctica, con respaldo académico</SectionHeading>
-          <p
-            style={{
-              marginTop: 10,
-              fontFamily: "var(--font-inter)",
-              fontSize: 15,
-              color: tok.t2,
-              lineHeight: 1.55,
-            }}
-          >
-            Investigación, contenido y comunidad clínica en un mismo entorno — pensado para psicólogos
-            que trabajan en digital.
+          <SectionHeading tok={tok}>Un mismo entorno para aprender, practicar y conectar</SectionHeading>
+          <p style={{ marginTop: 10, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.55 }}>
+            Academia, comunidad, práctica digital, consultorios virtuales e investigación — y herramientas como PsyChat
+            / MotusAI con orientación humana y profesional.
           </p>
         </motion.div>
 
         <div
           ref={pinWrapRef}
           className="[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{
-            overflowX: "auto",
-            overflowY: "hidden",
-            width: "100%",
-            WebkitOverflowScrolling: "touch",
-          }}
+          style={{ overflowX: "auto", overflowY: "hidden", width: "100%", WebkitOverflowScrolling: "touch" }}
         >
           <div
             ref={trackRef}
@@ -1543,265 +1411,73 @@ function CommunityGallerySection({ dark }: { dark: boolean }) {
   )
 }
 
-// ─── Formato de la sesión ─────────────────────────────────────────────────────
-
-function ExperienceFormatSection({ dark }: { dark: boolean }) {
+function AudienceFitSection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
-  const pinWrapRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
-
-  const cards = [
-    { title: "En vivo", body: "Clase en tiempo real: preguntas y participación, no grabación en frío." },
-    { title: "1 h 30", body: "Duración fija para cubrir marco, ejemplos clínicos y espacio de reflexión." },
-    { title: "Metaverso", body: "Videollamada en entorno inmersivo: mismo estándar profesional, formato claro." },
-    { title: "Grupo reducido", body: "Cupo limitado por edición para mantener la conversación clínica ordenada." },
-    { title: "Cada 15 días", body: "Nueva edición con fecha límite de registro. Si no entras, puedes anotarte a la siguiente." },
-    {
-      title: "Qué haremos",
-      body: "Presentación breve, autoevaluación guiada, marcos nuevos y técnicas aplicadas a psicoterapia en línea.",
-    },
+  const forYou = [
+    "Ya atiendes online y quieres más estructura.",
+    "Estás pensando en comenzar una práctica digital.",
+    "Quieres entender qué cambia clínicamente en el entorno virtual.",
+    "Te interesa la relación entre psicología, tecnología e IA.",
+    "Quieres formación con marco y criterio profesional.",
+    "Quieres conectar con otros psicólogos.",
   ]
-
-  useEffect(() => {
-    const pinWrap = pinWrapRef.current
-    const track = trackRef.current
-    if (!pinWrap || !track) return
-
-    const mm = gsap.matchMedia()
-    mm.add("(min-width: 901px)", () => {
-      const getDistance = () => {
-        const distance = track.scrollWidth - pinWrap.clientWidth
-        return Math.max(0, distance)
-      }
-      if (getDistance() < 8) return
-
-      const tween = gsap.fromTo(
-        track,
-        { x: () => -getDistance() },
-        {
-          x: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: pinWrap,
-            start: "top top+=72",
-            end: () => `+=${getDistance()}`,
-            pin: true,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        }
-      )
-
-      return () => {
-        tween.scrollTrigger?.kill()
-        tween.kill()
-      }
-    })
-
-    return () => mm.revert()
-  }, [])
+  const notFor = [
+    "Buscas únicamente hacks para conseguir pacientes.",
+    "Esperas que una IA sustituya el criterio profesional.",
+    "Buscas una certificación automática.",
+    "No tienes interés en desarrollar una práctica profesional digital.",
+  ]
+  const builders = [
+    { label: "Profesionales clínicos", line: "Experiencia y criterio para abordar los desafíos de la práctica." },
+    { label: "Educadores", line: "Contenido y formación para desarrollar nuevas competencias." },
+    { label: "Investigadores", line: "Conocimiento para comprender hacia dónde se dirige la psicología digital." },
+    { label: "Builders", line: "Tecnología e infraestructura para convertir esas ideas en herramientas reales." },
+  ]
 
   return (
     <section
       style={{
         background: tok.bg,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      <div style={{ position: "absolute", inset: 0, opacity: dark ? 0.27 : 0.76, pointerEvents: "none" }}>
+        <DotField
+          dotRadius={1.5}
+          dotSpacing={14}
+          cursorRadius={500}
+          cursorForce={0.1}
+          bulgeOnly
+          bulgeStrength={67}
+          glowRadius={dark ? 160 : 0}
+          sparkle={false}
+          waveAmplitude={0}
+          gradientFrom={dark ? "#a855f7" : "rgba(147,51,234,0.85)"}
+          gradientTo={dark ? "#b497cf" : "rgba(99,102,241,0.72)"}
+          glowColor={dark ? "#120f17" : "transparent"}
+          aria-hidden
+        />
+      </div>
       <motion.div
         ref={ref}
         variants={stagger}
         initial="hidden"
         animate={inView ? "show" : "hidden"}
+        style={{ position: "relative", zIndex: 1 }}
       >
         <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
-          <SectionLabel>Formato</SectionLabel>
-          <SectionHeading tok={tok}>¿Cómo será la masterclass?</SectionHeading>
+          <SectionLabel>Para quién es</SectionLabel>
+          <SectionHeading tok={tok}>¿Para quién es MotusDAO Academy?</SectionHeading>
         </motion.div>
 
-        <div
-          ref={pinWrapRef}
-          style={{
-            overflowX: "auto",
-            overflowY: "hidden",
-            width: "100%",
-            minHeight: "min(56vh, 460px)",
-            display: "flex",
-            alignItems: "stretch",
-          }}
-        >
-          <div
-            ref={trackRef}
-            style={{
-              display: "flex",
-              width: "max-content",
-            gap: 12,
-              alignItems: "stretch",
-              paddingRight: 24,
-              willChange: "transform",
-          }}
-        >
-            {cards.map((c, index) => (
-              <motion.div
-                key={c.title}
-                variants={fadeUp}
-                style={{
-                  background: tok.cardHighBg,
-                  border: `1px solid ${tok.cardHighBorder}`,
-                  borderRadius: 14,
-                  padding: "18px 18px 20px",
-                  width: "clamp(240px, 29vw, 340px)",
-                  minHeight: "min(56vh, 460px)",
-                  flex: "0 0 auto",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "var(--font-jura)",
-                    fontWeight: 700,
-                    fontSize: "clamp(36px, 5vw, 58px)",
-                    lineHeight: 1,
-                    marginBottom: 10,
-                    color: dark ? "rgba(255,255,255,0.17)" : "rgba(14,10,26,0.16)",
-                    letterSpacing: "-0.03em",
-                  }}
-                >
-                  {String(cards.length - index).padStart(2, "0")}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-jura)",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    color: tok.t1,
-                    marginBottom: 8,
-                  }}
-                >
-                  {c.title}
-                </h3>
-                <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5, margin: 0 }}>
-                  {c.body}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  )
-}
-
-function InstructorBlock({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-
-  const creds = [
-    "Especialista en psicología clínica digital",
-    "Maestría en psicoterapia",
-    "Docencia y práctica clínica con foco en encuadre y lectura del síntoma en contexto digital",
-  ]
-
-  return (
-    <section
-      style={{
-        background: tok.bgAlt,
-        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-      }}
-    >
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        style={{
-          maxWidth: 920,
-          margin: "0 auto",
-          background: tok.cardHighBg,
-          border: `1px solid ${tok.cardHighBorder}`,
-          borderRadius: 18,
-          padding: "clamp(22px, 4vw, 32px)",
-        }}
-      >
-        <motion.div variants={fadeUp} style={{ marginBottom: 12 }}>
-          <SectionLabel>Profesor</SectionLabel>
-          <SectionHeading tok={tok}>Mtro. Benjamín Buzali</SectionHeading>
-        </motion.div>
-        <motion.p
-          variants={fadeUp}
-          style={{
-            fontFamily: "var(--font-inter)",
-            fontSize: 15,
-            color: tok.t2,
-            lineHeight: 1.6,
-            maxWidth: 720,
-            marginBottom: 16,
-          }}
-        >
-          Conduce una masterclass clínica (no motivacional): vocabulario técnico preciso, ejemplos de práctica y
-          criterios para decidir cómo operar en digital sin perder profundidad.
-        </motion.p>
-        <motion.ul
-          variants={fadeUp}
-          style={{
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            display: "grid",
-            gap: 10,
-          }}
-        >
-          {creds.map((c) => (
-            <li
-              key={c}
-              style={{
-                display: "flex",
-                gap: 10,
-                alignItems: "flex-start",
-                fontFamily: "var(--font-inter)",
-                fontSize: 14,
-                color: tok.t1,
-                lineHeight: 1.5,
-              }}
-            >
-              <span style={{ color: "#A855F7", flexShrink: 0 }}>·</span>
-              <span>{c}</span>
-            </li>
-          ))}
-        </motion.ul>
-      </motion.div>
-    </section>
-  )
-}
-
-// ─── Confianza (sin testimonios placeholder) ─────────────────────────────────
-
-function TrustSignalsSection({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-
-  const lines = [
-    "Enfoque clínico serio: marco técnico y aplicación práctica desde el día uno.",
-    "Maestro en Psicoterapia con trayectoria en psicología clínica digital y casos graves.",
-    "Sesión en vivo con interacción; cupo acotado por edición.",
-    "Edición recurrente cada 15 días: si no entras ahora, puedes registrarte a la siguiente.",
-    "Pensada como muestra introductoria de un curso más avanzado: Psicología clínica digital con técnicas avanzadas.",
-  ]
-
-  return (
-    <section
-      style={{
-        background: tok.bg,
-        padding: "clamp(48px, 7vh, 88px) clamp(20px, 5vw, 72px)",
-      }}
-    >
-      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
-        <motion.div variants={fadeUp} style={{ marginBottom: 22 }}>
-          <SectionLabel>Confianza</SectionLabel>
-          <SectionHeading tok={tok}>Ésta masterclass en el inicio de algo más serio</SectionHeading>
-        </motion.div>
-        <ul style={{ listStyle: "none", margin: 0, padding: 0, maxWidth: 720, display: "grid", gap: 12 }}>
-          {lines.map((line) => (
+        <p style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 18, color: tok.t1, marginBottom: 14 }}>
+          Es para ti si…
+        </p>
+        <ul style={{ listStyle: "none", margin: "0 0 32px", padding: 0, display: "grid", gap: 12, maxWidth: 720 }}>
+          {forYou.map((line) => (
             <motion.li
               key={line}
               variants={fadeUp}
@@ -1811,7 +1487,7 @@ function TrustSignalsSection({ dark }: { dark: boolean }) {
                 alignItems: "flex-start",
                 fontFamily: "var(--font-inter)",
                 fontSize: 15,
-                color: tok.t2,
+                color: tok.t1,
                 lineHeight: 1.55,
               }}
             >
@@ -1820,14 +1496,89 @@ function TrustSignalsSection({ dark }: { dark: boolean }) {
             </motion.li>
           ))}
         </ul>
+
+        <motion.div variants={fadeUp}>
+          <h3
+            style={{
+              fontFamily: "var(--font-jura)",
+              fontWeight: 700,
+              fontSize: "clamp(18px, 2.4vw, 22px)",
+              color: tok.t1,
+              marginBottom: 14,
+            }}
+          >
+            No es para ti si…
+          </h3>
+          <ul style={{ listStyle: "none", margin: "0 0 40px", padding: 0, display: "grid", gap: 10, maxWidth: 720 }}>
+            {notFor.map((line) => (
+              <li
+                key={line}
+                style={{
+                  display: "flex",
+                  gap: 12,
+                  alignItems: "flex-start",
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 14,
+                  color: tok.t2,
+                  lineHeight: 1.55,
+                }}
+              >
+                <span style={{ color: tok.t3, flexShrink: 0 }}>—</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        <motion.div variants={fadeUp} style={{ marginBottom: 16 }}>
+          <SectionLabel>Quiénes construyen Motus</SectionLabel>
+          <SectionHeading tok={tok}>Una comunidad alrededor de profesionales</SectionHeading>
+        </motion.div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+            gap: 12,
+          }}
+        >
+          {builders.map((item) => (
+            <motion.div
+              key={item.label}
+              variants={fadeUp}
+              style={{
+                background: tok.card,
+                border: `1px solid ${tok.cardBorder}`,
+                borderRadius: 14,
+                padding: "16px 18px",
+              }}
+            >
+              <p style={{ margin: 0, fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1 }}>
+                {item.label}
+              </p>
+              <p style={{ margin: "6px 0 0", fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5 }}>
+                {item.line}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
     </section>
   )
 }
 
-function MidCtaBand({ dark, onCta }: { dark: boolean; onCta: () => void }) {
+function DualStartBand({
+  dark,
+  onDiagnostico,
+  onReservar,
+}: {
+  dark: boolean
+  onDiagnostico: () => void
+  onReservar: () => void
+}) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
+  const isMobile = useIsMobile()
+
   return (
     <section
       style={{
@@ -1842,28 +1593,40 @@ function MidCtaBand({ dark, onCta }: { dark: boolean; onCta: () => void }) {
         variants={stagger}
         initial="hidden"
         animate={inView ? "show" : "hidden"}
-        style={{
-          maxWidth: 720,
-          margin: "0 auto",
-          textAlign: "center",
-        }}
+        style={{ maxWidth: 720, margin: "0 auto" }}
       >
-        <motion.p
+        <motion.div variants={fadeUp} style={{ marginBottom: 22 }}>
+          <SectionLabel>Empieza donde estés</SectionLabel>
+          <SectionHeading tok={tok}>No necesitas una práctica digital perfecta</SectionHeading>
+          <p style={{ marginTop: 10, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.55 }}>
+            Necesitas saber dónde estás y qué quieres construir después.
+          </p>
+        </motion.div>
+        <motion.div
           variants={fadeUp}
-          style={{
-            fontFamily: "var(--font-inter)",
-            fontSize: 15,
-            color: tok.t2,
-            lineHeight: 1.55,
-            marginBottom: 18,
-          }}
+          style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}
         >
-          Si encajas con el perfil, el siguiente paso es dejar tu nombre y correo: te enviamos el acceso a la sesión
-          en vivo.
-        </motion.p>
-        <motion.div variants={fadeUp}>
-          <div onClick={onCta} style={{ display: "inline-block" }}>
-            <GradientButton>Reservar mi lugar gratis</GradientButton>
+          <div>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, marginBottom: 10 }}>
+              ¿Quieres descubrir tu perfil?
+            </p>
+            <GradientButton href="/diagnostico" onClick={onDiagnostico} full>
+              Hacer mi diagnóstico
+            </GradientButton>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, color: tok.t3, marginTop: 8 }}>
+              Gratis · 6 preguntas · Resultado inmediato
+            </p>
+          </div>
+          <div>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, marginBottom: 10 }}>
+              ¿Prefieres empezar aprendiendo?
+            </p>
+            <GradientButton onClick={onReservar} variant="outline" dark={dark} full>
+              Reservar mi lugar en la Masterclass
+            </GradientButton>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, color: tok.t3, marginTop: 8 }}>
+              Gratis · En vivo · 90 minutos · Grupo reducido
+            </p>
           </div>
         </motion.div>
       </motion.div>
@@ -1876,49 +1639,37 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
   const { ref, inView } = useReveal()
   const faqs = [
     {
+      q: "¿Qué es MotusDAO Academy?",
+      a: "Es el espacio de formación y comunidad de MotusDAO para profesionales que quieren desarrollar su práctica en entornos digitales.",
+    },
+    {
+      q: "¿Necesito trabajar online actualmente?",
+      a: "No. Puedes participar tanto si ya atiendes online como si estás considerando comenzar.",
+    },
+    {
       q: "¿La masterclass es gratuita?",
-      a: "Sí. El registro es gratuito; no hay pago para participar en esta sesión introductoria.",
+      a: "Sí. El registro es gratuito para la sesión introductoria.",
     },
     {
-      q: "¿Está dirigida solo a psicólogos?",
-      a: "Sí, está pensada para psicólogos (y perfiles equivalentes en clínica). No es una charla para público general.",
+      q: "¿Qué es el diagnóstico?",
+      a: "Es una evaluación orientativa de tu práctica digital: fortalezas, áreas de atención y un posible siguiente paso. No es un diagnóstico clínico, certificación ni evaluación de licencia profesional.",
     },
     {
-      q: "¿Necesito experiencia previa atendiendo online?",
-      a: "No es obligatorio. Sirve tanto si ya atiendes online como si estás evaluando el paso: el foco es criterio y estructura clínica.",
+      q: "¿Qué ocurre después del diagnóstico?",
+      a: "Recibes un perfil y una recomendación de siguiente paso. El camino concreto de entrada es la masterclass en vivo, y desde ahí comunidad y formación.",
     },
     {
-      q: "¿La clase es en vivo o grabada?",
-      a: "En vivo. Hay espacio de participación; no es un video grabado enviado por correo.",
+      q: "¿La IA sustituye al psicólogo en Motus?",
+      a: "No. Motus mantiene un enfoque de tecnología asistiva y revisión profesional humana.",
     },
     {
-      q: "¿Cuánto dura?",
-      a: "Una hora y media, con bloques claros: marco, aplicación clínica y espacio breve de reflexión.",
-    },
-    {
-      q: "¿Cómo se lleva a cabo la sesión?",
-      a: "Videollamada en metaverso (entorno inmersivo), con grupo reducido y conducción por el profesor.",
-    },
-    {
-      q: "¿Qué pasa si no alcanzo lugar en esta edición?",
-      a: "Abrimos una nueva edición aproximadamente cada 15 días. Puedes volver a registrarte para la siguiente fecha.",
-    },
-    {
-      q: "¿Esta masterclass forma parte de una formación más amplia?",
-      a: "Sí. Es una muestra seria y acotada; el diplomado profundiza marcos, técnica y práctica en clínica digital.",
-    },
-    {
-      q: "¿Qué datos pedís al registrarme?",
-      a: "Nombre y correo (obligatorio). WhatsApp es opcional si querés recordatorios por ese canal.",
+      q: "¿Puedo entrar a la comunidad aunque sea principiante?",
+      a: "Sí. La comunidad está pensada para profesionales y perfiles interesados en desarrollar su práctica digital.",
     },
   ]
+
   return (
-    <section
-      style={{
-        background: tok.bgAlt,
-        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-      }}
-    >
+    <section style={{ background: tok.bg, padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)" }}>
       <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"}>
         <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
           <SectionLabel>FAQ</SectionLabel>
@@ -1959,11 +1710,18 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
   )
 }
 
-// ─── CTA Final ────────────────────────────────────────────────────────────────
-
-function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
+function FinalCTA({
+  dark,
+  onDiagnostico,
+  onReservar,
+}: {
+  dark: boolean
+  onDiagnostico: () => void
+  onReservar: () => void
+}) {
   const tok = dark ? T.dark : T.light
   const { ref, inView } = useReveal()
+  const isMobile = useIsMobile()
 
   return (
     <motion.section
@@ -1972,14 +1730,13 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       style={{
-        background: tok.bg,
+        background: tok.bgAlt,
         padding: "clamp(80px, 14vh, 160px) clamp(24px, 6vw, 120px)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      {/* Bottom glow */}
       <div
         style={{
           position: "absolute",
@@ -1988,8 +1745,7 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
           transform: "translateX(-50%)",
           width: 600,
           height: 300,
-          background:
-            "radial-gradient(ellipse, rgba(236,72,153,0.07) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse, rgba(236,72,153,0.07) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -2006,7 +1762,7 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             marginBottom: 16,
           }}
         >
-          Cupo reducido por edición
+          Tu práctica. Tu criterio. Tu siguiente etapa.
         </h2>
         <p
           style={{
@@ -2017,29 +1773,28 @@ function FinalCTA({ dark, onCta }: { dark: boolean; onCta: () => void }) {
             marginBottom: 28,
           }}
         >
-          Nueva sesión en vivo aproximadamente cada 15 días. El registro cierra por fecha límite y por lugares
-          disponibles: si esta edición se llena, pasás a la lista de la siguiente.
+          Empieza con MotusDAO Academy.
         </p>
-        <p
+        <div
           style={{
-            fontFamily: "var(--font-inter)",
-            fontSize: 14,
-            color: tok.t3,
-            lineHeight: 1.5,
-            marginBottom: 28,
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: 12,
+            justifyContent: "center",
+            alignItems: "stretch",
           }}
         >
-          Dejá nombre y correo arriba para asegurar tu lugar gratis en la próxima masterclass.
-        </p>
-        <div onClick={onCta}>
-          <GradientButton>Reservar mi lugar gratis</GradientButton>
+          <GradientButton href="/diagnostico" onClick={onDiagnostico} full={isMobile}>
+            Descubrir mi perfil
+          </GradientButton>
+          <GradientButton onClick={onReservar} variant="outline" dark={dark} full={isMobile}>
+            Reservar mi lugar gratis
+          </GradientButton>
         </div>
       </div>
     </motion.section>
   )
 }
-
-// ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
@@ -2047,7 +1802,7 @@ function Footer({ dark }: { dark: boolean }) {
   return (
     <footer
       style={{
-        background: tok.bgAlt,
+        background: tok.bg,
         borderTop: `1px solid ${tok.cardBorder}`,
         padding: "24px clamp(24px, 6vw, 120px)",
         display: "flex",
@@ -2058,40 +1813,80 @@ function Footer({ dark }: { dark: boolean }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <img
-          src="/logo.svg"
-          alt="MotusDAO logo"
-          style={{ width: 20, height: 20, borderRadius: 6, objectFit: "cover" }}
-        />
-        <span
-          style={{
-            fontFamily: "var(--font-jura)",
-            fontWeight: 700,
-            fontSize: 14,
-            color: tok.t3,
-          }}
-        >
-          MotusDAO
+        <img src="/logo.svg" alt="MotusDAO logo" style={{ width: 20, height: 20, borderRadius: 6, objectFit: "cover" }} />
+        <span style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 14, color: tok.t3 }}>
+          MotusDAO Academy · Formación · Comunidad · Práctica Digital
         </span>
       </div>
-      <span
-        style={{
-          fontFamily: "var(--font-inter)",
-          fontSize: 13,
-          color: tok.t3,
-        }}
-      >
-        © 2026 · Todos los derechos reservados
+      <span style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3 }}>
+        © 2026 MotusDAO · Todos los derechos reservados
       </span>
     </footer>
   )
 }
 
-// ─── Root ─────────────────────────────────────────────────────────────────────
+function StickyConversionBar({
+  masterclassInView,
+  onDiagnostico,
+  onReservar,
+}: {
+  masterclassInView: boolean
+  onDiagnostico: () => void
+  onReservar: () => void
+}) {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/25 bg-black/35 shadow-[0_-8px_30px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(70deg, rgba(236,72,153,0.65) 0%, rgba(147,51,234,0.72) 33%, rgba(99,102,241,0.62) 66%, rgba(236,72,153,0.65) 100%)",
+          backgroundSize: "200% 100%",
+          animation: "fd-moving-banner 20s linear infinite",
+          filter: "saturate(1.4)",
+          opacity: 0.75,
+        }}
+      />
+      <style>
+        {`@keyframes fd-moving-banner {
+            from { background-position: 0% 0; }
+            to { background-position: 100% 0; }
+          }`}
+      </style>
+      <div className="relative flex flex-wrap items-center justify-center gap-2 px-12 py-2 sm:gap-3">
+        <span className="text-center text-xs text-white sm:text-sm">
+          {masterclassInView
+            ? "Masterclass gratuita en vivo · 90 min · grupo reducido"
+            : "¿Qué tipo de psicólogo digital eres?"}
+        </span>
+        {masterclassInView ? (
+          <button
+            type="button"
+            onClick={onReservar}
+            className="rounded-md border border-white/30 bg-white/10 px-2 py-1 text-xs font-semibold text-white hover:bg-white/20"
+          >
+            Reservar mi lugar
+          </button>
+        ) : (
+          <Link
+            href="/diagnostico"
+            onClick={onDiagnostico}
+            className="rounded-md border border-white/30 bg-white/10 px-2 py-1 text-xs font-semibold text-white hover:bg-white/20"
+          >
+            Descubrir mi perfil
+          </Link>
+        )}
+      </div>
+    </div>
+  )
+}
 
-export default function Home() {
+function Landing() {
+  const searchParams = useSearchParams()
+  const claseFirst = searchParams.get("intent") === "clase"
   const [dark, setDark] = useState(true)
   const [sessionId, setSessionId] = useState<string>("")
+  const [masterclassInView, setMasterclassInView] = useState(false)
   const trackEvent = useMutation(api.leads.trackEvent)
 
   const onTrack = (eventName: FunnelEventName, payload: Record<string, string> = {}) => {
@@ -2115,33 +1910,40 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const id = getOrCreateSessionId()
-    setSessionId(id)
+    setSessionId(getOrCreateSessionId())
   }, [])
 
   useEffect(() => {
     if (!sessionId) return
-    onTrack("page_view", { section: "landing" })
+    onTrack("page_view", { section: "landing", intent: claseFirst ? "clase" : "perfil" })
   }, [sessionId])
 
-  const handlePrimaryCta = () => {
-    onTrack("cta_click", {
-      section: "global",
-      ctaLabel: "Reservar mi lugar gratis",
-      intent: "lead",
-    })
-    scrollToId("registro-principal", "registro-principal-nombre")
+  useEffect(() => {
+    if (window.location.hash === "#masterclass") {
+      const timer = window.setTimeout(() => {
+        scrollToId("registro-principal", "registro-principal-nombre")
+      }, 200)
+      return () => window.clearTimeout(timer)
+    }
+  }, [])
+
+  useEffect(() => {
+    const el = document.getElementById("masterclass")
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setMasterclassInView(entry.isIntersecting),
+      { threshold: 0.28, rootMargin: "-72px 0px -30% 0px" }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  const handleDiagnostico = (section: string) => {
+    onTrack("cta_click", { section, ctaLabel: "Descubrir mi perfil", intent: "lead" })
   }
-  const handleMidCta = () => {
-    onTrack("cta_click", { section: "mid_funnel", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
-    scrollToId("registro-principal", "registro-principal-nombre")
-  }
-  const handleCommunityCta = () => {
-    onTrack("cta_click", { section: "community", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
-    scrollToId("registro-principal", "registro-principal-nombre")
-  }
-  const handleFinalRegisterCta = () => {
-    onTrack("cta_click", { section: "final", ctaLabel: "Reservar mi lugar gratis", intent: "lead" })
+
+  const handleReservar = (section: string) => {
+    onTrack("cta_click", { section, ctaLabel: "Reservar mi lugar", intent: "lead" })
     scrollToId("registro-principal", "registro-principal-nombre")
   }
 
@@ -2155,51 +1957,44 @@ export default function Home() {
       }}
     >
       <GlassFilter />
-      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onCta={handlePrimaryCta} />
-      <Hero dark={dark} onPrimaryCta={handlePrimaryCta} sessionId={sessionId} onTrack={onTrack} />
-      <TrustBar dark={dark} />
-      <WhatYouLearnSection dark={dark} />
-      <ExperienceFormatSection dark={dark} />
-      <PsychologistCommunitySection dark={dark} onCta={handleCommunityCta} />
-      <CommunityGallerySection dark={dark} />
+      <Nav dark={dark} onToggle={() => setDark((d) => !d)} onDiagnostico={() => handleDiagnostico("nav")} />
+      <Hero
+        dark={dark}
+        claseFirst={claseFirst}
+        onPrimaryCta={() => handleDiagnostico("hero")}
+        onReservar={() => handleReservar("hero")}
+      />
+      <AcademyIntroSection dark={dark} />
+      <DiagnosticSection dark={dark} onDiagnostico={() => handleDiagnostico("diagnostico")} />
+      <MasterclassSection dark={dark} sessionId={sessionId} onTrack={onTrack} />
+      <CommunityPathSection dark={dark} onReservar={() => handleReservar("community")} />
+      <EcosystemGallerySection dark={dark} />
       <AudienceFitSection dark={dark} />
-      <MidCtaBand dark={dark} onCta={handleMidCta} />
-      <InstructorBlock dark={dark} />
-      <TrustSignalsSection dark={dark} />
+      <DualStartBand
+        dark={dark}
+        onDiagnostico={() => handleDiagnostico("mid_funnel")}
+        onReservar={() => handleReservar("mid_funnel")}
+      />
       <ObjectionFaq dark={dark} />
-      <FinalCTA dark={dark} onCta={handleFinalRegisterCta} />
-      <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/25 bg-black/35 shadow-[0_-8px_30px_rgba(0,0,0,0.22)] backdrop-blur-xl">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(70deg, rgba(236,72,153,0.65) 0%, rgba(147,51,234,0.72) 33%, rgba(99,102,241,0.62) 66%, rgba(236,72,153,0.65) 100%)",
-            backgroundSize: "200% 100%",
-            animation: "fd-moving-banner 20s linear infinite",
-            filter: "saturate(1.4)",
-            opacity: 0.75,
-          }}
-        />
-        <style>
-          {`@keyframes fd-moving-banner {
-            from { background-position: 0% 0; }
-            to { background-position: 100% 0; }
-          }`}
-        </style>
-        <div className="relative flex flex-wrap items-center justify-center gap-2 px-12 py-2 sm:gap-3">
-          <span className="text-center text-xs text-white sm:text-sm">
-            Masterclass gratuita en vivo · grupo reducido · registro con cupo
-          </span>
-          <button
-            type="button"
-            onClick={handlePrimaryCta}
-            className="rounded-md border border-white/30 bg-white/10 px-2 py-1 text-xs font-semibold text-white hover:bg-white/20"
-          >
-            Reservar gratis
-          </button>
-        </div>
-      </div>
+      <FinalCTA
+        dark={dark}
+        onDiagnostico={() => handleDiagnostico("final")}
+        onReservar={() => handleReservar("final")}
+      />
+      <StickyConversionBar
+        masterclassInView={masterclassInView}
+        onDiagnostico={() => handleDiagnostico("sticky")}
+        onReservar={() => handleReservar("sticky")}
+      />
       <Footer dark={dark} />
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: T.dark.bg }} />}>
+      <Landing />
+    </Suspense>
   )
 }

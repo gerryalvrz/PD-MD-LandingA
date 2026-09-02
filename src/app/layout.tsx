@@ -19,9 +19,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Técnica Avanzada en Psicoterapia — MotusDAO",
+  title: "MotusDAO Academy — Formación, comunidad y práctica digital",
   description:
-    "El programa que integra análisis clínico avanzado e inteligencia artificial para psicólogos que lideran la psicología digital.",
+    "Espacio de formación y comunidad para psicólogos que quieren desarrollar su práctica en entornos digitales. Descubre tu perfil o reserva la masterclass gratuita en vivo.",
   openGraph: {
     images: ["/MAsterclass3.avif"],
   },
