@@ -448,7 +448,7 @@ function Hero({
               </div>
               <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
                 <GradientButton href="/diagnostico" onClick={onDiagnostico} full={isMobile} variant="outline" dark={dark}>
-                  Haz el diagnóstico
+                  Evaluar mi práctica
                 </GradientButton>
               </div>
             </motion.div>
@@ -607,7 +607,7 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
       >
         <motion.div variants={fadeUp}>
           <SectionLabel>Empieza donde estás</SectionLabel>
-          <SectionHeading tok={tok}>Diagnóstico de Práctica Digital</SectionHeading>
+          <SectionHeading tok={tok}>¿Qué puedes fortalecer en tu práctica digital?</SectionHeading>
           <p
             style={{
               marginTop: 12,
@@ -618,11 +618,11 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
               marginBottom: 22,
             }}
           >
-            Responde unas preguntas y recibe una orientación inicial sobre las áreas de tu práctica digital que podrías
-            revisar y desarrollar.
+            El Practice Index es una autoevaluación orientativa: diez preguntas sobre prácticas concretas, un foco de
+            trabajo y tres acciones. Sin registro y sin puntaje global.
           </p>
           <GradientButton href="/diagnostico" onClick={onDiagnostico}>
-            Hacer diagnóstico
+            Evaluar mi práctica
           </GradientButton>
           <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 12, lineHeight: 1.5 }}>
             Orientativo · No es diagnóstico clínico ni certificación profesional.
@@ -765,7 +765,7 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
     { q: "¿Membresía y pase son lo mismo?", a: "Son productos distintos. La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte." },
     { q: "¿Los talleres y la supervisión están incluidos?", a: "Se contratan aparte en Praxis: taller USD 15 y supervisión USD 50 por sesión. Los cursos tienen precios propios." },
     { q: "¿Puedo entrar directamente al Portal?", a: "La vía profesional directa es por invitación y requiere revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año." },
-    { q: "¿Tengo que hacer el diagnóstico para incorporarme?", a: "No. Es una orientación gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal." },
+    { q: "¿Tengo que hacer el diagnóstico para incorporarme?", a: "No. El Practice Index es una orientación gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal." },
     { q: "¿La ruta certifica o garantiza pacientes?", a: "La formación y la revisión interna no sustituyen tu autorización profesional ni garantizan asignación de pacientes." },
   ]
 
@@ -950,7 +950,7 @@ export default function Home() {
   }, [onTrack])
 
   const handleDiagnostico = (section: string) => {
-    onTrack("cta_click", { section, ctaLabel: "Haz el diagnóstico", intent: "lead" })
+    onTrack("cta_click", { section, ctaLabel: "Evaluar mi práctica", intent: "lead" })
   }
 
   const handleMembership = (section: string) => {
