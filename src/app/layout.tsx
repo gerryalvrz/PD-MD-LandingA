@@ -19,9 +19,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "MotusDAO Academy — Formación, comunidad y práctica digital",
+  title: "MotusDAO — Membresía y ruta profesional para psicólogos",
   description:
-    "Espacio de formación y comunidad para psicólogos que quieren desarrollar su práctica en entornos digitales. Descubre tu perfil o reserva la masterclass gratuita en vivo.",
+    "Recursos, formación y comunidad para tu práctica digital. Conoce la membresía desde USD 20/mes y la ruta de cinco bloques hacia el Portal Clínico de MotusDAO.",
   openGraph: {
     images: ["/MAsterclass3.avif"],
   },
