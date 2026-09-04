@@ -9,6 +9,7 @@ import { api } from "../../convex/_generated/api"
 import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { getOrCreateSessionId, getStoredLeadContext, type FunnelEventName } from "@/lib/funnel-session"
+import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
 import { GRAD, T, type Tok } from "@/lib/landing-theme"
 
 const fadeUp = {
@@ -698,7 +699,8 @@ function JourneySection({ dark }: { dark: boolean }) {
   )
 }
 
-function MembershipSection({ dark }: { dark: boolean }) {
+function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (plan: MembershipPlan | "invitation") => void }) {
+  const [plan, setPlan] = useState<MembershipPlan>("monthly")
   const tok = dark ? T.dark : T.light
   const cardStyle: React.CSSProperties = { border: `1px solid ${tok.cardBorder}`, borderRadius: 20, padding: "clamp(22px, 3vw, 36px)", background: tok.card }
   const bodyStyle: React.CSSProperties = { fontFamily: "var(--font-inter)", color: tok.t2, fontSize: 15, lineHeight: 1.65 }
@@ -719,6 +721,19 @@ function MembershipSection({ dark }: { dark: boolean }) {
               <li>Actividades de formación continua e introducción a PsyChat.</li>
               <li>Comunidad de práctica, recordatorios y encuentros según calendario.</li>
             </ul>
+            <fieldset style={{ margin: "24px 0 18px", padding: 0, border: 0 }}>
+              <legend style={{ ...bodyStyle, marginBottom: 10, color: tok.t1 }}>Elige tu plan</legend>
+              <div style={{ display: "grid", gap: 10 }}>
+                {(["monthly", "annual"] as const).map((value) => (
+                  <label key={value} style={{ ...bodyStyle, display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 10, cursor: "pointer", border: `1px solid ${plan === value ? "#a855f7" : tok.cardBorder}`, color: tok.t1 }}>
+                    <input type="radio" name="membership-plan" value={value} checked={plan === value} onChange={() => setPlan(value)} />
+                    {value === "monthly" ? "Mensual · USD 20/mes" : "Anual fundador · USD 120/año"}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <GradientButton full href={membershipUrl(plan)} onClick={() => onContinue(plan)}>Continuar a Fundamentos</GradientButton>
+            <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>Acceso gratuito durante la revisión de contenido. Tu elección no genera un cobro ni activa una suscripción.</p>
             <div style={{ borderTop: `1px solid ${tok.cardBorder}`, marginTop: 24, paddingTop: 20 }}>
               <p style={{ ...bodyStyle, margin: 0 }}><strong style={{ color: tok.t1 }}>Al continuar hacia el Portal</strong><br />El Pase Motus Beta comunitario se contrata aparte, tras la revisión de requisitos: USD 29/mes o USD 290/año.</p>
             </div>
@@ -730,6 +745,9 @@ function MembershipSection({ dark }: { dark: boolean }) {
             <p style={bodyStyle}>o <strong style={{ color: tok.t1 }}>USD 790/año beta</strong></p>
             <p style={{ ...bodyStyle, marginTop: 20 }}>Para profesionales invitados que ingresan mediante revisión y onboarding. Incluye el Portal Clínico durante la beta, según aprobación y permisos.</p>
             <p style={{ ...bodyStyle, marginTop: 16 }}>La invitación es necesaria para acceder a esta vía.</p>
+            <p style={{ ...bodyStyle, margin: "16px 0" }}>Contacta al equipo para conocer los requisitos de revisión y onboarding. Enviar una consulta no concede acceso al pase.</p>
+            <GradientButton full variant="outline" dark={dark} href={INVITATION_CONTACT_URL} onClick={() => onContinue("invitation")}>Consultar sobre la invitación</GradientButton>
+            <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>Se abrirá tu aplicación de correo. También puedes escribir a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.</p>
           </article>
         </div>
         <p style={{ ...bodyStyle, marginTop: 20 }}>Praxis se contrata aparte: taller USD 15 y supervisión USD 50 por sesión. Cada curso tiene su propio precio.</p>
@@ -955,7 +973,7 @@ export default function Home() {
         <TrustBar dark={dark} />
         <BenefitsSection dark={dark} />
         <JourneySection dark={dark} />
-        <MembershipSection dark={dark} />
+        <MembershipSection dark={dark} onContinue={(plan) => onTrack("cta_click", { section: "membresia", ctaLabel: plan === "invitation" ? "Consultar sobre la invitación" : "Continuar a Fundamentos", intent: "lead", plan, action: plan === "invitation" ? "invitation_contact_click" : "membership_review_continue" })} />
         <DigitalPracticeDiagnosticSection dark={dark} onDiagnostico={() => handleDiagnostico("diagnostico")} />
         <ObjectionFaq dark={dark} />
         <FinalCTA dark={dark} onMembership={() => handleMembership("final")} />
