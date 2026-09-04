@@ -10,6 +10,7 @@ import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackgr
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { getOrCreateSessionId, getStoredLeadContext, type FunnelEventName } from "@/lib/funnel-session"
 import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
+import { AppExperience } from "@/components/landing/AppExperience"
 import { GRAD, T, type Tok } from "@/lib/landing-theme"
 
 const fadeUp = {
@@ -972,6 +973,7 @@ export default function Home() {
         <Hero dark={dark} onConoce={() => handleMembership("hero")} onDiagnostico={() => handleDiagnostico("hero")} />
         <TrustBar dark={dark} />
         <BenefitsSection dark={dark} />
+        <AppExperience dark={dark} onExplore={(feature) => onTrack("cta_click", { section: "experiencia", ctaLabel: feature, action: "app_feature_explore" })} />
         <JourneySection dark={dark} />
         <MembershipSection dark={dark} onContinue={(plan) => onTrack("cta_click", { section: "membresia", ctaLabel: plan === "invitation" ? "Consultar sobre la invitación" : "Continuar a Fundamentos", intent: "lead", plan, action: plan === "invitation" ? "invitation_contact_click" : "membership_review_continue" })} />
         <DigitalPracticeDiagnosticSection dark={dark} onDiagnostico={() => handleDiagnostico("diagnostico")} />
