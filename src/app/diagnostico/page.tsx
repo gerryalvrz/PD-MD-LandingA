@@ -28,6 +28,7 @@ import {
   getStoredLeadContext,
   type FunnelEventName,
 } from "@/lib/funnel-session"
+import { isShareReferral } from "@/lib/share-card"
 
 const tok = T.dark
 
@@ -121,7 +122,10 @@ export default function DiagnosticoPage() {
 
   useEffect(() => {
     if (!sessionId) return
-    onTrack("page_view", { section: "diagnostico" })
+    onTrack("page_view", {
+      section: "diagnostico",
+      src: isShareReferral(window.location.search) ? "share" : "direct",
+    })
   }, [sessionId])
 
   function begin() {

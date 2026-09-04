@@ -11,6 +11,8 @@ import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { getOrCreateSessionId, getStoredLeadContext, type FunnelEventName } from "@/lib/funnel-session"
 import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
 import { LANDING_ASSESSMENT, LANDING_ASSESSMENT_COPY, landingAssessmentPath } from "@/lib/active-assessment"
+import { genericShareDraft } from "@/lib/share-card"
+import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { GRAD, T, type Tok } from "@/lib/landing-theme"
 
@@ -621,9 +623,12 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
           >
             {LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].lede}
           </p>
-          <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico}>
-            Evaluar mi práctica
-          </GradientButton>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+            <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico}>
+              Evaluar mi práctica
+            </GradientButton>
+            <ShareInviteButton draft={genericShareDraft(landingAssessmentPath())} label="Invitar a un colega" full={false} />
+          </div>
           <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 12, lineHeight: 1.5 }}>
             Orientativo · No es diagnóstico clínico ni certificación profesional.
           </p>

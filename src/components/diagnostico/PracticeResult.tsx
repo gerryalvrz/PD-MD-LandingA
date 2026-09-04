@@ -9,6 +9,8 @@ import {
   type PriorityMode,
   type QuestionId,
 } from "@/lib/practice-index"
+import { ShareInviteButton } from "@/components/share/ShareModal"
+import { practiceShareDraft } from "@/lib/share-card"
 import styles from "./PracticeResult.module.css"
 
 const LEVEL_LABEL: Record<0 | 1 | 2 | 3 | 4, string> = {
@@ -261,6 +263,8 @@ export function PracticeResultView({
         No hay un puntaje total de 0 a 100: cada área se lee sola. Recargar la página borra este intento. Nada de esto se
         envía al servidor por defecto.
       </p>
+
+      <ShareInviteButton draft={practiceShareDraft(result)} />
 
       <button type="button" className={styles.restart} onClick={onRestart}>
         Empezar de nuevo

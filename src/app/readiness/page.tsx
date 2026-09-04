@@ -25,6 +25,7 @@ import {
   getStoredLeadContext,
   type FunnelEventName,
 } from "@/lib/funnel-session"
+import { isShareReferral } from "@/lib/share-card"
 
 const tok = T.dark
 
@@ -117,7 +118,10 @@ export default function ReadinessPage() {
 
   useEffect(() => {
     if (!sessionId) return
-    onTrack("page_view", { section: "readiness" })
+    onTrack("page_view", {
+      section: "readiness",
+      src: isShareReferral(window.location.search) ? "share" : "direct",
+    })
   }, [sessionId])
 
   function begin() {

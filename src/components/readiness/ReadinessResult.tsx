@@ -1,6 +1,8 @@
 "use client"
 
 import type { ReadinessId, ReadinessResult } from "@/lib/readiness-index"
+import { ShareInviteButton } from "@/components/share/ShareModal"
+import { readinessShareDraft } from "@/lib/share-card"
 import styles from "./ReadinessResult.module.css"
 
 const BAND_CLASS: Record<ReadinessResult["band"]["id"], string> = {
@@ -150,6 +152,8 @@ export function ReadinessResultView({
         habilitación para el Portal. Recargar la página borra este intento. Nada de esto se envía al servidor por
         defecto.
       </p>
+
+      <ShareInviteButton draft={readinessShareDraft(result)} />
 
       <button type="button" className={styles.restart} onClick={onRestart}>
         Empezar de nuevo
