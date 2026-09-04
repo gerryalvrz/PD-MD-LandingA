@@ -2,9 +2,9 @@ import type { Metadata } from "next"
 import type { ReactNode } from "react"
 
 export const metadata: Metadata = {
-  title: "¿Qué tipo de psicólogo digital eres? — MotusDAO Academy",
+  title: "Diagnóstico de Práctica Digital — MotusDAO Academy",
   description:
-    "Diagnóstico básico y orientativo de tu práctica digital. Seis preguntas, resultado inmediato y un siguiente paso dentro de MotusDAO Academy.",
+    "Orientación inicial sobre las áreas de tu práctica digital que podrías revisar y desarrollar. No es un diagnóstico clínico ni una certificación profesional.",
 }
 
 export default function DiagnosticoLayout({ children }: { children: ReactNode }) {

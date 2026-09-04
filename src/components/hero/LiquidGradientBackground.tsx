@@ -587,68 +587,44 @@ export function LiquidGradientBackground({ dark, showControls = true }: LiquidGr
       />
 
       {showControls && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: isMobile ? 62 : 94,
-            right: 16,
-            zIndex: 8,
-            display: "flex",
-            gap: 6,
-            flexWrap: "wrap",
-            justifyContent: "flex-end",
-            pointerEvents: "auto",
-            width: "min(320px, calc(100% - 16px))",
-          }}
-        >
-          {[1, 2, 3, 4, 5].map((id) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => handleSetScheme(id)}
-              style={{
-                minWidth: 34,
-                height: 30,
-                borderRadius: 14,
-                border: "1px solid rgba(255,255,255,0.35)",
-                background: activeScheme === id ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
-                color: "#fff",
-                fontSize: 11,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              {id}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {showControls && (
         <button
           type="button"
           onClick={() => setIsPanelOpen((v) => !v)}
+          aria-label={isPanelOpen ? "Cerrar colores del fondo" : "Colores del fondo"}
+          aria-expanded={isPanelOpen}
           style={{
             position: "absolute",
-            bottom: isMobile ? 20 : 48,
+            top: "max(88px, calc(env(safe-area-inset-top, 0px) + 76px))",
             right: 16,
-            zIndex: 8,
-            border: "1px solid rgba(255,255,255,0.35)",
-            background: "rgba(255,255,255,0.12)",
-            color: "#fff",
-            borderRadius: 8,
-            padding: "7px 10px",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
+            zIndex: 20,
+            width: 40,
+            height: 40,
+            padding: 0,
+            borderRadius: 12,
+            border: "1px solid rgba(255,255,255,0.45)",
+            background: "rgba(14,10,26,0.78)",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
             cursor: "pointer",
             pointerEvents: "auto",
-            width: "fit-content",
-            maxWidth: "calc(100% - 24px)",
+            display: "grid",
+            gridTemplateColumns: "10px 10px",
+            gridTemplateRows: "10px 10px",
+            gap: 3,
+            placeContent: "center",
           }}
         >
-          {isPanelOpen ? "Cerrar adjuster" : "Adjust colors"}
+          {colorHexes.slice(0, 4).map((hex, idx) => (
+            <span
+              key={`${hex}-${idx}`}
+              aria-hidden
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: 3,
+                background: hex === "#000000" ? "#7C3AED" : hex,
+              }}
+            />
+          ))}
         </button>
       )}
 
@@ -656,51 +632,64 @@ export function LiquidGradientBackground({ dark, showControls = true }: LiquidGr
         <div
           style={{
             position: isMobile ? "fixed" : "absolute",
-            bottom: isMobile ? "auto" : 104,
-            top: "auto",
-            right: 16,
-            zIndex: isMobile ? 40 : 9,
-            width: "min(360px, calc(100% - 16px))",
-            maxHeight: "min(70vh, 520px)",
+            zIndex: isMobile ? 40 : 21,
+            width: "min(320px, calc(100% - 24px))",
+            maxHeight: "min(62vh, 480px)",
             overflowY: "auto",
-            borderRadius: 16,
-            border: "1px solid rgba(255,255,255,0.26)",
-            background: "rgba(255,255,255,0.10)",
+            borderRadius: 14,
+            border: "1px solid rgba(255,255,255,0.18)",
+            background: "rgba(14,10,26,0.88)",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
-            padding: 16,
+            padding: 14,
             pointerEvents: "auto",
             ...(isMobile
               ? {
                   top: "auto",
-                  bottom: "calc(env(safe-area-inset-bottom, 0px) + 56px)",
+                  bottom: "calc(env(safe-area-inset-bottom, 0px) + 72px)",
+                  right: 12,
                 }
-              : {}),
+              : {
+                  top: "max(136px, calc(env(safe-area-inset-top, 0px) + 124px))",
+                  bottom: "auto",
+                  right: 16,
+                }),
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <h3 style={{ margin: 0, color: "#fff", fontSize: 16, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              Color Adjuster
-            </h3>
-            <button
-              type="button"
-              onClick={() => setIsPanelOpen(false)}
-              style={{ background: "transparent", border: "none", color: "#fff", fontSize: 24, cursor: "pointer" }}
-            >
-              x
-            </button>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+            {[1, 2, 3, 4, 5].map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => handleSetScheme(id)}
+                aria-label={`Esquema ${id}`}
+                style={{
+                  minWidth: 28,
+                  height: 26,
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  background: activeScheme === id ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.08)",
+                  color: "rgba(255,255,255,0.86)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                {id}
+              </button>
+            ))}
           </div>
-          <div style={{ display: "grid", gap: 10 }}>
+          <div style={{ display: "grid", gap: 8 }}>
             {colorHexes.map((hex, idx) => (
-              <div key={`color-${idx + 1}`} style={{ display: "grid", gridTemplateColumns: "56px 1fr auto", gap: 8 }}>
+              <div key={`color-${idx + 1}`} style={{ display: "grid", gridTemplateColumns: "44px 1fr auto", gap: 8 }}>
                 <input
                   type="color"
                   value={hex}
                   onChange={(e) => handleColorChange(idx, e.target.value)}
                   style={{
-                    width: 56,
-                    height: 36,
-                    border: "1px solid rgba(255,255,255,0.35)",
+                    width: 44,
+                    height: 32,
+                    border: "1px solid rgba(255,255,255,0.25)",
                     borderRadius: 8,
                     background: "transparent",
                     padding: 0,
@@ -713,11 +702,12 @@ export function LiquidGradientBackground({ dark, showControls = true }: LiquidGr
                   value={hex}
                   style={{
                     width: "100%",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    border: "1px solid rgba(255,255,255,0.14)",
                     borderRadius: 8,
-                    background: "rgba(0,0,0,0.25)",
-                    color: "#fff",
-                    padding: "8px 10px",
+                    background: "rgba(0,0,0,0.28)",
+                    color: "rgba(255,255,255,0.82)",
+                    padding: "6px 8px",
+                    fontSize: 12,
                     fontWeight: 600,
                   }}
                 />
@@ -725,16 +715,17 @@ export function LiquidGradientBackground({ dark, showControls = true }: LiquidGr
                   type="button"
                   onClick={() => void handleCopy(hex)}
                   style={{
-                    border: "1px solid rgba(255,255,255,0.35)",
+                    border: "1px solid rgba(255,255,255,0.22)",
                     borderRadius: 8,
-                    background: "rgba(255,255,255,0.14)",
-                    color: "#fff",
+                    background: "rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.82)",
                     fontWeight: 600,
-                    padding: "0 10px",
+                    fontSize: 11,
+                    padding: "0 8px",
                     cursor: "pointer",
                   }}
                 >
-                  Copy
+                  Copiar
                 </button>
               </div>
             ))}

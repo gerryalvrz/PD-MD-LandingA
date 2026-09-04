@@ -8,12 +8,7 @@ import { api } from "../../../convex/_generated/api"
 import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { GRAD, T } from "@/lib/landing-theme"
-import {
-  DIGITAL_PROFILES,
-  QUIZ_QUESTIONS,
-  resolveProfile,
-  type ProfileId,
-} from "@/lib/digital-profiles"
+import { QUIZ_QUESTIONS, resolveProfile, type ProfileId } from "@/lib/digital-profiles"
 import {
   getOrCreateSessionId,
   getStoredLeadContext,
@@ -118,7 +113,7 @@ export default function DiagnosticoPage() {
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <img src="/logo.svg" alt="MotusDAO" style={{ width: 28, height: 28, borderRadius: 8 }} />
           <span style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1 }}>
-            MotusDAO Academy
+            Diagnóstico de Práctica Digital
           </span>
         </Link>
         <Link
@@ -227,7 +222,7 @@ export default function DiagnosticoPage() {
                 marginBottom: 12,
               }}
             >
-              Tu perfil
+              Orientación inicial
             </p>
             <GlassEffect
               className="rounded-2xl"
@@ -267,16 +262,17 @@ export default function DiagnosticoPage() {
                 margin: "20px 0 22px",
               }}
             >
-              Este resultado es orientativo: no es un diagnóstico clínico ni una evaluación de licencia. El siguiente
-              paso concreto es la masterclass en vivo, la entrada a la comunidad profesional.
+              Este resultado es orientativo: no es un diagnóstico clínico, certificación ni evaluación de licencia
+              profesional. Te señala áreas de tu práctica digital que podrías revisar. El diagnóstico es entrada de
+              orientación; Academia es la capa de formación, y no sustituye comunidad, supervisión ni validación.
             </p>
 
-            <a
-              href="/?intent=clase#masterclass"
+            <Link
+              href="/#academia"
               onClick={() =>
                 onTrack("cta_click", {
                   section: "diagnostico_result",
-                  ctaLabel: "Reservar mi lugar",
+                  ctaLabel: "Conoce MotusDAO Academy",
                   intent: "lead",
                   profile: profile.id,
                 })
@@ -295,8 +291,8 @@ export default function DiagnosticoPage() {
                 marginBottom: 12,
               }}
             >
-              Reservar mi lugar gratis
-            </a>
+              Conoce MotusDAO Academy
+            </Link>
             <p
               style={{
                 fontFamily: "var(--font-inter)",
@@ -306,7 +302,7 @@ export default function DiagnosticoPage() {
                 marginBottom: 18,
               }}
             >
-              En vivo · 90 min · Grupo reducido
+              Orientativo · Gratis · Para psicólogos
             </p>
 
             <button
@@ -330,7 +326,7 @@ export default function DiagnosticoPage() {
             </button>
 
             <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, color: tok.t3, marginTop: 24, lineHeight: 1.5 }}>
-              Los cinco perfiles de Motus: {DIGITAL_PROFILES.map((item) => item.name).join(" · ")}.
+              Orientación de práctica digital. No implica certificación ni acceso automático a otras capas de Motus.
             </p>
           </motion.div>
         ) : null}
