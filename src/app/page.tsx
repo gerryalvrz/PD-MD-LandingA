@@ -10,6 +10,7 @@ import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackgr
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { getOrCreateSessionId, getStoredLeadContext, type FunnelEventName } from "@/lib/funnel-session"
 import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
+import { LANDING_ASSESSMENT, LANDING_ASSESSMENT_COPY, landingAssessmentPath } from "@/lib/active-assessment"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { GRAD, T, type Tok } from "@/lib/landing-theme"
 
@@ -447,7 +448,7 @@ function Hero({
                 </GradientButton>
               </div>
               <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
-                <GradientButton href="/diagnostico" onClick={onDiagnostico} full={isMobile} variant="outline" dark={dark}>
+                <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico} full={isMobile} variant="outline" dark={dark}>
                   Evaluar mi práctica
                 </GradientButton>
               </div>
@@ -607,7 +608,7 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
       >
         <motion.div variants={fadeUp}>
           <SectionLabel>Empieza donde estás</SectionLabel>
-          <SectionHeading tok={tok}>¿Qué puedes fortalecer en tu práctica digital?</SectionHeading>
+          <SectionHeading tok={tok}>{LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].heading}</SectionHeading>
           <p
             style={{
               marginTop: 12,
@@ -618,10 +619,9 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
               marginBottom: 22,
             }}
           >
-            El Practice Index es una autoevaluación orientativa: diez preguntas sobre prácticas concretas, un foco de
-            trabajo y tres acciones. Sin registro y sin puntaje global.
+            {LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].lede}
           </p>
-          <GradientButton href="/diagnostico" onClick={onDiagnostico}>
+          <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico}>
             Evaluar mi práctica
           </GradientButton>
           <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 12, lineHeight: 1.5 }}>
@@ -765,7 +765,7 @@ function ObjectionFaq({ dark }: { dark: boolean }) {
     { q: "¿Membresía y pase son lo mismo?", a: "Son productos distintos. La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte." },
     { q: "¿Los talleres y la supervisión están incluidos?", a: "Se contratan aparte en Praxis: taller USD 15 y supervisión USD 50 por sesión. Los cursos tienen precios propios." },
     { q: "¿Puedo entrar directamente al Portal?", a: "La vía profesional directa es por invitación y requiere revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año." },
-    { q: "¿Tengo que hacer el diagnóstico para incorporarme?", a: "No. El Practice Index es una orientación gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal." },
+    { q: "¿Tengo que hacer el diagnóstico para incorporarme?", a: "No. La autoevaluación de práctica digital es gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal." },
     { q: "¿La ruta certifica o garantiza pacientes?", a: "La formación y la revisión interna no sustituyen tu autorización profesional ni garantizan asignación de pacientes." },
   ]
 
