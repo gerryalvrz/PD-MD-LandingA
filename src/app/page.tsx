@@ -14,7 +14,10 @@ import { LANDING_ASSESSMENT, LANDING_ASSESSMENT_COPY, landingAssessmentPath } fr
 import { genericShareDraft } from "@/lib/share-card"
 import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
+import { MembershipResources } from "@/components/landing/MembershipResources"
+import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
 import { GRAD, T, type Tok } from "@/lib/landing-theme"
+import { BookOpen, Map, Users } from "lucide-react"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -491,101 +494,55 @@ function Hero({
 
 function TrustBar({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-  const items = ["Recursos para tu práctica", "Formación y comunidad", "Una ruta de cinco bloques"]
+  const iconClass = "h-6 w-6 md:h-7 md:w-7"
 
   return (
-    <motion.section
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.6 }}
+    <section
+      aria-label="Recursos, formación y ruta"
       style={{
         background: tok.bgAlt,
         borderTop: `1px solid ${tok.cardBorder}`,
         borderBottom: `1px solid ${tok.cardBorder}`,
-        padding: "20px clamp(24px, 6vw, 120px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "clamp(20px, 4vw, 56px)",
-        flexWrap: "wrap",
       }}
     >
-      {items.map((item) => (
-        <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#9333EA", flexShrink: 0 }} />
-          <span
-            style={{
-              fontFamily: "var(--font-inter)",
-              fontSize: 13,
-              fontWeight: 500,
-              color: tok.t2,
-              letterSpacing: "0.01em",
-            }}
-          >
-            {item}
-          </span>
-        </div>
-      ))}
-    </motion.section>
+      <ScrollSplitCard
+        imageSrc="/experience/ruta-cinco-bloques.jpg"
+        imageAlt="Ilustración de la ruta de cinco bloques: Génesis, Fundamentos, Praxis, Validación y Portal Clínico"
+        stickyClassName={`${dark ? "bg-[#130D22]" : "bg-[#F0ECF9]"} pb-[84px] md:pb-0`}
+        startLabel="Desliza"
+        endLabel="Empieza con la membresía"
+        startLabelClassName="text-[#A855F7]"
+        endLabelClassName={dark ? "text-white/90" : "text-[#0E0A1A]/90"}
+        cards={[
+          {
+            title: "Recursos para tu práctica",
+            description: "Manual clínico-operativo y biblioteca virtual para estructurar tu consulta digital.",
+            bgColor: "#EDE8F7",
+            textColor: "#0E0A1A",
+            icon: <BookOpen className={iconClass} aria-hidden="true" />,
+          },
+          {
+            title: "Formación y comunidad",
+            description: "Actividades de formación continua y un espacio de práctica con otros profesionales.",
+            bgColor: "#9333EA",
+            textColor: "#ffffff",
+            icon: <Users className={iconClass} aria-hidden="true" />,
+          },
+          {
+            title: "Una ruta de cinco bloques",
+            description: "De Génesis al Portal Clínico, según tus objetivos y requisitos profesionales.",
+            bgColor: "#0E0A1A",
+            textColor: "#ffffff",
+            icon: <Map className={iconClass} aria-hidden="true" />,
+          },
+        ]}
+      />
+    </section>
   )
 }
 
-function BenefitsSection({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-  const { ref, inView } = useReveal()
-  const pillars = [
-    { label: "Manual clínico-operativo", line: "Una referencia para estructurar tu práctica digital." },
-    { label: "Biblioteca virtual", line: "Recursos para consultar y continuar aprendiendo." },
-    { label: "Formación continua", line: "Actividades para desarrollar tu práctica profesional." },
-    { label: "Introducción a PsyChat", line: "Conoce herramientas de apoyo para tu trabajo." },
-    { label: "Comunidad de práctica", line: "Comparte el recorrido con otros profesionales." },
-    { label: "Acompañamiento", line: "Recordatorios de avance y encuentros según calendario." },
-  ]
-
-  return (
-    <section
-      id="beneficios"
-      style={{
-        background: tok.bg,
-        padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
-        scrollMarginTop: 88,
-      }}
-    >
-      <span id="academia" aria-hidden="true" style={{ display: "block", scrollMarginTop: 88 }} />
-      <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "show" : "hidden"} style={{ maxWidth: 920 }}>
-        <motion.div variants={fadeUp} style={{ marginBottom: 28 }}>
-          <SectionLabel>Incluido en tu membresía</SectionLabel>
-          <SectionHeading tok={tok}>Recursos para dar el siguiente paso</SectionHeading>
-          <p
-            style={{
-              marginTop: 12,
-              fontFamily: "var(--font-inter)",
-              fontSize: 15,
-              color: tok.t2,
-              lineHeight: 1.6,
-              maxWidth: 640,
-            }}
-          >
-            La Membresía de Práctica Digital es tu entrada comunitaria al bloque Fundamentos. Reúne recursos, formación y comunidad para organizar tu práctica online. Talleres, supervisión y Pase Motus Beta se contratan aparte.
-          </p>
-        </motion.div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
-            gap: 12,
-          }}
-        >
-          {pillars.map((item) => (
-            <PillarCard key={item.label} label={item.label} line={item.line} tok={tok} />
-          ))}
-        </div>
-      </motion.div>
-    </section>
-  )
+function BenefitsSection({ dark, onExplore }: { dark: boolean; onExplore: (id: string) => void }) {
+  return <MembershipResources dark={dark} onExplore={onExplore} />
 }
 
 function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boolean; onDiagnostico: () => void }) {
@@ -977,7 +934,13 @@ export default function Home() {
       <main>
         <Hero dark={dark} onConoce={() => handleMembership("hero")} onDiagnostico={() => handleDiagnostico("hero")} />
         <TrustBar dark={dark} />
-        <BenefitsSection dark={dark} />
+        <BenefitsSection
+          dark={dark}
+          onExplore={(feature) => {
+            onTrack("cta_click", { section: "beneficios", ctaLabel: feature, action: "resource_preview" })
+            if (!feature.startsWith("filtro-")) onTrack("modal_open", { section: "beneficios", ctaLabel: feature })
+          }}
+        />
         <AppExperience dark={dark} onExplore={(feature) => onTrack("cta_click", { section: "experiencia", ctaLabel: feature, action: "app_feature_explore" })} />
         <JourneySection dark={dark} />
         <MembershipSection dark={dark} onContinue={(plan) => onTrack("cta_click", { section: "membresia", ctaLabel: plan === "invitation" ? "Consultar sobre la invitación" : "Continuar a Fundamentos", intent: "lead", plan, action: plan === "invitation" ? "invitation_contact_click" : "membership_review_continue" })} />
