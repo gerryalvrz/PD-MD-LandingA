@@ -2,6 +2,8 @@
 
 import type { ReadinessId, ReadinessResult } from "@/lib/readiness-index"
 import { ShareInviteButton } from "@/components/share/ShareModal"
+import { PsychologistTypeCard } from "@/components/share/PsychologistTypeCard"
+import { psychologistTypeFromReadiness } from "@/lib/psychologist-types"
 import { readinessShareDraft } from "@/lib/share-card"
 import styles from "./ReadinessResult.module.css"
 
@@ -22,12 +24,14 @@ export function ReadinessResultView({
   onRestart: () => void
 }) {
   const critical = result.flags.some((flag) => flag.severity === "critical")
+  const persona = psychologistTypeFromReadiness(result)
 
   return (
     <article className={styles.wrap}>
-      <p className={styles.eyebrow}>Tu resultado</p>
-      <h1 className={styles.heading}>{result.band.title}</h1>
-      <p className={styles.lede}>{result.band.description}</p>
+      <p className={styles.eyebrow}>Tu tipo</p>
+      {persona ? <PsychologistTypeCard type={persona} /> : null}
+      <h1 className={persona ? "sr-only" : styles.heading}>{persona ? persona.title : result.band.title}</h1>
+      {persona ? null : <p className={styles.lede}>{result.band.description}</p>}
 
       <div className={styles.scoreRow}>
         <div className={styles.scoreCard}>
@@ -44,7 +48,7 @@ export function ReadinessResultView({
           <h3>Qué significa</h3>
           <p>
             Cada área vale hasta 4 puntos. El total no es una certificación ni un dictamen legal. Si hay una alerta, esa
-            alerta manda sobre el color de la banda.
+            alerta manda sobre el color de la banda. El tipo de la tarjeta es una lectura comercial, no un dictamen.
           </p>
         </div>
       </div>

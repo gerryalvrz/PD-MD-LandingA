@@ -1,5 +1,10 @@
 import type { PracticeResult } from "./practice-index"
 import type { ReadinessResult } from "./readiness-index"
+import {
+  psychologistTypeFromPractice,
+  psychologistTypeFromReadiness,
+  type PsychologistTypeId,
+} from "./psychologist-types.ts"
 
 export const SHARE_SOURCE_PARAM = "src"
 export const SHARE_SOURCE_VALUE = "share"
@@ -11,6 +16,8 @@ export type ShareDraft = {
   path: string
   version: string
   redacted: boolean
+  imageSrc?: string
+  typeId?: PsychologistTypeId
 }
 
 const GENERIC_HEADLINE = "Estoy revisando la organización digital de mi práctica."
@@ -63,6 +70,19 @@ export function genericShareDraft(path: string, version = "landing"): ShareDraft
 }
 
 export function practiceShareDraft(result: PracticeResult): ShareDraft {
+  const type = psychologistTypeFromPractice(result)
+  if (type) {
+    return {
+      kicker: type.kicker,
+      headline: `Soy ${type.title}.`,
+      detail: `${type.shareLine} Descubre tu tipo.`,
+      path: "/diagnostico",
+      version: result.version,
+      redacted: false,
+      imageSrc: type.image,
+      typeId: type.id,
+    }
+  }
   const sensitive =
     (result.priority !== null && SENSITIVE_INDEX.has(result.priority.questionId)) ||
     result.unorientedAreas.length > 0
@@ -83,6 +103,19 @@ export function practiceShareDraft(result: PracticeResult): ShareDraft {
 }
 
 export function readinessShareDraft(result: ReadinessResult): ShareDraft {
+  const type = psychologistTypeFromReadiness(result)
+  if (type) {
+    return {
+      kicker: type.kicker,
+      headline: `Soy ${type.title}.`,
+      detail: `${type.shareLine} Descubre tu tipo.`,
+      path: "/readiness",
+      version: result.version,
+      redacted: false,
+      imageSrc: type.image,
+      typeId: type.id,
+    }
+  }
   const flagged = result.flags.some((flag) => flag.severity === "critical" || SENSITIVE_READINESS.has(flag.id))
   const sensitivePriority = result.priority !== null && SENSITIVE_READINESS.has(result.priority.id)
   const publicStep =

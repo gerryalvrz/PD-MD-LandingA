@@ -10,7 +10,9 @@ import {
   type QuestionId,
 } from "@/lib/practice-index"
 import { ShareInviteButton } from "@/components/share/ShareModal"
+import { PsychologistTypeCard } from "@/components/share/PsychologistTypeCard"
 import { practiceShareDraft } from "@/lib/share-card"
+import { psychologistTypeFromPractice } from "@/lib/psychologist-types"
 import styles from "./PracticeResult.module.css"
 
 const LEVEL_LABEL: Record<0 | 1 | 2 | 3 | 4, string> = {
@@ -85,18 +87,22 @@ export function PracticeResultView({
   const focus = result.priority
   const focusLevel = focus ? (focus.level as 0 | 1 | 2 | 3 | 4) : null
   const establishedLevel = result.established ? numericValue(answers[result.established.questionId]) : null
-  const heading = ready ? `Siguiente paso: ${focus!.title}` : "Todavía no hay un foco claro"
   const remaining = Math.max(MIN_NUMERIC_COVERAGE - result.numericCount, 0)
+  const persona = psychologistTypeFromPractice(result)
+  const heading = persona ? persona.title : ready ? `Siguiente paso: ${focus!.title}` : "Todavía no hay un foco claro"
 
   return (
     <article className={styles.wrap}>
-      <p className={styles.eyebrow}>Tu mapa de práctica</p>
-      <h1 className={styles.heading}>{heading}</h1>
+      <p className={styles.eyebrow}>{persona ? "Tu tipo" : "Tu mapa de práctica"}</p>
+      {persona ? <PsychologistTypeCard type={persona} /> : null}
+      <h1 className={persona ? "sr-only" : styles.heading}>{heading}</h1>
+      {persona ? null : (
       <p className={styles.lede}>
         {ready
           ? "No es una calificación ni un diagnóstico. Es el área que tus respuestas marcan para ordenar ahora."
           : `Respondiste ${result.numericCount} de ${QUESTIONS.length} áreas. Se necesitan al menos ${MIN_NUMERIC_COVERAGE} para señalar una prioridad.`}
       </p>
+      )}
 
       <div className={styles.stats}>
         <div className={`${styles.stat} ${styles.statFocus}`}>

@@ -28,25 +28,25 @@ test("share URL only carries an aggregate campaign tag", () => {
   assert.equal(url.includes("R4"), false)
 })
 
-test("readiness share never includes score or a critical AI flag", () => {
+test("readiness share uses the commercial type and omits score", () => {
   const answers = allReadiness("E")
   answers.R4 = "B"
   const result = evaluateReadiness(answers)
   const draft = readinessShareDraft(result)
   const check = assertPublicShareText(draft)
-  assert.equal(draft.redacted, true)
   assert.equal(check.hasScore, false)
   assert.equal(check.hasSensitiveCue, false)
-  assert.match(draft.headline, /organización digital/)
+  assert.match(draft.headline, /Psicólogo|Smart Psychologist/)
+  assert.ok(draft.typeId)
 })
 
-test("safe readiness priority can appear without numbers", () => {
+test("safe readiness type still omits numbers", () => {
   const answers = allReadiness("E")
   answers.R5 = "A"
   const draft = readinessShareDraft(evaluateReadiness(answers))
   assert.equal(draft.redacted, false)
-  assert.match(draft.headline, /presencia profesional/)
   assert.equal(assertPublicShareText(draft).hasScore, false)
+  assert.match(draft.headline, /Soy /)
 })
 
 test("social intent URLs keep the campaign link and omit scores", () => {
@@ -78,18 +78,18 @@ test("social intent URLs keep the campaign link and omit scores", () => {
   assert.equal(facebook.includes(encodeURIComponent(pageUrl)), true)
 })
 
-test("practice index hides urgency and omits score", () => {
+test("practice index share uses a type card and omits urgency", () => {
   const urgent = evaluatePractice({
     Q1: 4, Q2: 4, Q3: 4, Q4: 4, Q5: 4, Q6: 4, Q7: 0, Q8: 4, Q9: 4, Q10: 4,
   })
   const urgentDraft = practiceShareDraft(urgent)
-  assert.equal(urgentDraft.redacted, true)
+  assert.equal(urgentDraft.typeId, "dinosaurio")
   assert.equal(assertPublicShareText(urgentDraft).hasSensitiveCue, false)
 
   const agenda = evaluatePractice({
     Q1: 3, Q2: 2, Q3: 0, Q4: 3, Q5: 3, Q6: 3, Q7: 3, Q8: 2, Q9: 3, Q10: 2,
   })
   const agendaDraft = practiceShareDraft(agenda)
-  assert.equal(agendaDraft.redacted, false)
-  assert.match(agendaDraft.headline, /citas/)
+  assert.equal(agendaDraft.typeId, "dinosaurio")
+  assert.match(agendaDraft.headline, /Dinosaurio/)
 })

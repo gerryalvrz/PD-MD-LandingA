@@ -13,6 +13,8 @@ import {
 } from "@/lib/share-card"
 import { getOrCreateSessionId, getStoredLeadContext } from "@/lib/funnel-session"
 import { SocialIconRow } from "@/components/ui/social-icon"
+import { PsychologistTypeCard } from "@/components/share/PsychologistTypeCard"
+import { PSYCHOLOGIST_TYPES } from "@/lib/psychologist-types"
 import styles from "./ShareModal.module.css"
 
 function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -32,12 +34,47 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
   return lines
 }
 
-function paintCard(draft: ShareDraft, url: string): HTMLCanvasElement {
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.crossOrigin = "anonymous"
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error(src))
+    image.src = src
+  })
+}
+
+async function paintCard(draft: ShareDraft, url: string): Promise<HTMLCanvasElement> {
   const canvas = document.createElement("canvas")
   canvas.width = 1080
   canvas.height = 1350
   const ctx = canvas.getContext("2d")
   if (!ctx) return canvas
+
+  if (draft.imageSrc) {
+    try {
+      const art = await loadImage(draft.imageSrc)
+      const scale = Math.max(1080 / art.width, 1350 / art.height)
+      const width = art.width * scale
+      const height = art.height * scale
+      ctx.drawImage(art, (1080 - width) / 2, (1350 - height) / 2, width, height)
+      ctx.fillStyle = "rgba(14, 10, 26, 0.78)"
+      roundRect(ctx, 40, 40, 280, 72, 36)
+      ctx.fill()
+      try {
+        const logo = await loadImage("/logo.svg")
+        ctx.drawImage(logo, 56, 54, 44, 44)
+      } catch {
+        /* wordmark is enough if the svg cannot paint */
+      }
+      ctx.fillStyle = "#ffffff"
+      ctx.font = "700 28px sans-serif"
+      ctx.fillText("MotusDAO", 112, 86)
+      return canvas
+    } catch {
+      /* fall through to the text card */
+    }
+  }
 
   const gradient = ctx.createLinearGradient(0, 0, 1080, 1350)
   gradient.addColorStop(0, "#1a1230")
@@ -74,6 +111,16 @@ function paintCard(draft: ShareDraft, url: string): HTMLCanvasElement {
   ctx.fillText("Autoevaluación orientativa · no es certificación", 80, 1180)
   ctx.fillText(url.replace(/^https?:\/\//, ""), 80, 1240)
   return canvas
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
 }
 
 function canvasToPngFile(canvas: HTMLCanvasElement): Promise<File> {
@@ -194,7 +241,7 @@ export function ShareModal({ draft, onClose }: { draft: ShareDraft; onClose: () 
 
   async function shareImage(section: string, forStories: boolean) {
     if (!url) return false
-    const file = await canvasToPngFile(paintCard(draft, url))
+    const file = await canvasToPngFile(await paintCard(draft, url))
     const imageOnly: ShareData = { files: [file] }
     const withCaption: ShareData = { files: [file], text: colleagueShareText(draft) }
     const payloads = [imageOnly, withCaption]
@@ -243,17 +290,17 @@ export function ShareModal({ draft, onClose }: { draft: ShareDraft; onClose: () 
     }
   }
 
-  function savePng() {
+  async function savePng() {
     if (!url) return
-    const canvas = paintCard(draft, url)
+    const canvas = await paintCard(draft, url)
     const anchor = document.createElement("a")
     anchor.href = canvas.toDataURL("image/png")
     anchor.download = "motus-practica-digital.png"
     anchor.click()
   }
 
-  function downloadImage() {
-    savePng()
+  async function downloadImage() {
+    await savePng()
     emit("share_download")
     setStatus("Imagen descargada. En el escritorio, súbela a Stories o Estado desde la galería.")
   }
@@ -262,7 +309,7 @@ export function ShareModal({ draft, onClose }: { draft: ShareDraft; onClose: () 
     if (!url) return
     if (usesImageShare(network)) {
       if (canShareImage && (await shareImage("share_instagram", true))) return
-      savePng()
+      await savePng()
       emit("share_instagram")
       setStatus("Imagen descargada. En el escritorio, ábrela en Instagram o WhatsApp y súbela a Stories o Estado.")
       return
@@ -291,16 +338,20 @@ export function ShareModal({ draft, onClose }: { draft: ShareDraft; onClose: () 
           El enlace no lleva tu puntaje ni tus respuestas. En el teléfono, Instagram lleva la imagen al diálogo del sistema: elige Stories o Estado. En el escritorio, descarga el PNG y súbelo a mano.
         </p>
 
-        <div className={styles.preview}>
-          <div className={styles.previewBrand}>
-            <img src="/logo.svg" alt="" />
-            <span>MotusDAO</span>
+        {draft.typeId && PSYCHOLOGIST_TYPES[draft.typeId] ? (
+          <PsychologistTypeCard type={PSYCHOLOGIST_TYPES[draft.typeId]} compact />
+        ) : (
+          <div className={styles.preview}>
+            <div className={styles.previewBrand}>
+              <img src="/logo.svg" alt="" />
+              <span>MotusDAO</span>
+            </div>
+            <p className={styles.previewKicker}>{draft.kicker}</p>
+            <p className={styles.previewHeadline}>{draft.headline}</p>
+            <p className={styles.previewDetail}>{draft.detail}</p>
+            <span className={styles.previewCta}>Evalúa tu práctica</span>
           </div>
-          <p className={styles.previewKicker}>{draft.kicker}</p>
-          <p className={styles.previewHeadline}>{draft.headline}</p>
-          <p className={styles.previewDetail}>{draft.detail}</p>
-          <span className={styles.previewCta}>Evalúa tu práctica</span>
-        </div>
+        )}
 
         <SocialIconRow className={styles.networks} onSelect={(network) => void openNetwork(network)} />
 
@@ -313,7 +364,7 @@ export function ShareModal({ draft, onClose }: { draft: ShareDraft; onClose: () 
           <button type="button" className={canShare ? styles.secondary : styles.primary} onClick={() => void copyLink()}>
             Copiar enlace
           </button>
-          <button type="button" className={styles.secondary} onClick={downloadImage}>
+          <button type="button" className={styles.secondary} onClick={() => void downloadImage()}>
             Descargar imagen
           </button>
           <button type="button" className={styles.ghost} onClick={onClose}>
