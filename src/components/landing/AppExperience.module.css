@@ -1,4 +1,4 @@
-.section { --text-secondary: #c0b9ce; --accent: #d8b4fe; --border: rgba(216,180,254,.2); --surface: rgba(255,255,255,.035); padding: clamp(52px,8vh,96px) clamp(20px,5vw,72px); scroll-margin-top: 90px; font-family: var(--font-inter); }
+.section { --text-secondary: #c0b9ce; --accent: #9B8AFF; --border: rgba(155,138,255,.28); --surface: rgba(255,255,255,.035); padding: clamp(52px,8vh,96px) clamp(20px,5vw,72px); scroll-margin-top: 90px; font-family: var(--font-inter); }
 .section[data-theme="light"] { --text-secondary: #544765; --accent: #7025ae; --border: rgba(112,37,174,.18); --surface: rgba(255,255,255,.6); }
 .container { max-width: 1080px; margin: 0 auto; }
 .eyebrow { color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .1em; margin: 0 0 16px; }

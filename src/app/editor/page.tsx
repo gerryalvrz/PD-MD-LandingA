@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react"
 import { marked } from "marked"
 import { api } from "../../../convex/_generated/api"
 import { renderTemplateString } from "../../../convex/emailTemplateDefaults"
+import { ACCENT, glassCtaStyle } from "@/lib/landing-theme"
 
 type TemplateItem = {
   key: string
@@ -278,8 +279,8 @@ const styles: Record<string, CSSProperties> = {
     cursor: "pointer",
   },
   templateButtonSelected: {
-    border: "1px solid rgba(147,51,234,0.8)",
-    background: "rgba(147,51,234,0.15)",
+    border: `1px solid ${ACCENT.border}`,
+    background: ACCENT.wash,
   },
   templateButtonTop: {
     display: "flex",
@@ -345,13 +346,8 @@ const styles: Record<string, CSSProperties> = {
     gap: "10px",
   },
   saveButton: {
-    border: "none",
-    borderRadius: "10px",
+    ...glassCtaStyle({ dark: true, small: true }),
     padding: "10px 14px",
-    background: "linear-gradient(to right, #9333EA, #EC4899)",
-    color: "white",
-    fontWeight: 600,
-    cursor: "pointer",
   },
   status: {
     fontSize: "13px",

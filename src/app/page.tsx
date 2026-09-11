@@ -16,8 +16,13 @@ import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
 import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
-import { GRAD, T, type Tok } from "@/lib/landing-theme"
-import { BookOpen, Map, Users } from "lucide-react"
+import { ErurouniShaderPanel } from "@/components/ui/erurouni-shader-panel"
+import { OzzyShaderPanel } from "@/components/ui/ozzy-shader-panel"
+import { ThiagoShaderPanel } from "@/components/ui/thiago-shader-panel"
+import { ACCENT, ACCENT_GRAD, T, type Tok, glassCtaStyle } from "@/lib/landing-theme"
+import { GlassCta } from "@/components/ui/glass-cta"
+import { GlobePulse } from "@/components/ui/cobe-globe-pulse"
+import { CreditCard, Globe, Sparkles } from "lucide-react"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -60,7 +65,7 @@ function GradientText({ children }: { children: React.ReactNode }) {
   return (
     <span
       style={{
-        backgroundImage: GRAD,
+        backgroundImage: ACCENT_GRAD,
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         backgroundClip: "text",
@@ -71,69 +76,6 @@ function GradientText({ children }: { children: React.ReactNode }) {
   )
 }
 
-function GradientButton({
-  children,
-  small,
-  full,
-  href,
-  onClick,
-  variant = "primary",
-  dark = true,
-}: {
-  children: React.ReactNode
-  small?: boolean
-  full?: boolean
-  href?: string
-  onClick?: () => void
-  variant?: "primary" | "outline"
-  dark?: boolean
-}) {
-  const isPrimary = variant === "primary"
-  const style: React.CSSProperties = {
-    background: isPrimary ? GRAD : "transparent",
-    border: isPrimary ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.22)" : "rgba(14,10,26,0.18)"}`,
-    borderRadius: 10,
-    color: isPrimary ? "#fff" : dark ? "rgba(255,255,255,0.92)" : "rgba(14,10,26,0.90)",
-    fontWeight: 600,
-    fontSize: small ? 14 : 16,
-    padding: small ? "9px 18px" : "14px 28px",
-    cursor: "pointer",
-    fontFamily: "var(--font-inter)",
-    letterSpacing: "0.01em",
-    width: full ? "100%" : undefined,
-    display: "inline-block",
-    textAlign: "center",
-    textDecoration: "none",
-    boxSizing: "border-box",
-  }
-
-  if (href) {
-    const inner = (
-      <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
-        {children}
-      </motion.span>
-    )
-    if (href.startsWith("/") && !href.startsWith("//")) {
-      return (
-        <Link href={href} style={{ textDecoration: "none", width: full ? "100%" : undefined, display: full ? "block" : "inline-block" }}>
-          {inner}
-        </Link>
-      )
-    }
-    return (
-      <motion.a href={href} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
-        {children}
-      </motion.a>
-    )
-  }
-
-  return (
-    <motion.button type="button" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClick} style={style}>
-      {children}
-    </motion.button>
-  )
-}
-
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -141,7 +83,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
         fontFamily: "var(--font-inter)",
         fontSize: 12,
         fontWeight: 500,
-        color: "#A855F7",
+        color: ACCENT.iris,
         letterSpacing: "0.10em",
         textTransform: "uppercase",
         marginBottom: 16,
@@ -304,14 +246,14 @@ function Nav({
                   width: 18,
                   height: 18,
                   borderRadius: "50%",
-                  background: "#9333EA",
+                  background: ACCENT.iris,
                 }}
               />
             </button>
 
-            <GradientButton small href="#membresia" onClick={onMembership}>
+            <GlassCta small href="#membresia" onClick={onMembership} dark={dark}>
               Elegir mi membresía
-            </GradientButton>
+            </GlassCta>
           </div>
         </div>
       </GlassEffect>
@@ -358,7 +300,7 @@ function Hero({
           transform: "translate(-50%, -50%)",
           width: "min(720px, 95vw)",
           height: 420,
-          background: "radial-gradient(ellipse, rgba(147,51,234,0.11) 0%, transparent 72%)",
+          background: `radial-gradient(ellipse, ${ACCENT.glow} 0%, transparent 72%)`,
           pointerEvents: "none",
           zIndex: 1,
         }}
@@ -440,7 +382,7 @@ function Hero({
                 maxWidth: 560,
               }}
             >
-              Empieza con recursos, formación y comunidad. Continúa por una ruta de cinco bloques hacia el Portal Clínico, según tus objetivos y requisitos profesionales.
+              Empieza con recursos, formación y comunidad global. Continúa por una ruta de cinco bloques hacia el Portal Clínico, según tus objetivos y requisitos profesionales.
             </motion.p>
 
             <motion.div
@@ -448,14 +390,14 @@ function Hero({
               style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}
             >
               <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
-                <GradientButton href="#membresia" onClick={onConoce} full={isMobile}>
+                <GlassCta href="#membresia" onClick={onConoce} full={isMobile} dark={dark}>
                   Elegir mi membresía
-                </GradientButton>
+                </GlassCta>
               </div>
               <div style={{ flex: isMobile ? "1 1 100%" : "0 1 auto" }}>
-                <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico} full={isMobile} variant="outline" dark={dark}>
+                <GlassCta href={landingAssessmentPath()} onClick={onDiagnostico} full={isMobile} variant="outline" dark={dark}>
                   Evaluar mi práctica
-                </GradientButton>
+                </GlassCta>
               </div>
             </motion.div>
             <motion.p
@@ -472,18 +414,32 @@ function Hero({
             </motion.p>
           </div>
 
-          <motion.div variants={fadeUp} style={{ width: "100%", maxWidth: 420, justifySelf: "stretch" }}>
-            <img
-              src="/MAsterclass3.avif"
-              alt="MotusDAO Academy — formación profesional para psicólogos en práctica digital"
+          <motion.div
+            variants={fadeUp}
+            style={{
+              width: "100%",
+              maxWidth: 420,
+              justifySelf: "center",
+              position: "relative",
+            }}
+          >
+            <div
               style={{
-                width: "100%",
-                height: "auto",
-                borderRadius: 16,
-                objectFit: "cover",
-                border: isLight ? "1px solid rgba(147,51,234,0.22)" : "1px solid rgba(192,132,252,0.28)",
-                boxShadow: dark ? "0 16px 40px rgba(0,0,0,0.35)" : "0 16px 40px rgba(31,10,56,0.12)",
+                position: "absolute",
+                inset: "-8%",
+                borderRadius: "50%",
+                background: `radial-gradient(circle, ${ACCENT.glow} 0%, transparent 70%)`,
+                pointerEvents: "none",
+                opacity: dark ? 0.55 : 0.35,
               }}
+              aria-hidden
+            />
+            <GlobePulse
+              className="mx-auto w-full max-w-[420px]"
+              markers={[
+                { id: "mexico", location: [19.43, -99.13], delay: 0 },
+                { id: "argentina", location: [-34.6, -58.38], delay: 0.5 },
+              ]}
             />
           </motion.div>
         </div>
@@ -498,7 +454,7 @@ function TrustBar({ dark }: { dark: boolean }) {
 
   return (
     <section
-      aria-label="Recursos, formación y ruta"
+      aria-label="Formación, IA, pagos y comunidad"
       style={{
         background: tok.bgAlt,
         borderTop: `1px solid ${tok.cardBorder}`,
@@ -506,34 +462,38 @@ function TrustBar({ dark }: { dark: boolean }) {
       }}
     >
       <ScrollSplitCard
-        imageSrc="/experience/ruta-cinco-bloques.jpg"
-        imageAlt="Ilustración de la ruta de cinco bloques: Génesis, Fundamentos, Praxis, Validación y Portal Clínico"
+        imageSrc="/experience/recorrido-bloques.jpg"
+        imageAlt="Recorrido de cinco bloques: Génesis, Fundamentos, Praxis, Validación y Portal Clínico"
         stickyClassName={`${dark ? "bg-[#130D22]" : "bg-[#F0ECF9]"} pb-[84px] md:pb-0`}
         startLabel="Desliza"
         endLabel="Empieza con la membresía"
-        startLabelClassName="text-[#A855F7]"
+        startLabelClassName="text-[#9B8AFF]"
         endLabelClassName={dark ? "text-white/90" : "text-[#0E0A1A]/90"}
         cards={[
           {
-            title: "Recursos para tu práctica",
-            description: "Manual clínico-operativo y biblioteca virtual para estructurar tu consulta digital.",
+            title: "Formación y comunidad global",
+            description: "Formación continua y una red de profesionales de salud mental en distintos países.",
             bgColor: "#EDE8F7",
             textColor: "#0E0A1A",
-            icon: <BookOpen className={iconClass} aria-hidden="true" />,
+            icon: <Globe className={iconClass} color="#0E0A1A" aria-hidden="true" strokeWidth={2} />,
+            media: <OzzyShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
           },
           {
-            title: "Formación y comunidad",
-            description: "Actividades de formación continua y un espacio de práctica con otros profesionales.",
-            bgColor: "#9333EA",
+            title: "Inteligencia Artificial",
+            description: "Aplica lo más reciente en IA a tu práctica clínica, con criterio profesional.",
+            bgColor: "#6E56CF",
             textColor: "#ffffff",
-            icon: <Users className={iconClass} aria-hidden="true" />,
+            icon: <Sparkles className={iconClass} color="#ffffff" aria-hidden="true" strokeWidth={2} />,
+            media: <ThiagoShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
+            mediaClassName: "-translate-y-[20%]",
           },
           {
-            title: "Una ruta de cinco bloques",
-            description: "De Génesis al Portal Clínico, según tus objetivos y requisitos profesionales.",
+            title: "Pagos",
+            description: "Cobros inmediatos, sin comisión, desde cualquier parte del mundo. Selecciona tu moneda de cobro.",
             bgColor: "#0E0A1A",
             textColor: "#ffffff",
-            icon: <Map className={iconClass} aria-hidden="true" />,
+            icon: <CreditCard className={iconClass} color="#ffffff" aria-hidden="true" strokeWidth={2} />,
+            media: <ErurouniShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
           },
         ]}
       />
@@ -581,9 +541,9 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
             {LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].lede}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-            <GradientButton href={landingAssessmentPath()} onClick={onDiagnostico}>
+            <GlassCta href={landingAssessmentPath()} onClick={onDiagnostico} dark={dark}>
               Evaluar mi práctica
-            </GradientButton>
+            </GlassCta>
             <ShareInviteButton draft={genericShareDraft(landingAssessmentPath())} label="Invitar a un colega" full={false} />
           </div>
           <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 12, lineHeight: 1.5 }}>
@@ -695,7 +655,7 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
                 ))}
               </div>
             </fieldset>
-            <GradientButton full href={membershipUrl(plan)} onClick={() => onContinue(plan)}>Continuar a Fundamentos</GradientButton>
+            <GlassCta full href={membershipUrl(plan)} onClick={() => onContinue(plan)} dark={dark}>Continuar a Fundamentos</GlassCta>
             <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>Acceso gratuito durante la revisión de contenido. Tu elección no genera un cobro ni activa una suscripción.</p>
             <div style={{ borderTop: `1px solid ${tok.cardBorder}`, marginTop: 24, paddingTop: 20 }}>
               <p style={{ ...bodyStyle, margin: 0 }}><strong style={{ color: tok.t1 }}>Al continuar hacia el Portal</strong><br />El Pase Motus Beta comunitario se contrata aparte, tras la revisión de requisitos: USD 29/mes o USD 290/año.</p>
@@ -709,7 +669,7 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
             <p style={{ ...bodyStyle, marginTop: 20 }}>Para profesionales invitados que ingresan mediante revisión y onboarding. Incluye el Portal Clínico durante la beta, según aprobación y permisos.</p>
             <p style={{ ...bodyStyle, marginTop: 16 }}>La invitación es necesaria para acceder a esta vía.</p>
             <p style={{ ...bodyStyle, margin: "16px 0" }}>Contacta al equipo para conocer los requisitos de revisión y onboarding. Enviar una consulta no concede acceso al pase.</p>
-            <GradientButton full variant="outline" dark={dark} href={INVITATION_CONTACT_URL} onClick={() => onContinue("invitation")}>Consultar sobre la invitación</GradientButton>
+            <GlassCta full variant="outline" dark={dark} href={INVITATION_CONTACT_URL} onClick={() => onContinue("invitation")}>Consultar sobre la invitación</GlassCta>
             <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>Se abrirá tu aplicación de correo. También puedes escribir a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.</p>
           </article>
         </div>
@@ -799,7 +759,7 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
           transform: "translateX(-50%)",
           width: 600,
           height: 300,
-          background: "radial-gradient(ellipse, rgba(236,72,153,0.07) 0%, transparent 70%)",
+          background: `radial-gradient(ellipse, ${ACCENT.glow} 0%, transparent 70%)`,
           pointerEvents: "none",
         }}
       />
@@ -829,9 +789,9 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
         >
           Recursos, formación y comunidad para avanzar en tu práctica digital. Empieza por Fundamentos y conoce el recorrido hacia el Portal Clínico.
         </p>
-        <GradientButton href="#membresia" onClick={onMembership}>
+        <GlassCta href="#membresia" onClick={onMembership} dark={dark}>
           Elegir mi membresía
-        </GradientButton>
+        </GlassCta>
         <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 14 }}>
           USD 20/mes · USD 120/año fundador
         </p>
@@ -872,7 +832,7 @@ function Footer({ dark }: { dark: boolean }) {
 function StickyConversionBar({ onMembership }: { onMembership: () => void }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/20 bg-[#160d25]/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden">
-      <a href="#membresia" onClick={onMembership} className="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-white" style={{ background: GRAD }}>Elegir mi membresía · USD 20/mes</a>
+      <a href="#membresia" onClick={onMembership} className="block text-center text-sm font-semibold" style={{ ...glassCtaStyle({ dark: true, full: true, small: true }), padding: "12px 16px" }}>Elegir mi membresía · USD 20/mes</a>
     </div>
   )
 }
@@ -928,7 +888,7 @@ export default function Home() {
         paddingBottom: 84,
       }}
     >
-      <style>{`a:focus-visible, button:focus-visible { outline: 3px solid #c084fc; outline-offset: 4px; } @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }`}</style>
+      <style>{`a:focus-visible, button:focus-visible { outline: 3px solid ${ACCENT.iris}; outline-offset: 4px; } @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }`}</style>
       <GlassFilter />
       <Nav dark={dark} onToggle={() => setDark((d) => !d)} onMembership={() => handleMembership("nav")} />
       <main>

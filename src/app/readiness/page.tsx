@@ -7,7 +7,7 @@ import { useMutation } from "convex/react"
 import { api } from "../../../convex/_generated/api"
 import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { GlassFilter } from "@/components/ui/liquid-glass"
-import { GRAD, T } from "@/lib/landing-theme"
+import { ACCENT, ACCENT_GRAD, T, glassCtaStyle } from "@/lib/landing-theme"
 import { ReadinessResultView } from "@/components/readiness/ReadinessResult"
 import formStyles from "@/components/diagnostico/PracticeForm.module.css"
 import {
@@ -46,8 +46,8 @@ const optionStyle = (selected: boolean): CSSProperties => ({
   fontSize: 15,
   lineHeight: 1.45,
   color: tok.t1,
-  background: selected ? "rgba(147,51,234,0.12)" : "rgba(255,255,255,0.04)",
-  border: `1px solid ${selected ? "rgba(168,85,247,0.55)" : "rgba(255,255,255,0.10)"}`,
+  background: selected ? ACCENT.wash : "rgba(255,255,255,0.04)",
+  border: `1px solid ${selected ? ACCENT.border : "rgba(255,255,255,0.10)"}`,
   borderRadius: 12,
   padding: "14px 16px",
   minHeight: 52,
@@ -55,16 +55,10 @@ const optionStyle = (selected: boolean): CSSProperties => ({
 })
 
 const navButtonStyle = (solid?: boolean): CSSProperties => ({
+  ...glassCtaStyle({ dark: true, variant: solid ? "primary" : "outline" }),
   minHeight: 44,
-  borderRadius: 10,
-  fontFamily: "var(--font-inter)",
-  fontWeight: 600,
-  fontSize: 15,
-  cursor: "pointer",
   padding: "12px 20px",
-  border: solid ? "0" : "1px solid rgba(255,255,255,0.18)",
-  background: solid ? GRAD : "transparent",
-  color: "#fff",
+  fontSize: 15,
 })
 
 export default function ReadinessPage() {
@@ -219,12 +213,12 @@ export default function ReadinessPage() {
           }}
           aria-hidden={phase === "intro"}
         >
-          <div style={{ width: `${phase === "intro" ? 0 : progress}%`, height: "100%", background: GRAD, transition: "width 0.35s ease" }} />
+          <div style={{ width: `${phase === "intro" ? 0 : progress}%`, height: "100%", background: ACCENT_GRAD, transition: "width 0.35s ease" }} />
         </div>
 
         {phase === "intro" ? (
           <motion.div variants={fadeUp} initial="hidden" animate="show">
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 500, color: "#A855F7", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: 12 }}>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 500, color: ACCENT.iris, letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: 12 }}>
               Digital Practice Readiness · {READINESS_VERSION}
             </p>
             <h1 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: "clamp(26px, 6vw, 36px)", lineHeight: 1.15, letterSpacing: "-0.02em", marginBottom: 16 }}>
@@ -247,7 +241,7 @@ export default function ReadinessPage() {
 
         {phase === "questions" && question ? (
           <motion.div key={question.id} variants={fadeUp} initial="hidden" animate="show">
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 500, color: "#A855F7", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: 12 }}>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 500, color: ACCENT.iris, letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: 12 }}>
               {question.area} · {questionIndex + 1} de {READINESS_QUESTIONS.length}
             </p>
             <h1 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: "clamp(24px, 5.4vw, 34px)", lineHeight: 1.18, letterSpacing: "-0.02em", marginBottom: 10 }}>
@@ -266,7 +260,7 @@ export default function ReadinessPage() {
                     onClick={() => setPending(option.letter)}
                     style={optionStyle(selected)}
                   >
-                    <strong style={{ color: "#d8b4fe", marginRight: 8 }}>{option.letter}.</strong>
+                    <strong style={{ color: ACCENT.lilac, marginRight: 8 }}>{option.letter}.</strong>
                     {option.label}
                   </button>
                 )
@@ -303,7 +297,7 @@ export default function ReadinessPage() {
               onRestart={handleRestart}
             />
             <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, textAlign: "center", marginTop: 18 }}>
-              <Link href="/#membresia" style={{ color: "#d8b4fe" }}>
+              <Link href="/#membresia" style={{ color: ACCENT.lilac }}>
                 Volver a la membresía
               </Link>
             </p>

@@ -77,6 +77,41 @@ ul {
 }
 
 :root {
+  /* Motus candy glass — source of truth also in src/lib/landing-theme.ts */
+  --motus-bg: #0E0A1A;
+  --motus-bg-alt: #130D22;
+  --motus-iris: #9B8AFF;
+  --motus-iris-deep: #6E56CF;
+  --motus-iris-lilac: #C9C0FF;
+  --motus-candy-pink: #ec4899;
+  --motus-candy-purple: #a855f7;
+  --motus-accent-grad: linear-gradient(135deg, #a855f7 0%, #ec4899 52%, #c9c0ff 100%);
+  --motus-glass-cta-shine-dark: linear-gradient(180deg, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.05) 34%, transparent 56%);
+  --motus-glass-cta-candy-dark: linear-gradient(
+    105deg,
+    rgba(236, 72, 153, 0.28) 0%,
+    rgba(244, 114, 182, 0.25) 14%,
+    rgba(232, 121, 249, 0.23) 28%,
+    rgba(192, 132, 252, 0.21) 44%,
+    rgba(155, 138, 255, 0.19) 60%,
+    rgba(124, 58, 237, 0.17) 78%,
+    rgba(91, 33, 182, 0.14) 100%
+  );
+  --motus-glass-cta-neon-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.31),
+    inset 0 1px 12px rgba(255, 255, 255, 0.06),
+    inset 0 -6px 16px rgba(91, 33, 182, 0.06),
+    0 0 0 1px rgba(253, 230, 255, 0.31),
+    0 0 20px rgba(244, 114, 182, 0.23),
+    0 0 40px rgba(192, 132, 252, 0.21),
+    0 0 68px rgba(124, 58, 237, 0.14),
+    0 10px 26px rgba(8, 4, 20, 0.28);
+  --motus-glass-cta-bg-dark: rgba(255, 255, 255, 0.015);
+  --motus-glass-cta-border-dark: rgba(253, 230, 255, 0.36);
+  --motus-glass-cta-text-shadow-dark: 0 0 22px rgba(251, 207, 232, 0.25), 0 1px 0 rgba(91, 33, 182, 0.18);
+  --motus-glass-cta-blur: blur(22px) saturate(210%);
+  --motus-candy-glass-version: 1.0.0;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -143,6 +178,18 @@ ul {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Candy-glass primary CTA — for CSS modules / non-React surfaces. JS source: glassCtaStyle() */
+.motus-glass-cta-primary {
+  background-color: var(--motus-glass-cta-bg-dark);
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  border: 1px solid var(--motus-glass-cta-border-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur);
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur);
+  color: #fff;
+  text-shadow: var(--motus-glass-cta-text-shadow-dark);
 }
 
 @layer base {

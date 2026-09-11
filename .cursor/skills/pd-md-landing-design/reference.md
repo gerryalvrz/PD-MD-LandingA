@@ -1,59 +1,137 @@
 # MotusDAO Landing — Design Reference
 
-Extracted from [`src/app/page.tsx`](../../../src/app/page.tsx), [`src/app/layout.tsx`](../../../src/app/layout.tsx), [`src/app/globals.css`](../../../src/app/globals.css).
+Extracted from [`src/lib/landing-theme.ts`](../../../src/lib/landing-theme.ts), [`src/components/ui/glass-cta.tsx`](../../../src/components/ui/glass-cta.tsx), [`src/app/page.tsx`](../../../src/app/page.tsx), [`src/app/layout.tsx`](../../../src/app/layout.tsx), [`src/app/globals.css`](../../../src/app/globals.css).
+
+---
+
+## Candy glass (locked CTA system)
+
+**Version:** `MOTUS_CANDY_GLASS_VERSION = "1.0.0"` (export from `landing-theme.ts`; CSS `--motus-candy-glass-version`)
+
+**Retired:** Opaque `linear-gradient(to right, #9333EA, #EC4899)` CTA fills (flat candy pill).
+
+**Locked signature:** **candy glass** — stained-glass button: pink→purple wash at **~14–28% opacity** (tuned for visible hue without opaque fill), frost shine on top, neon pink-lilac edge, `backdrop-filter: blur(22px) saturate(210%)`. Hue reads *through* glass; never a solid fill.
+
+### Layer stack (primary dark)
+
+| # | Layer | Token / CSS var |
+|---|-------|-----------------|
+| 1 | Glass base | `backgroundColor: rgba(255,255,255,0.015)` → `--motus-glass-cta-bg-dark` |
+| 2 | Frost shine | `GLASS_CTA_SHINE_DARK` → `--motus-glass-cta-shine-dark` |
+| 3 | Candy wash | `GLASS_CTA_CANDY_FILL_DARK` → `--motus-glass-cta-candy-dark` |
+| 4 | Combined | `GLASS_CTA_INNER_FILL_DARK` = shine + candy (comma-separated `backgroundImage`) |
+| 5 | Border | `rgba(253,230,255,0.36)` → `--motus-glass-cta-border-dark` |
+| 6 | Neon halo | `GLASS_CTA_NEON_SHADOW` → `--motus-glass-cta-neon-shadow` |
+| 7 | Blur | `blur(22px) saturate(210%)` → `--motus-glass-cta-blur` |
+| 8 | Text glow | `--motus-glass-cta-text-shadow-dark` |
+
+Hover (React only): `GLASS_CTA_NEON_SHADOW_HOVER` via `GlassCta` Framer Motion `whileHover`.
+
+| Surface | Treatment |
+|---------|-----------|
+| Primary CTA | `<GlassCta>` or `glassCtaStyle({ variant: "primary" })` |
+| Secondary CTA | `variant="outline"` — faint candy tint, still glass |
+| Full-width CTA | `full` prop or `glassCtaStyle({ full: true })` → `GLASS_CTA_NEON_SHADOW_FULL` |
+| CSS modules | `--motus-glass-cta-*` vars or `.motus-glass-cta-primary` in `globals.css` |
+| GradientText / meters | `ACCENT_GRAD` — text/meters/SVG strokes only |
+| Labels | `ACCENT.iris` (`#9B8AFF`) |
+| Danger | `ACCENT.danger` — semantic only |
+
+### Propagation playbook (Hub, chat, Academy, other Motus sites)
+
+**Step 1 — Copy the bundle**
+
+| File | What it provides |
+|------|------------------|
+| `src/lib/landing-theme.ts` | `MOTUS_CANDY_GLASS_VERSION`, `T`, `ACCENT`, `GLASS_CTA_*`, `glassCtaStyle()` |
+| `src/components/ui/glass-cta.tsx` | `<GlassCta>` + hover glow (needs `framer-motion`) |
+| `src/app/globals.css` (`:root`) | All `--motus-*` and `--motus-glass-cta-*` variables + `.motus-glass-cta-primary` |
+
+**Step 2 — Wire CTAs**
+
+```tsx
+import { GlassCta } from "@/components/ui/glass-cta"
+import { glassCtaStyle, ACCENT_GRAD } from "@/lib/landing-theme"
+
+// Preferred (client, with hover)
+<GlassCta href="/path" dark>Continuar</GlassCta>
+<GlassCta variant="outline" small>Secundario</GlassCta>
+
+// Server components / inline <a>
+<a style={glassCtaStyle({ dark: true, full: true })} href="…">CTA</a>
+```
+
+**Step 3 — CSS modules (no React)**
+
+```css
+.myCta {
+  background-color: var(--motus-glass-cta-bg-dark);
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  border: 1px solid var(--motus-glass-cta-border-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur);
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur);
+  text-shadow: var(--motus-glass-cta-text-shadow-dark);
+  color: #fff;
+}
+```
+
+Or add class `motus-glass-cta-primary` from global CSS.
+
+**Step 4 — Verify after migration**
+
+- [ ] `MOTUS_CANDY_GLASS_VERSION` matches across copied files
+- [ ] No `#9333EA` / `#EC4899` opaque button backgrounds remain
+- [ ] No `ACCENT_GRAD` used as CTA `background` / `backgroundImage` fill
+- [ ] Primary buttons have `backdrop-filter` (glass reads against page bg)
+- [ ] Text highlights still use `ACCENT_GRAD` with `backgroundClip: text`
+
+**Hard rules**
+
+- Candy pink/purple (`ACCENT.candyPink`, `ACCENT.candyPurple`) — **transparent layers only** (`GLASS_CTA_*`).
+- shadcn `--primary` is separate app chrome; do not map it to the old Tailwind purple→pink pill.
+- `GlassEffect` SVG distortion — nav/forms only, **not** on buttons (muddy at small size).
+
+**Reference implementations in this repo**
+
+| Location | Pattern |
+|----------|---------|
+| `src/app/page.tsx` | `<GlassCta>` hero, membership, sticky banner |
+| `src/app/diagnostico/page.tsx`, `readiness/page.tsx` | `glassCtaStyle` inline |
+| `src/app/gracias/page.tsx`, `editor/page.tsx` | `glassCtaStyle` |
+| `ShareModal.module.css`, `PracticeResult.module.css`, `ReadinessResult.module.css` | `--motus-glass-cta-*` vars |
 
 ---
 
 ## Color Tokens
 
-Define once per file (or import when refactored):
+Source of truth: [`src/lib/landing-theme.ts`](../../../src/lib/landing-theme.ts).
 
 ```ts
-const GRAD = "linear-gradient(to right, #9333EA, #EC4899)"
-
-const T = {
-  dark: {
-    bg: "#0E0A1A",
-    bgAlt: "#130D22",
-    t1: "rgba(255,255,255,0.92)",
-    t2: "rgba(255,255,255,0.52)",
-    t3: "rgba(255,255,255,0.28)",
-    card: "rgba(255,255,255,0.04)",
-    cardBorder: "rgba(255,255,255,0.08)",
-    cardHighBg: "rgba(147,51,234,0.07)",
-    cardHighBorder: "rgba(147,51,234,0.3)",
-    navBg: "rgba(14,10,26,0.85)",
-    navBorder: "rgba(255,255,255,0.06)",
-    toggleTrack: "rgba(255,255,255,0.10)",
-  },
-  light: {
-    bg: "#F8F6FF",
-    bgAlt: "#F0ECF9",
-    t1: "rgba(14,10,26,0.90)",
-    t2: "rgba(14,10,26,0.55)",
-    t3: "rgba(14,10,26,0.32)",
-    card: "rgba(0,0,0,0.03)",
-    cardBorder: "rgba(0,0,0,0.08)",
-    cardHighBg: "rgba(147,51,234,0.06)",
-    cardHighBorder: "rgba(147,51,234,0.25)",
-    navBg: "rgba(248,246,255,0.88)",
-    navBorder: "rgba(0,0,0,0.07)",
-    toggleTrack: "rgba(0,0,0,0.10)",
-  },
-} as const
+import { ACCENT, ACCENT_GRAD, T, glassCtaStyle } from "@/lib/landing-theme"
 ```
 
-| Role | Value |
-|------|-------|
-| Accent label | `#A855F7` |
-| Toggle knob | `#9333EA` |
-| Error text | `#EC4899` |
-| Hero radial glow | `radial-gradient(ellipse, rgba(147,51,234,0.11) 0%, transparent 72%)` |
-| Final CTA glow | `radial-gradient(ellipse, rgba(236,72,153,0.07) 0%, transparent 70%)` |
+| Role | Token | Value |
+|------|-------|-------|
+| Dark bg | `T.dark.bg` | `#0E0A1A` |
+| Dark alt | `T.dark.bgAlt` | `#130D22` |
+| Accent label | `ACCENT.iris` | `#9B8AFF` |
+| Accent deep | `ACCENT.deep` | `#6E56CF` |
+| Accent lilac | `ACCENT.lilac` | `#C9C0FF` |
+| Candy pink | `ACCENT.candyPink` | `#EC4899` (transparent layers only) |
+| Candy purple | `ACCENT.candyPurple` | `#A855F7` (transparent layers only) |
+| Text highlight | `ACCENT_GRAD` | `linear-gradient(135deg, #A855F7, #EC4899, #C9C0FF)` |
+| Toggle knob | `ACCENT.iris` | `#9B8AFF` |
+| Error text | `ACCENT.danger` | `#E11D48` |
+| Hero / final glow | `ACCENT.glow` | `rgba(110,86,207,0.14)` |
+| `GRAD` | deprecated alias | same as `ACCENT_GRAD` — not a button fill |
+
+Light theme remains `T.light` (lavender paper `#F8F6FF`). Glass CTAs have a light-mode skin in `glassCtaStyle({ dark: false })`.
 
 ---
 
 ## Typography
+
 
 Fonts loaded in [`layout.tsx`](../../../src/app/layout.tsx):
 
@@ -70,7 +148,7 @@ Fonts loaded in [`layout.tsx`](../../../src/app/layout.tsx):
 | Hero H1 (desktop) | `clamp(26px, 4.6vw, 44px)` | same |
 | Section H2 | `clamp(28px, 4vw, 44px)` | Jura 700 |
 | Final CTA H2 | `clamp(26px, 4.2vw, 44px)` | centered |
-| Section label | 12px | uppercase, `letter-spacing: 0.10em`, `#A855F7` |
+| Section label | 12px | uppercase, `letter-spacing: 0.10em`, `ACCENT.iris` |
 | Body / intro | 15–17px | Inter, `line-height: 1.55–1.6`, `tok.t2` |
 | Card title | 16px | Jura 700 |
 | Card body / FAQ answer | 14px | Inter, `tok.t2` |
@@ -123,12 +201,14 @@ Hero uses `animate="show"` on mount (no scroll wait).
 
 Direct `initial={{ opacity: 0, y: 40 }}` / `animate={inView ? { opacity: 1, y: 0 } : {}}` with `duration: 0.9`.
 
-### GradientButton micro-interaction
+### GlassCta micro-interaction
 
 ```ts
 whileHover={{ scale: 1.03 }}
 whileTap={{ scale: 0.97 }}
 ```
+
+Primary fill is shine + candy wash (`glassCtaStyle`), not an opaque left-to-right pill.
 
 ### Theme toggle
 
@@ -183,7 +263,7 @@ Root wrapper: `transition: "background 0.35s ease"`.
 
 - `GlassEffect` bar, `h-14`, `rounded-2xl`, fixed top with safe-area
 - Logo `/logo.svg` + "MotusDAO" (wordmark hidden on mobile)
-- Theme toggle + `GradientButton small` ("Reservar lugar")
+- Theme toggle + `GlassCta small` ("Elegir mi membresía")
 
 ### Pattern: Hero
 
@@ -222,13 +302,13 @@ Root wrapper: `transition: "background 0.35s ease"`.
 ### Pattern: Audience fit (checklist)
 
 - Optional full-section `DotField` at low opacity
-- Checkmarks in `#A855F7`
+- Checkmarks in `ACCENT.iris`
 - Separate "not for you" block with muted styling
 
 ### Pattern: Mid-CTA band
 
 - `tok.bgAlt`, top/bottom borders, centered max-width 720px
-- Short paragraph + single `GradientButton`
+- Short paragraph + single `GlassCta`
 
 ### Pattern: FAQ
 
@@ -258,8 +338,9 @@ See [`src/app/gracias/page.tsx`](../../../src/app/gracias/page.tsx):
 
 | Component | Location | Notes |
 |-----------|----------|-------|
-| `GradientText` | `page.tsx` | `backgroundImage: GRAD`, `backgroundClip: text` |
-| `GradientButton` | `page.tsx` | `borderRadius: 10`, white text, optional `small` / `full` |
+| `GradientText` | `page.tsx` | `backgroundImage: ACCENT_GRAD`, `backgroundClip: text` |
+| `GlassCta` | `components/ui/glass-cta.tsx` | Candy glass CTA v1.0.0; `small` / `full` / `outline`; `GradientButton` deprecated alias |
+| `glassCtaStyle` | `lib/landing-theme.ts` | Style helper for server components and raw `<button>` / `<a>` |
 | `SectionLabel` | `page.tsx` | Uppercase purple label |
 | `SectionHeading` | `page.tsx` | Jura H2 with `tok.t1` |
 | `MasterclassLeadForm` | `page.tsx` | Glass form, Convex registrar, redirects to `/gracias?flow=lead` |
@@ -316,7 +397,9 @@ Session ID: `localStorage` key `motus_session_id`. Lead context: `motus_lead_ctx
 
 | File | Purpose |
 |------|---------|
-| `src/app/page.tsx` | Main landing — tokens, components, all sections |
+| `src/lib/landing-theme.ts` | Tokens: `T`, `ACCENT`, `ACCENT_GRAD`, `glassCtaStyle` |
+| `src/components/ui/glass-cta.tsx` | Primary CTA primitive |
+| `src/app/page.tsx` | Main landing — sections compose tokens + primitives |
 | `src/app/layout.tsx` | Fonts, metadata, Convex provider |
 | `src/app/gracias/page.tsx` | Post-registration thank-you |
 | `src/app/globals.css` | Reset, smooth scroll, keyframes |
@@ -342,7 +425,7 @@ See [SKILL.md](SKILL.md). Additional technical notes:
 
 ## External Inspiration
 
-User-provided references (merged). **Rule:** Steal *layout, density, and information architecture* from these sources; map colors to `T` / `GRAD` on the masterclass landing unless the user explicitly asks for Academy deck colors on a page.
+User-provided references (merged). **Rule:** Steal *layout, density, and information architecture* from these sources; map colors to `T` / `ACCENT` on the landing unless the user explicitly asks for Academy deck colors on a page.
 
 ### Brand hub (MotusDAO main site)
 
@@ -372,7 +455,7 @@ Academy deck slides for **Fundamentos Bloque 1** (curriculum / Academy brand). P
 
 | File | What to steal | Map to landing |
 |------|---------------|----------------|
-| `bloque 1/1.png` | Hero title card: large outlined + solid type mix, circular course badge, diagonal teal→purple gradient, curved tagline | Hero badge pill + `GradientText` in H1; optional course-edition badge — **colors → `T`/`GRAD`**, not raw deck hex |
+| `bloque 1/1.png` | Hero title card: large outlined + solid type mix, circular course badge, diagonal teal→purple gradient, curved tagline | Hero badge pill + `GradientText` in H1; optional course-edition badge — **colors → `T`/`ACCENT`**, not raw deck hex |
 | `bloque 1/2.png` | Split layout: left glass/dark panel (INTRODUCCIÓN / CONTEXTO / TEMARIO bullets), right illustration column | “Para quién es” / curriculum sections: label + heading + bullet list; optional 40% visual column |
 | `bloque 1/4.png` | Two equal topic cards on soft gradient; numbered section title; card glow (purple vs teal) | Horizontal card rails or 2-col grid for “fundamentos” topics; use `tok.card` + accent border instead of deck pastels |
 | `bloque 1/8.png` | Centered chapter divider: 3D sphere + italic `MOTUSDAO ACADEMY` wordmark | Section transitions (“Fin de bloque”) — subtle, not on every section |
@@ -385,7 +468,7 @@ Also present: `bloque I/4.png`, `bloque I/8.png`, `bloque I/9.png` — treat as 
 
 | Context | Palette | Typography accent |
 |---------|---------|-------------------|
-| **Masterclass landing** (`page.tsx`) | Dark violet `#0E0A1A`, purple-pink `GRAD`, glass | Jura + Inter (required) |
+| **Masterclass landing** (`page.tsx`) | Dark violet `#0E0A1A`, iris `#9B8AFF`, glass CTAs | Jura + Inter (required) |
 | **Academy decks** (`public/Reference/`) | Teal–cyan–lavender pastels, white outlined headlines | Italic all-caps Academy wordmark on slides |
 
 When user says “like the presentation,” apply **layout and type hierarchy** from Reference images; keep **landing colors** unless they ask to match Academy slides exactly.

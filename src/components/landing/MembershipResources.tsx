@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { ArrowUpRight, BookOpen, Library, GraduationCap, Sparkles, Users, CalendarDays, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { T, type Tok } from "@/lib/landing-theme"
+import { ACCENT, T, type Tok } from "@/lib/landing-theme"
 import {
   MEMBERSHIP_RESOURCE_GROUPS,
   MEMBERSHIP_RESOURCES,
@@ -71,7 +71,7 @@ export function MembershipResources({
               fontFamily: "var(--font-inter)",
               fontSize: 12,
               fontWeight: 500,
-              color: "#A855F7",
+              color: ACCENT.iris,
               letterSpacing: "0.10em",
               textTransform: "uppercase",
               marginBottom: 16,

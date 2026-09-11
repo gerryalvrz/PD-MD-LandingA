@@ -23,7 +23,7 @@ export function assessmentOgImage(kicker: string, headline: string, detail: stri
           <div
             style={{
               display: "flex",
-              color: "#c084fc",
+              color: "#9B8AFF",
               fontSize: 28,
               fontWeight: 600,
               letterSpacing: 4,
@@ -68,7 +68,8 @@ export function assessmentOgImage(kicker: string, headline: string, detail: stri
               height: 52,
               padding: "0 22px",
               borderRadius: 12,
-              background: "linear-gradient(to right, #9333ea, #ec4899)",
+              border: "1px solid rgba(255,255,255,0.34)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(155,138,255,0.18) 42%, rgba(18,12,40,0.85) 100%)",
               fontSize: 22,
               fontWeight: 600,
             }}

@@ -82,7 +82,7 @@ async function paintCard(draft: ShareDraft, url: string): Promise<HTMLCanvasElem
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, 1080, 1350)
 
-  ctx.fillStyle = "#c084fc"
+  ctx.fillStyle = "#9B8AFF"
   ctx.font = "600 28px sans-serif"
   ctx.fillText("MOTUSDAO", 80, 140)
   ctx.fillText(draft.kicker.toUpperCase(), 80, 190)
@@ -103,7 +103,7 @@ async function paintCard(draft: ShareDraft, url: string): Promise<HTMLCanvasElem
     y += 48
   }
 
-  ctx.fillStyle = "#ec4899"
+  ctx.fillStyle = "#9B8AFF"
   ctx.font = "600 30px sans-serif"
   ctx.fillText("Evalúa tu práctica", 80, 1120)
   ctx.fillStyle = "rgba(255,255,255,0.55)"

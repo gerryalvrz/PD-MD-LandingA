@@ -4,7 +4,7 @@
 }
 
 .eyebrow {
-  color: #c084fc;
+  color: #9B8AFF;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -210,7 +210,7 @@
   display: block;
   height: 100%;
   border-radius: 99px;
-  background: linear-gradient(to right, #9333ea, #ec4899);
+  background: linear-gradient(135deg, #6E56CF 0%, #C9C0FF 100%);
 }
 
 .barEmpty {
@@ -260,7 +260,7 @@
   font-weight: 700;
   font-size: 16px;
   color: #fff;
-  background: linear-gradient(to right, #9333ea, #ec4899);
+  background: linear-gradient(135deg, #6E56CF 0%, #C9C0FF 100%);
 }
 
 .chips {
@@ -275,9 +275,9 @@
   font-weight: 600;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(236, 72, 153, 0.16);
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  color: #fbcfe8;
+  background: rgba(110, 86, 207, 0.18);
+  border: 1px solid rgba(155, 138, 255, 0.4);
+  color: #C9C0FF;
 }
 
 .link {
@@ -287,16 +287,27 @@
   min-height: 44px;
   margin-top: 14px;
   padding: 12px 18px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #9333ea, #ec4899);
+  border-radius: 12px;
+  background-color: var(--motus-glass-cta-bg-dark);
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  border: 1px solid var(--motus-glass-cta-border-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur);
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur);
   color: #fff;
   font-weight: 600;
   font-size: 15px;
   text-decoration: none;
+  text-shadow: var(--motus-glass-cta-text-shadow-dark);
 }
 
 .link:hover {
-  filter: brightness(1.06);
+  border-color: rgba(255, 240, 252, 0.44);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.39),
+    0 0 26px rgba(244, 114, 182, 0.29),
+    0 0 52px rgba(217, 70, 239, 0.24),
+    0 0 76px rgba(139, 92, 246, 0.18);
 }
 
 .disclaimer {

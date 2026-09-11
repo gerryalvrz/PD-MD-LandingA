@@ -64,8 +64,8 @@ function CoverageRing({ value, total }: { value: number; total: number }) {
       />
       <defs>
         <linearGradient id="mpiRing" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#9333EA" />
-          <stop offset="100%" stopColor="#EC4899" />
+          <stop offset="0%" stopColor="#6E56CF" />
+          <stop offset="100%" stopColor="#C9C0FF" />
         </linearGradient>
       </defs>
     </svg>

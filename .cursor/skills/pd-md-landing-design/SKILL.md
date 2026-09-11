@@ -13,8 +13,9 @@ description: >-
 
 Build UI for **MotusDAO — Técnica Avanzada en Psicoterapia**: a masterclass funnel for licensed psychologists transitioning to digital clinical practice. Output must feel **premium clinical + digital-native** — authoritative healthcare education with Apple/Linear polish, not generic SaaS purple templates.
 
-**Source of truth:** [`src/app/page.tsx`](../../../src/app/page.tsx)  
-**Detailed tokens and templates:** [reference.md](reference.md)  
+**Source of truth:** [`src/lib/landing-theme.ts`](../../../src/lib/landing-theme.ts) (`MOTUS_CANDY_GLASS_VERSION`)  
+**Layout patterns:** [`src/app/page.tsx`](../../../src/app/page.tsx)  
+**Detailed tokens, propagation playbook:** [reference.md](reference.md)  
 **External inspiration:** [reference.md § External Inspiration](reference.md#external-inspiration) — MemeCore (community simplicity), Ecosapiens (concise layouts), [motusdao.org](https://www.motusdao.org/), Academy slides in `public/Reference/bloque 1/`
 
 ---
@@ -73,14 +74,15 @@ Before finishing, verify:
 - [ ] **Theme:** `dark` prop passed; `const tok = dark ? T.dark : T.light`
 - [ ] **Backgrounds:** `tok.bg` / `tok.bgAlt` — deep violet-black (`#0E0A1A`) in dark mode
 - [ ] **Text:** `tok.t1` (primary), `tok.t2` (body), `tok.t3` (muted)
-- [ ] **Accent gradient:** `linear-gradient(to right, #9333EA, #EC4899)` for CTAs and `GradientText`
-- [ ] **Section labels:** 12px uppercase purple `#A855F7`, `letter-spacing: 0.10em`
+- [ ] **CTAs:** `GlassCta` / `glassCtaStyle()` — locked **candy glass v1.0.0** (transparent pink→purple wash ~14–28% + frost shine + neon edge). Never an opaque gradient pill. Propagate via [reference.md § Propagation playbook](reference.md#propagation-playbook-hub-chat-academy-other-motus-sites).
+- [ ] **Accent:** `ACCENT.iris` for labels; `ACCENT_GRAD` on text/meters only
+- [ ] **Section labels:** 12px uppercase iris `#9B8AFF`, `letter-spacing: 0.10em`
 - [ ] **Headings:** Jura 700, `letter-spacing: -0.02em`, `clamp()` font sizes
 - [ ] **Body:** Inter 400–600, `line-height: 1.55–1.6`
 - [ ] **Cards:** `tok.card` + `tok.cardBorder`, `borderRadius: 12–16`
 - [ ] **Glass:** `GlassEffect` for forms/nav; include `<GlassFilter />` at page root
 - [ ] **Atmosphere:** `LiquidGradientBackground` in hero; optional `DotField` for texture sections
-- [ ] **Glow accents:** Soft radial purple/pink ellipses at low opacity — ambient, not decorative overload
+- [ ] **Glow accents:** Soft radial iris ellipses (`ACCENT.glow`) at low opacity — ambient, not decorative overload
 
 **Default theme:** Dark-first (`useState(true)`). Light mode must remain fully supported via `T.light`.
 
@@ -88,7 +90,7 @@ Before finishing, verify:
 
 ## Implementation Rules
 
-1. **Reuse, don't reinvent** — `GradientText`, `GradientButton`, `SectionLabel`, `SectionHeading`, `MasterclassLeadForm`, `GlassEffect`, `LiquidGradientBackground`, `DotField` (see reference.md component index).
+1. **Reuse, don't reinvent** — `GradientText`, `GlassCta`, `SectionLabel`, `SectionHeading`, `MasterclassLeadForm`, `GlassEffect`, `LiquidGradientBackground`, `DotField` (see reference.md component index).
 
 2. **Styling convention** — Inline styles with `T` tokens + selective Tailwind (`className` on glass/banner). Do not migrate existing sections to Tailwind-only.
 
@@ -111,7 +113,9 @@ Before finishing, verify:
 - Generic 3-column "features" grid with icon placeholders
 - Lorem ipsum or fake testimonials (project explicitly avoids placeholder social proof)
 - English copy without user request
-- New color palettes outside `T` / `GRAD` without explicit approval
+- New color palettes outside `T` / `ACCENT` without explicit approval
+- Opaque purple→pink (`#9333EA` → `#EC4899`) fills on buttons — retired flat candy pill
+- Using `ACCENT_GRAD` as an opaque CTA background — text/meter only; candy hues belong in transparent `GLASS_CTA_*` layers
 - Heavy animation on mobile that hurts scroll performance
 - Inventing new CTA copy — use established funnel language
 - Replacing clinical tone with startup/marketing jargon ("revolucionario", "disruptivo", etc.)

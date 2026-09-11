@@ -1,7 +1,7 @@
 .section {
   --text-secondary: #c0b9ce;
-  --accent: #d8b4fe;
-  --border: rgba(216, 180, 254, 0.2);
+  --accent: #9B8AFF;
+  --border: rgba(155, 138, 255, 0.28);
   --surface: rgba(255, 255, 255, 0.035);
   padding: clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px);
   scroll-margin-top: 88px;

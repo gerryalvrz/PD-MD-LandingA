@@ -10,6 +10,8 @@ export interface ScrollSplitCardItem {
   bgColor: string
   textColor: string
   icon?: ReactNode
+  media?: ReactNode
+  mediaClassName?: string
 }
 
 interface ScrollSplitCardProps {
@@ -25,38 +27,70 @@ interface ScrollSplitCardProps {
   endLabelClassName?: string
 }
 
+function CardBackVisual({ card }: { card: ScrollSplitCardItem }) {
+  const mediaClassName = cn(
+    "relative z-10 mb-3 w-full shrink-0",
+    card.icon && card.media && "origin-bottom scale-y-[1.2]",
+    card.mediaClassName,
+  )
+
+  return (
+    <>
+      {card.icon ? <div className="relative z-10 mb-auto shrink-0 self-start">{card.icon}</div> : null}
+      {card.media ? <div className={mediaClassName}>{card.media}</div> : null}
+    </>
+  )
+}
+
 function StaticSplitCards({
   cards,
   className,
+  imageSrc,
+  imageAlt,
 }: {
   cards: ScrollSplitCardItem[]
   className?: string
+  imageSrc?: string
+  imageAlt?: string
 }) {
   return (
-    <div className={cn("mx-auto grid w-full max-w-4xl gap-3 px-4 py-16 sm:grid-cols-3", className)}>
-      {cards.slice(0, 3).map((card) => (
-        <article
-          key={card.title}
-          className="relative flex min-h-[220px] flex-col justify-end overflow-hidden rounded-2xl border border-white/5 p-6"
-          style={{ backgroundColor: card.bgColor, color: card.textColor }}
-        >
-          {card.icon ? <div className="relative z-10 mb-auto">{card.icon}</div> : null}
-          <h3
-            className="relative z-10 mb-3 text-xl leading-tight font-bold"
-            style={{ fontFamily: "var(--font-jura)", letterSpacing: "-0.02em" }}
+    <div className={cn("mx-auto w-full max-w-6xl px-4 py-16", className)}>
+      {imageSrc ? (
+        <figure className="mb-8 overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_48px_rgba(0,0,0,0.35)]">
+          <img
+            src={imageSrc}
+            alt={imageAlt ?? ""}
+            className="h-auto w-full"
+            style={{ imageRendering: "pixelated" }}
+            loading="lazy"
+          />
+        </figure>
+      ) : null}
+      <div className="grid gap-3 sm:grid-cols-3">
+        {cards.slice(0, 3).map((card) => (
+          <article
+            key={card.title}
+            className="relative flex min-h-[220px] flex-col justify-end overflow-hidden rounded-2xl border border-white/5 p-6"
+            style={{ backgroundColor: card.bgColor, color: card.textColor }}
           >
-            {card.title}
-          </h3>
-          <p className="relative z-10 text-sm opacity-80" style={{ fontFamily: "var(--font-inter)", lineHeight: 1.55 }}>
-            {card.description}
-          </p>
-        </article>
-      ))}
+            <CardBackVisual card={card} />
+            <h3
+              className="relative z-10 mb-3 text-xl leading-tight font-bold"
+              style={{ fontFamily: "var(--font-jura)", letterSpacing: "-0.02em" }}
+            >
+              {card.title}
+            </h3>
+            <p className="relative z-10 text-sm opacity-80" style={{ fontFamily: "var(--font-inter)", lineHeight: 1.55 }}>
+              {card.description}
+            </p>
+          </article>
+        ))}
+      </div>
     </div>
   )
 }
 
-export function ScrollSplitCard({
+function AnimatedScrollSplitCard({
   className,
   stickyClassName,
   imageSrc,
@@ -69,12 +103,6 @@ export function ScrollSplitCard({
   endLabelClassName,
 }: ScrollSplitCardProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const [motionReady, setMotionReady] = useState(false)
-
-  useEffect(() => {
-    setMotionReady(true)
-  }, [])
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -103,10 +131,6 @@ export function ScrollSplitCard({
   const startTextOpacity = useTransform(scrollYProgress, [0, 0.08, 0.2, 1], [1, 0, 0, 0])
   const startTextY = useTransform(scrollYProgress, [0, 0.08], [0, 16])
 
-  if (motionReady && reduceMotion) {
-    return <StaticSplitCards cards={cards} className={className} />
-  }
-
   return (
     <div ref={containerRef} className={cn("relative h-[500vh] w-full", className)}>
       <div
@@ -121,10 +145,7 @@ export function ScrollSplitCard({
             style={{ opacity: startTextOpacity, y: startTextY }}
           >
             <p
-              className={cn(
-                "text-[12px] font-medium tracking-[0.10em] uppercase",
-                startLabelClassName,
-              )}
+              className={cn("text-[12px] font-medium tracking-[0.10em] uppercase", startLabelClassName)}
               style={{ fontFamily: "var(--font-inter)" }}
             >
               {startLabel}
@@ -134,7 +155,7 @@ export function ScrollSplitCard({
 
         <motion.div
           style={{ scale, y: cardsY, transformStyle: "preserve-3d" }}
-          className="relative flex h-[min(400px,58vh)] w-full max-w-4xl px-4"
+          className="relative flex aspect-[1024/444] w-full max-w-6xl px-4"
           role="img"
           aria-label={imageAlt || undefined}
         >
@@ -164,8 +185,10 @@ export function ScrollSplitCard({
                     {
                       left: `${-100 * i}%`,
                       backgroundImage: `url(${imageSrc})`,
-                      backgroundSize: "100% 100%",
-                      backgroundPosition: "center",
+                      backgroundSize: "100% auto",
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "center top",
+                      imageRendering: "pixelated",
                     } satisfies CSSProperties
                   }
                 />
@@ -194,7 +217,7 @@ export function ScrollSplitCard({
                   }}
                 />
 
-                {card.icon ? <div className="relative z-10 mb-auto">{card.icon}</div> : null}
+                <CardBackVisual card={card} />
                 <h3
                   className="relative z-10 mb-3 text-lg leading-tight font-bold md:mb-4 md:text-2xl"
                   style={{ fontFamily: "var(--font-jura)", letterSpacing: "-0.02em" }}
@@ -231,4 +254,39 @@ export function ScrollSplitCard({
       </div>
     </div>
   )
+}
+
+function useScrollSplitLayout() {
+  const reduceMotion = useReducedMotion()
+  const [layout, setLayout] = useState<"static" | "animated">("static")
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 768px)")
+    const update = () => {
+      setLayout(reduceMotion || media.matches ? "static" : "animated")
+    }
+
+    update()
+    media.addEventListener("change", update)
+    return () => media.removeEventListener("change", update)
+  }, [reduceMotion])
+
+  return layout
+}
+
+export function ScrollSplitCard(props: ScrollSplitCardProps) {
+  const layout = useScrollSplitLayout()
+
+  if (layout === "static") {
+    return (
+      <StaticSplitCards
+        cards={props.cards}
+        className={props.className}
+        imageSrc={props.imageSrc}
+        imageAlt={props.imageAlt}
+      />
+    )
+  }
+
+  return <AnimatedScrollSplitCard {...props} />
 }

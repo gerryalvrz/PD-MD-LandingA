@@ -22,7 +22,7 @@
 
 .kicker {
   margin: 0 0 8px;
-  color: #c084fc;
+  color: #9B8AFF;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -75,7 +75,7 @@
 }
 
 .previewKicker {
-  color: #c084fc;
+  color: #9B8AFF;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -105,8 +105,14 @@
   min-height: 40px;
   align-items: center;
   padding: 0 14px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #9333ea, #ec4899);
+  border-radius: 12px;
+  background-color: var(--motus-glass-cta-bg-dark);
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  border: 1px solid var(--motus-glass-cta-border-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur);
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur);
+  text-shadow: var(--motus-glass-cta-text-shadow-dark);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
@@ -132,14 +138,21 @@
 }
 
 .primary {
-  border: 0;
+  background-color: var(--motus-glass-cta-bg-dark);
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  border: 1px solid var(--motus-glass-cta-border-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur);
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur);
+  text-shadow: var(--motus-glass-cta-text-shadow-dark);
   color: #fff;
-  background: linear-gradient(to right, #9333ea, #ec4899);
 }
 
 .secondary {
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
   color: #fff;
 }
 
@@ -150,17 +163,20 @@
 }
 
 .trigger {
-  border: 1px solid rgba(168, 85, 247, 0.45);
-  background: rgba(147, 51, 234, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.03) 100%);
+  backdrop-filter: blur(12px);
   color: #fff;
   width: 100%;
   margin-top: 16px;
   padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
 }
 
 .status {
   min-height: 20px;
   margin: 8px 0 0;
   font-size: 13px;
-  color: #d8b4fe;
+  color: #C9C0FF;
 }

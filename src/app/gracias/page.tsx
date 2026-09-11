@@ -1,5 +1,6 @@
 import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { LeadRedirectNotice } from "./LeadRedirectNotice"
+import { glassCtaStyle, ACCENT } from "@/lib/landing-theme"
 
 type Flow = "lead" | "compra" | "llamada"
 
@@ -67,7 +68,7 @@ export default async function GraciasPage({
           width: "100%",
           maxWidth: 680,
           borderRadius: 20,
-          border: "1px solid rgba(147,51,234,0.35)",
+          border: `1px solid ${ACCENT.border}`,
           background: "rgba(255,255,255,0.04)",
           padding: "40px 28px",
           textAlign: "center",
@@ -102,12 +103,7 @@ export default async function GraciasPage({
             href={content.primary.href}
             style={{
               textDecoration: "none",
-              padding: "12px 20px",
-              borderRadius: 10,
-              color: "#fff",
-              fontFamily: "var(--font-inter)",
-              fontWeight: 600,
-              background: "linear-gradient(to right, #9333EA, #EC4899)",
+              ...glassCtaStyle({ dark: true }),
             }}
           >
             {content.primary.label}
