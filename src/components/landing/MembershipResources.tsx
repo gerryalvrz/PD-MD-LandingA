@@ -1,15 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { ArrowUpRight, BookOpen, Library, GraduationCap, Sparkles, Users, CalendarDays, Wallet } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useMemo, useState, type ReactNode } from "react"
+import { BookOpen, GraduationCap, Library, Sparkles, Users } from "lucide-react"
+import { InteractiveSelector, type InteractiveSelectorOption } from "@/components/ui/interactive-selector"
 import { ACCENT, T, type Tok } from "@/lib/landing-theme"
-import {
-  MEMBERSHIP_RESOURCE_GROUPS,
-  MEMBERSHIP_RESOURCES,
-  type MembershipResource,
-  type MembershipResourceGroup,
-} from "@/lib/membership-resources"
+import { MEMBERSHIP_RESOURCES, type MembershipResource } from "@/lib/membership-resources"
 import styles from "./MembershipResources.module.css"
 
 const icons = {
@@ -18,12 +13,30 @@ const icons = {
   academy: GraduationCap,
   ai: Sparkles,
   community: Users,
-  calendar: CalendarDays,
-  payments: Wallet,
 }
 
-function firstSelectable(items: MembershipResource[]) {
-  return items.find((item) => item.href) ?? items[0] ?? null
+const SELECTOR_IMAGES: Record<string, string> = {
+  manual: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80",
+  biblioteca: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80",
+  formacion: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
+  psychat: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
+  comunidad: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
+}
+
+function buildSelectorOptions(items: MembershipResource[], dark: boolean): InteractiveSelectorOption[] {
+  const iconClass = dark ? "text-white" : "text-[#6E56CF]"
+
+  return items.map((item) => {
+    const Icon = icons[item.icon as keyof typeof icons]
+    const icon: ReactNode = <Icon size={22} className={iconClass} aria-hidden="true" />
+
+    return {
+      title: item.title,
+      description: item.line,
+      image: SELECTOR_IMAGES[item.id] ?? SELECTOR_IMAGES.manual,
+      icon,
+    }
+  })
 }
 
 export function MembershipResources({
@@ -34,25 +47,18 @@ export function MembershipResources({
   onExplore: (id: string) => void
 }) {
   const tok: Tok = dark ? T.dark : T.light
-  const [group, setGroup] = useState<MembershipResourceGroup>("recursos")
-  const cards = MEMBERSHIP_RESOURCES.filter((item) => item.group === group)
-  const [activeId, setActiveId] = useState(firstSelectable(cards)?.id ?? null)
-  const [frameReady, setFrameReady] = useState(false)
-  const active = cards.find((item) => item.id === activeId) ?? firstSelectable(cards)
-  const frameSrc = active?.frameSrc ?? active?.href ?? null
+  const selectorItems = useMemo(
+    () => MEMBERSHIP_RESOURCES.filter((item) => item.group === "recursos" && item.status !== "Próximamente"),
+    [],
+  )
+  const selectorOptions = useMemo(() => buildSelectorOptions(selectorItems, dark), [selectorItems, dark])
+  const [activeIndex, setActiveIndex] = useState(0)
 
-  useEffect(() => {
-    const next = firstSelectable(MEMBERSHIP_RESOURCES.filter((item) => item.group === group))
-    setActiveId(next?.id ?? null)
-  }, [group])
-
-  useEffect(() => {
-    setFrameReady(false)
-  }, [frameSrc])
-
-  const selectResource = (item: MembershipResource) => {
-    setActiveId(item.id)
-    if (item.href) onExplore(item.id)
+  const handleSelectorSelect = (index: number, source?: "auto" | "user") => {
+    const item = selectorItems[index]
+    if (!item) return
+    setActiveIndex(index)
+    if (source !== "auto") onExplore(item.id)
   }
 
   return (
@@ -98,99 +104,13 @@ export function MembershipResources({
           </p>
         </div>
 
-        <div className={styles.filters} role="group" aria-label="Ver recursos o herramientas">
-          {MEMBERSHIP_RESOURCE_GROUPS.map((item, index) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className={styles.filter}
-              aria-pressed={group === item.id}
-              aria-controls="membership-resource-menu"
-              onClick={() => {
-                setGroup(item.id)
-                onExplore(`filtro-${item.id}`)
-              }}
-            >
-              <span className={styles.step}>{String(index + 1).padStart(2, "0")}</span>
-              {item.label}
-            </Button>
-          ))}
-        </div>
-
-        <div className={styles.workspace}>
-          <nav id="membership-resource-menu" className={styles.menu} aria-label="Recursos de la membresía">
-            {cards.map((item) => {
-              const Icon = icons[item.icon]
-              const upcoming = item.status === "Próximamente"
-              const selected = active?.id === item.id
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-current={selected ? "true" : undefined}
-                  className={styles.menuItem}
-                  data-upcoming={upcoming ? "true" : "false"}
-                  onClick={() => selectResource(item)}
-                >
-                  <span className={styles.icon}>
-                    <Icon size={18} aria-hidden="true" />
-                  </span>
-                  <span className={styles.menuCopy}>
-                    <span className={styles.menuTitle}>{item.title}</span>
-                    <span className={styles.menuLine}>{item.line}</span>
-                  </span>
-                  <span className={styles.status} data-status={item.status}>
-                    {item.status}
-                  </span>
-                </button>
-              )
-            })}
-          </nav>
-
-          <div className={styles.preview} aria-live="polite">
-            {frameSrc ? (
-              <>
-                <div className={styles.previewHeader}>
-                  <h3 className={styles.previewTitle}>{active?.title}</h3>
-                  {active?.href ? (
-                    <a className={styles.previewLink} href={active.href} target="_blank" rel="noopener noreferrer">
-                      Abrir en nueva pestaña
-                      <ArrowUpRight size={15} aria-hidden="true" />
-                    </a>
-                  ) : null}
-                </div>
-                <div className={styles.frameWrap}>
-                  {!frameReady ? (
-                    <p className={styles.frameLoading} role="status">
-                      Abriendo {active?.title.toLowerCase()}…
-                    </p>
-                  ) : null}
-                  <iframe
-                    key={frameSrc}
-                    className={styles.frame}
-                    src={frameSrc}
-                    title={active?.title}
-                    referrerPolicy="no-referrer"
-                    onLoad={() => setFrameReady(true)}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className={styles.empty}>
-                <h3 className={styles.previewTitle}>{active?.title ?? "Elige un recurso"}</h3>
-                <p>
-                  {active?.status === "Próximamente"
-                    ? "Este acompañamiento está en preparación. Elige otra opción del menú para ver un recurso disponible."
-                    : "Elige una opción a la izquierda para verla aquí."}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <p className={styles.note}>
-          La vista previa abre el recurso en este panel. Si pide iniciar sesión, usa «Abrir en nueva pestaña». No envíes datos de pacientes en estos enlaces.
-        </p>
+        <InteractiveSelector
+          dark={dark}
+          options={selectorOptions}
+          activeIndex={activeIndex}
+          onSelect={handleSelectorSelect}
+          aria-label="Vista previa de recursos incluidos en la membresía"
+        />
       </div>
     </section>
   )

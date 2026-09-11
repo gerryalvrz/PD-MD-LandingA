@@ -7,12 +7,15 @@ import { useEffect, useRef } from "react"
 interface OzzyShaderPanelProps {
   dark?: boolean
   className?: string
+  active?: boolean
 }
 
-export function OzzyShaderPanel({ dark = true, className }: OzzyShaderPanelProps) {
+export function OzzyShaderPanel({ dark = true, className, active = true }: OzzyShaderPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    if (!active) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -32,7 +35,7 @@ export function OzzyShaderPanel({ dark = true, className }: OzzyShaderPanelProps
     return () => {
       shader?.destroy()
     }
-  }, [dark])
+  }, [active, dark])
 
   return (
     <div

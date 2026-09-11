@@ -49,7 +49,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={cn(jura.variable, inter.variable, "font-sans", geist.variable)}>
+    <html
+      lang="es"
+      data-scroll-behavior="smooth"
+      className={cn(jura.variable, inter.variable, "font-sans", geist.variable)}
+    >
       <body>
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>

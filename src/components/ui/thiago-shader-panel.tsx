@@ -7,12 +7,15 @@ import { useEffect, useRef } from "react"
 interface ThiagoShaderPanelProps {
   dark?: boolean
   className?: string
+  active?: boolean
 }
 
-export function ThiagoShaderPanel({ dark = true, className }: ThiagoShaderPanelProps) {
+export function ThiagoShaderPanel({ dark = true, className, active = true }: ThiagoShaderPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    if (!active) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -32,7 +35,7 @@ export function ThiagoShaderPanel({ dark = true, className }: ThiagoShaderPanelP
     return () => {
       shader?.destroy()
     }
-  }, [dark])
+  }, [active, dark])
 
   return (
     <div

@@ -897,8 +897,7 @@ export default function Home() {
         <BenefitsSection
           dark={dark}
           onExplore={(feature) => {
-            onTrack("cta_click", { section: "beneficios", ctaLabel: feature, action: "resource_preview" })
-            if (!feature.startsWith("filtro-")) onTrack("modal_open", { section: "beneficios", ctaLabel: feature })
+            onTrack("cta_click", { section: "beneficios", ctaLabel: feature, action: "resource_select" })
           }}
         />
         <AppExperience dark={dark} onExplore={(feature) => onTrack("cta_click", { section: "experiencia", ctaLabel: feature, action: "app_feature_explore" })} />

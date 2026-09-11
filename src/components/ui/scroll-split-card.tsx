@@ -1,8 +1,26 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from "framer-motion"
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react"
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion"
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+} from "react"
 
 export interface ScrollSplitCardItem {
   title: string
@@ -27,17 +45,24 @@ interface ScrollSplitCardProps {
   endLabelClassName?: string
 }
 
-function CardBackVisual({ card }: { card: ScrollSplitCardItem }) {
+function CardBackVisual({ card, mediaActive = true }: { card: ScrollSplitCardItem; mediaActive?: boolean }) {
   const mediaClassName = cn(
     "relative z-10 mb-3 w-full shrink-0",
-    card.icon && card.media && "origin-bottom scale-y-[1.2]",
+    card.icon && card.media && mediaActive && "origin-bottom scale-y-[1.2]",
     card.mediaClassName,
   )
+
+  const media =
+    card.media && mediaActive
+      ? isValidElement(card.media)
+        ? cloneElement(card.media as ReactElement<{ active?: boolean }>, { active: true })
+        : card.media
+      : null
 
   return (
     <>
       {card.icon ? <div className="relative z-10 mb-auto shrink-0 self-start">{card.icon}</div> : null}
-      {card.media ? <div className={mediaClassName}>{card.media}</div> : null}
+      {media ? <div className={mediaClassName}>{media}</div> : null}
     </>
   )
 }
@@ -85,6 +110,174 @@ function StaticSplitCards({
             </p>
           </article>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function usePinnedScrollProgress(targetRef: RefObject<HTMLElement | null>) {
+  const progress = useMotionValue(0)
+
+  useEffect(() => {
+    const update = () => {
+      const el = targetRef.current
+      if (!el) return
+
+      const rect = el.getBoundingClientRect()
+      const distance = rect.height - window.innerHeight
+      if (distance <= 0) {
+        progress.set(rect.top <= 0 ? 1 : 0)
+        return
+      }
+
+      progress.set(Math.min(1, Math.max(0, -rect.top / distance)))
+    }
+
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+    }
+  }, [progress, targetRef])
+
+  return progress
+}
+
+function mobileScene(progress: number): "image" | 0 | 1 | 2 {
+  if (progress < 0.18) return "image"
+  if (progress < 0.44) return 0
+  if (progress < 0.7) return 1
+  return 2
+}
+
+function MobileFeatureCard({ card, active }: { card: ScrollSplitCardItem; active: boolean }) {
+  const [mediaActive, setMediaActive] = useState(false)
+
+  useEffect(() => {
+    if (!active) {
+      setMediaActive(false)
+      return
+    }
+
+    const timeout = window.setTimeout(() => setMediaActive(true), 40)
+    return () => window.clearTimeout(timeout)
+  }, [active])
+
+  return (
+    <article
+      className="absolute inset-x-4 top-[46%] mx-auto flex min-h-[min(62svh,460px)] max-w-md flex-col justify-end overflow-hidden rounded-2xl border border-white/5 p-6 transition-transform duration-300 ease-out"
+      style={{
+        transform: active ? "translateY(-50%) scale(1)" : "translateY(-50%) scale(0.96)",
+        visibility: active ? "visible" : "hidden",
+        zIndex: active ? 4 : 0,
+        backgroundColor: card.bgColor,
+        color: card.textColor,
+        pointerEvents: "none",
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay"
+        style={{
+          backgroundImage: `url("https://framerusercontent.com/images/6mcf62RlDfRfU61Yg5vb2pefpi4.png?width=256&height=256")`,
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <CardBackVisual card={card} mediaActive={mediaActive} />
+      <h3
+        className="relative z-10 mb-3 text-xl leading-tight font-bold"
+        style={{ fontFamily: "var(--font-jura)", letterSpacing: "-0.02em" }}
+      >
+        {card.title}
+      </h3>
+      <p className="relative z-10 text-sm opacity-80" style={{ fontFamily: "var(--font-inter)", lineHeight: 1.55 }}>
+        {card.description}
+      </p>
+    </article>
+  )
+}
+
+function MobileScrollSplitCard({
+  className,
+  stickyClassName,
+  imageSrc,
+  imageAlt = "",
+  cards,
+  startLabel,
+  startLabelClassName,
+  endLabel,
+  endLabelClassName,
+}: ScrollSplitCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scene, setScene] = useState<"image" | 0 | 1 | 2>("image")
+  const visibleCards = cards.slice(0, 3)
+  const scrollYProgress = usePinnedScrollProgress(containerRef)
+
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.14, 0.18], [1, 1, 0])
+  const imageScale = useTransform(scrollYProgress, [0, 0.14, 0.18], [1, 1, 0.96])
+  const startTextOpacity = useTransform(scrollYProgress, [0, 0.08, 0.14], [1, 1, 0])
+  const endTextOpacity = useTransform(scrollYProgress, [0.86, 0.92, 1], [0, 1, 1])
+  const endTextY = useTransform(scrollYProgress, [0.86, 0.92], [20, 0])
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const next = mobileScene(progress)
+    setScene((current) => (current === next ? current : next))
+  })
+
+  return (
+    <div ref={containerRef} className={cn("relative h-[520svh] w-full", className)}>
+      <div
+        className={cn(
+          "sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden",
+          stickyClassName,
+        )}
+      >
+        {startLabel ? (
+          <motion.p
+            className={cn(
+              "absolute top-[12%] right-0 left-0 z-20 text-center text-[12px] font-medium tracking-[0.10em] uppercase",
+              startLabelClassName,
+            )}
+            style={{ fontFamily: "var(--font-inter)", opacity: startTextOpacity }}
+          >
+            {startLabel}
+          </motion.p>
+        ) : null}
+
+        <motion.figure
+          className="absolute inset-x-4 top-[22%] z-[1] mx-auto max-w-md overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_48px_rgba(0,0,0,0.35)]"
+          style={{ opacity: imageOpacity, scale: imageScale }}
+        >
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            className="h-auto w-full"
+            style={{ imageRendering: "pixelated" }}
+            loading="lazy"
+          />
+        </motion.figure>
+
+        {visibleCards.map((card, index) => (
+          <MobileFeatureCard key={card.title} card={card} active={scene === index} />
+        ))}
+
+        {endLabel ? (
+          <motion.div
+            className="absolute right-0 bottom-[10%] left-0 z-20 text-center"
+            style={{ opacity: endTextOpacity, y: endTextY }}
+          >
+            <p
+              className={cn(
+                "px-6 text-[clamp(22px,6.4vw,30px)] leading-tight font-bold tracking-[-0.02em]",
+                endLabelClassName,
+              )}
+              style={{ fontFamily: "var(--font-jura)" }}
+            >
+              {endLabel}
+            </p>
+          </motion.div>
+        ) : null}
       </div>
     </div>
   )
@@ -258,12 +451,16 @@ function AnimatedScrollSplitCard({
 
 function useScrollSplitLayout() {
   const reduceMotion = useReducedMotion()
-  const [layout, setLayout] = useState<"static" | "animated">("static")
+  const [layout, setLayout] = useState<"static" | "mobile" | "animated">("static")
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 768px)")
     const update = () => {
-      setLayout(reduceMotion || media.matches ? "static" : "animated")
+      if (reduceMotion) {
+        setLayout("static")
+        return
+      }
+      setLayout(media.matches ? "mobile" : "animated")
     }
 
     update()
@@ -286,6 +483,10 @@ export function ScrollSplitCard(props: ScrollSplitCardProps) {
         imageAlt={props.imageAlt}
       />
     )
+  }
+
+  if (layout === "mobile") {
+    return <MobileScrollSplitCard {...props} />
   }
 
   return <AnimatedScrollSplitCard {...props} />

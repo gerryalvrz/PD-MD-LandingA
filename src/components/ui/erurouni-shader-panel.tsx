@@ -7,12 +7,15 @@ import { useEffect, useRef } from "react"
 interface ErurouniShaderPanelProps {
   dark?: boolean
   className?: string
+  active?: boolean
 }
 
-export function ErurouniShaderPanel({ dark = true, className }: ErurouniShaderPanelProps) {
+export function ErurouniShaderPanel({ dark = true, className, active = true }: ErurouniShaderPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    if (!active) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -32,7 +35,7 @@ export function ErurouniShaderPanel({ dark = true, className }: ErurouniShaderPa
     return () => {
       shader?.destroy()
     }
-  }, [dark])
+  }, [active, dark])
 
   return (
     <div
