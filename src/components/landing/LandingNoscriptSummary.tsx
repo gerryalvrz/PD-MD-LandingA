@@ -35,6 +35,8 @@ export function LandingNoscriptSummary() {
         <p>{LANDING_META.lede}</p>
         <p>
           <strong>{LANDING_META.priceLine}</strong>
+          {" · "}
+          {LANDING_META.savingsBadge}
         </p>
         <p>
           <a href={`${CANONICAL_SITE_URL}/#membresia`}>{LANDING_CTAS.membership.label}</a>
@@ -99,6 +101,9 @@ export function LandingNoscriptSummary() {
         <h2>{LANDING_FINAL.heading}</h2>
         <p>{LANDING_FINAL.lede}</p>
         <p>{LANDING_FINAL.priceLine}</p>
+        <p>
+          {LANDING_FINAL.savingsBadge}
+        </p>
 
         <h2>Límites</h2>
         <ul>

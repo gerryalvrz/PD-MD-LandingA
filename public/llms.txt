@@ -19,7 +19,7 @@ For a clear “what it is / what it is not” summary, also use:
 
 ## Producto principal
 
-- Membresía de Práctica Digital (Bloque 02 — Fundamentos): USD 20/mes o USD 120/año fundador
+- Membresía de Práctica Digital (Bloque 02 — Fundamentos): USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado)
 - Incluye: manual clínico-operativo, biblioteca virtual, formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario
 
 ## Ruta de cinco bloques
@@ -32,7 +32,7 @@ For a clear “what it is / what it is not” summary, also use:
 
 ## CTAs
 
-- Elegir membresía: https://academia.motusdao.org/#membresia
+- Empezar mi membresía: https://academia.motusdao.org/#membresia
 - Guía de membresía (citable): https://academia.motusdao.org/guia-membresia
 - Evaluar práctica (autoevaluación gratuita): https://academia.motusdao.org/diagnostico
 - Consulta por invitación al pase directo: contact@motusdao.org

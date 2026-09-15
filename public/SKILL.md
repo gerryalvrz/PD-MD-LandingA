@@ -35,7 +35,7 @@ MotusDAO ofrece recursos, formación y comunidad para que psicólogos ordenen su
 
 **Membresía de Práctica Digital** (Bloque 02 — Fundamentos)
 
-- USD 20/mes o USD 120/año fundador
+- USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado)
 - Incluye: manual clínico-operativo, biblioteca virtual, formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario
 - CTA: https://academia.motusdao.org/#membresia
 

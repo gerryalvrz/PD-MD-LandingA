@@ -263,7 +263,7 @@ Root wrapper: `transition: "background 0.35s ease"`.
 
 - `GlassEffect` bar, `h-14`, `rounded-2xl`, fixed top with safe-area
 - Logo `/logo.svg` + "MotusDAO" (wordmark hidden on mobile)
-- Theme toggle + `GlassCta small` ("Elegir mi membresía")
+- Theme toggle + `GlassCta small` ("Empezar mi membresía")
 
 ### Pattern: Hero
 

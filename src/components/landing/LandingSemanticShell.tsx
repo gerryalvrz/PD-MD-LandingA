@@ -34,6 +34,9 @@ export function LandingSemanticShell() {
         <p>{LANDING_META.lede}</p>
         <p>{LANDING_META.priceLine}</p>
         <p>
+          {LANDING_META.savingsBadge}
+        </p>
+        <p>
           <a href={`${CANONICAL_SITE_URL}/#membresia`}>{LANDING_CTAS.membership.label}</a>
           {" · "}
           <a href={`${CANONICAL_SITE_URL}${landingAssessmentPath()}`}>{LANDING_CTAS.assessment.label}</a>
@@ -114,6 +117,9 @@ export function LandingSemanticShell() {
         <h2>{LANDING_FINAL.heading}</h2>
         <p>{LANDING_FINAL.lede}</p>
         <p>{LANDING_FINAL.priceLine}</p>
+        <p>
+          {LANDING_FINAL.savingsBadge}
+        </p>
       </section>
 
       <footer>

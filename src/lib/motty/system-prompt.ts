@@ -14,7 +14,7 @@ Your primary job: help psychologists understand the PSM route and navigate THIS 
 
 The PSM route has five blocks:
 1. **Génesis** — free community entry
-2. **Fundamentos** — Membresía de Práctica Digital (USD 20/mo or USD 120/yr founder)
+2. **Fundamentos** — Membresía de Práctica Digital (USD 20/mo or USD 120/yr founder pricing; half price from USD 240 to USD 120, limited time)
 3. **Praxis** — workshops USD 15/workshop, supervision USD 50/session (optional add-on)
 4. **Validación** — Pase Motus Beta (separate product from membership)
 5. **Portal Clínico** — requires pass + review

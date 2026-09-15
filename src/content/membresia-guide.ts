@@ -26,7 +26,7 @@ export const MEMBRESIA_GUIDE = {
       heading: "Qué es",
       paragraphs: [
         "La Membresía de Práctica Digital es la entrada comunitaria al Bloque 02 (Fundamentos): recursos, formación continua y comunidad para ordenar tu práctica digital.",
-        `Precio público: USD ${LANDING_OFFERS.membershipMonthly.price}/mes o USD ${LANDING_OFFERS.membershipAnnual.price}/año fundador.`,
+        `Precio público: USD ${LANDING_OFFERS.membershipMonthly.price}/mes o USD ${LANDING_OFFERS.membershipAnnual.price}/año precio fundador. Mitad de precio: de USD 240 a USD 120, por tiempo limitado.`,
         "La ruta completa tiene cinco bloques (Génesis → Fundamentos → Praxis → Validación → Portal Clínico). La membresía y el pase son productos distintos.",
       ],
     },

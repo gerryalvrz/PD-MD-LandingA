@@ -53,7 +53,7 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
       style={{ color: tok.t1 }}
       aria-labelledby="experience-title"
     >
-      <LiquidGradientBackground key={dark ? "exp-dark" : "exp-light"} dark={dark} showControls={false} />
+      <LiquidGradientBackground dark={dark} showControls={false} />
       <div
         className={styles.veil}
         aria-hidden

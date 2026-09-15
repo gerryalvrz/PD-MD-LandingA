@@ -16,7 +16,7 @@ export const MOTTY_OFFERS: MottyOffer[] = [
     id: "membership",
     label: "Membresía de Práctica Digital",
     summary:
-      "Fundamentos del PSM: USD 20/mes o USD 120/año (fundador). Incluye comunidad, recursos y estructura de práctica digital.",
+      "Fundamentos del PSM: USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado). Incluye comunidad, recursos y estructura de práctica digital.",
     href: `${SITE}/#membresia`,
     cta: "Ver membresía",
   },

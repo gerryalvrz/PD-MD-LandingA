@@ -26,11 +26,14 @@ export function GlobePulse({
   speed = 0.003,
 }: GlobePulseProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const markersRef = useRef(markers)
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null)
   const dragOffset = useRef({ phi: 0, theta: 0 })
   const phiOffsetRef = useRef(0)
   const thetaOffsetRef = useRef(0)
   const isPausedRef = useRef(false)
+
+  markersRef.current = markers
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY }
@@ -67,66 +70,116 @@ export function GlobePulse({
   }, [handlePointerUp])
 
   useEffect(() => {
-    if (!canvasRef.current) return
     const canvas = canvasRef.current
-    let globe: ReturnType<typeof createGlobe> | null = null
-    let animationId: number
-    let phi = 0
+    if (!canvas) return
 
-    function init() {
+    let globe: ReturnType<typeof createGlobe> | null = null
+    let animationId = 0
+    let phi = 0
+    let disposed = false
+    let resizeObserver: ResizeObserver | null = null
+
+    const destroy = () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId)
+        animationId = 0
+      }
+      if (globe) {
+        try {
+          globe.destroy()
+        } catch {
+          // Context may already be gone.
+        }
+        globe = null
+      }
+      canvas.style.opacity = "0"
+    }
+
+    const init = () => {
+      if (disposed) return
       const width = canvas.offsetWidth
       if (width === 0 || globe) return
 
-      globe = createGlobe(canvas, {
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-        width,
-        height: width,
-        phi: 0,
-        theta: 0.2,
-        dark: 1,
-        diffuse: 1.5,
-        mapSamples: 16000,
-        mapBrightness: 10,
-        baseColor: [0.5, 0.5, 0.5],
-        markerColor: [0.2, 0.8, 0.9],
-        glowColor: [0.05, 0.05, 0.05],
-        markerElevation: 0,
-        markers: markers.map((m) => ({ location: m.location, size: 0.025, id: m.id })),
-        arcs: [],
-        arcColor: [0.3, 0.85, 0.95],
-        arcWidth: 0.5,
-        arcHeight: 0.25,
-        opacity: 0.7,
-      })
-      function animate() {
-        if (!isPausedRef.current) phi += speed
-        globe!.update({
-          phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-          theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta,
+      try {
+        globe = createGlobe(canvas, {
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          width,
+          height: width,
+          phi: 0,
+          theta: 0.2,
+          dark: 1,
+          diffuse: 1.5,
+          mapSamples: 16000,
+          mapBrightness: 10,
+          baseColor: [0.5, 0.5, 0.5],
+          markerColor: [0.2, 0.8, 0.9],
+          glowColor: [0.05, 0.05, 0.05],
+          markerElevation: 0,
+          markers: markersRef.current.map((m) => ({ location: m.location, size: 0.025, id: m.id })),
+          arcs: [],
+          arcColor: [0.3, 0.85, 0.95],
+          arcWidth: 0.5,
+          arcHeight: 0.25,
+          opacity: 0.7,
         })
+      } catch {
+        globe = null
+        return
+      }
+
+      const animate = () => {
+        if (disposed || !globe) return
+        if (!isPausedRef.current) phi += speed
+        try {
+          globe.update({
+            phi: phi + phiOffsetRef.current + dragOffset.current.phi,
+            theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta,
+          })
+        } catch {
+          destroy()
+          return
+        }
         animationId = requestAnimationFrame(animate)
       }
       animate()
-      setTimeout(() => canvas && (canvas.style.opacity = "1"))
+      requestAnimationFrame(() => {
+        if (!disposed && canvas.isConnected) canvas.style.opacity = "1"
+      })
     }
+
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      destroy()
+    }
+
+    const onContextRestored = () => {
+      init()
+    }
+
+    canvas.addEventListener("webglcontextlost", onContextLost)
+    canvas.addEventListener("webglcontextrestored", onContextRestored)
 
     if (canvas.offsetWidth > 0) {
       init()
     } else {
-      const ro = new ResizeObserver((entries) => {
+      resizeObserver = new ResizeObserver((entries) => {
         if (entries[0]?.contentRect.width > 0) {
-          ro.disconnect()
+          resizeObserver?.disconnect()
+          resizeObserver = null
           init()
         }
       })
-      ro.observe(canvas)
+      resizeObserver.observe(canvas)
     }
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId)
-      if (globe) globe.destroy()
+      disposed = true
+      resizeObserver?.disconnect()
+      canvas.removeEventListener("webglcontextlost", onContextLost)
+      canvas.removeEventListener("webglcontextrestored", onContextRestored)
+      destroy()
     }
-  }, [markers, speed])
+  }, [speed])
 
   return (
     <div className={`relative aspect-square select-none ${className}`}>
@@ -148,6 +201,7 @@ export function GlobePulse({
           transition: "opacity 1.2s ease",
           borderRadius: "50%",
           touchAction: "none",
+          backgroundColor: "transparent",
         }}
       />
       {markers.map((m) => (

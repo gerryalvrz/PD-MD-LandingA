@@ -6,12 +6,12 @@ export const LANDING_META = {
   title: "MotusDAO — Membresía y ruta profesional para psicólogos",
   description:
     "Recursos, formación y comunidad para tu práctica digital. Conoce la membresía desde USD 20/mes y la ruta de cinco bloques hacia el Portal Clínico de MotusDAO.",
-  headline: "Dale estructura a tu práctica digital y avanza con MotusDAO",
-  headlineAccent: "MotusDAO",
+  headline: "Dale estructura a tu práctica digital.",
   lede:
-    "Empieza con recursos, formación y comunidad global. Continúa por una ruta de cinco bloques hacia el Portal Clínico, según tus objetivos y requisitos profesionales.",
+    "Formación, herramientas y comunidad para ejercer online con mayor claridad.",
   audience: "Profesionales de salud mental",
-  priceLine: "Membresía desde USD 20/mes · USD 120/año fundador",
+  priceLine: "USD 20/mes · USD 120/año precio fundador",
+  savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
   orgName: "MotusDAO",
   orgEmail: "contact@motusdao.org",
   contactEmail: "contact@motusdao.org",
@@ -41,6 +41,14 @@ export const LANDING_TRUST = [
     title: "Pagos",
     description: "Cobros inmediatos, sin comisión, desde cualquier parte del mundo. Selecciona tu moneda de cobro.",
   },
+] as const
+
+/** Thin hero chips that name the tools referenced in the lede. */
+export const LANDING_HERO_SERVICES = [
+  { label: "Formación" },
+  { label: "IA" },
+  { label: "Pagos" },
+  { label: "Comunidad Global" },
 ] as const
 
 export type JourneyStage = {
@@ -82,7 +90,7 @@ export const LANDING_JOURNEY = {
       title: "Fundamentos",
       ordinal: "02",
       job: "Ordena tu práctica digital",
-      line: "Ordena tu práctica con la Membresía de Práctica Digital: USD 20/mes o USD 120/año fundador.",
+      line: "Ordena tu práctica con la Membresía de Práctica Digital: USD 20/mes o USD 120/año precio fundador.",
       chips: ["Membresía", "USD 20/mes", "Manual"],
       cta: "Ver membresía",
       href: "#membresia",
@@ -138,7 +146,8 @@ export const LANDING_MEMBERSHIP = {
     title: "Membresía de Práctica Digital",
     priceMonthlyLabel: "USD 20",
     priceMonthlySuffix: "/mes",
-    priceAnnual: "USD 120/año fundador",
+    priceAnnual: "USD 120/año precio fundador",
+    savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
     includes: [
       "Manual clínico-operativo y biblioteca virtual.",
       "Actividades de formación continua e introducción a PsyChat.",
@@ -146,7 +155,7 @@ export const LANDING_MEMBERSHIP = {
     ],
     planLegend: "Elige tu plan",
     planMonthly: "Mensual · USD 20/mes",
-    planAnnual: "Anual fundador · USD 120/año",
+    planAnnual: "Anual · USD 120/año precio fundador",
     continueLabel: "Continuar a Fundamentos",
     continueNote:
       "Acceso gratuito durante la revisión de contenido. Tu elección no genera un cobro ni activa una suscripción.",
@@ -183,7 +192,8 @@ export const LANDING_FINAL = {
   heading: "Dale estructura a tu siguiente etapa",
   lede:
     "Recursos, formación y comunidad para avanzar en tu práctica digital. Empieza por Fundamentos y conoce el recorrido hacia el Portal Clínico.",
-  priceLine: "USD 20/mes · USD 120/año fundador",
+  priceLine: "USD 20/mes · USD 120/año precio fundador",
+  savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
 } as const
 
 export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> = [
@@ -227,8 +237,8 @@ export const LANDING_NON_CLAIMS = [
 ] as const
 
 export const LANDING_CTAS = {
-  membership: { label: "Elegir mi membresía", href: "/#membresia" },
-  membershipSticky: { label: "Elegir mi membresía · USD 20/mes", href: "/#membresia" },
+  membership: { label: "Empezar mi membresía", href: "/#membresia" },
+  membershipSticky: { label: "Empezar mi membresía · USD 20/mes", href: "/#membresia" },
   assessment: { label: "Evaluar mi práctica", href: "/diagnostico" },
   invitation: { label: "Consultar sobre la invitación", href: "mailto:contact@motusdao.org" },
 } as const
@@ -236,7 +246,7 @@ export const LANDING_CTAS = {
 export const LANDING_AGENT_PROMPT = {
   label: "Prompt para tu agente",
   helper:
-    "Pégalo en ChatGPT, Claude, Cursor u otro asistente para que consulte MotusDAO con fuentes oficiales.",
+    "¿Dudas antes de decidir? Pégalo en ChatGPT, Claude o Cursor para contrastar la membresía con fuentes oficiales.",
   expandHint: "Haz clic aquí para ver y copiar el prompt",
   collapseHint: "Ocultar prompt",
   prompt:

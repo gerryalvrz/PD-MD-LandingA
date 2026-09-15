@@ -556,6 +556,16 @@ export function LiquidGradientBackground({ dark, showControls = true }: LiquidGr
       uniformsRef.current = null
       sceneRef.current = null
     }
+    // Mount once — theme changes sync via the effect below (avoids WebGL teardown that can kill the hero globe).
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
+  }, [])
+
+  useEffect(() => {
+    const scheme = SCHEMES[defaultScheme]
+    if (!scheme) return
+    setActiveScheme(defaultScheme)
+    setColorHexes(scheme.hexes)
+    applySchemeToShader(scheme)
   }, [defaultScheme])
 
   const handleColorChange = (index: number, value: string) => {

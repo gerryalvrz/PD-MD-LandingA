@@ -14,6 +14,7 @@ import {
   LANDING_FINAL,
   LANDING_JOURNEY,
   LANDING_MEMBERSHIP,
+  LANDING_HERO_SERVICES,
   LANDING_META,
   LANDING_NAV,
   LANDING_TRUST,
@@ -32,7 +33,7 @@ import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
 import { ErurouniShaderPanel } from "@/components/ui/erurouni-shader-panel"
 import { OzzyShaderPanel } from "@/components/ui/ozzy-shader-panel"
 import { ThiagoShaderPanel } from "@/components/ui/thiago-shader-panel"
-import { ACCENT, ACCENT_GRAD, T, type Tok, glassCtaStyle } from "@/lib/landing-theme"
+import { ACCENT, T, type Tok, glassCtaStyle } from "@/lib/landing-theme"
 import { GlassCta } from "@/components/ui/glass-cta"
 import { CreditCard, Globe, Sparkles } from "lucide-react"
 
@@ -69,18 +70,91 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-function GradientText({ children }: { children: React.ReactNode }) {
+function SavingsBadge({
+  dark,
+  badge,
+  hint,
+}: {
+  dark: boolean
+  badge: string
+  hint?: string
+}) {
   return (
     <span
       style={{
-        backgroundImage: ACCENT_GRAD,
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        flexWrap: "wrap",
       }}
     >
-      {children}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          fontFamily: "var(--font-inter)",
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: "0.02em",
+          color: dark ? "#0E0A1A" : "#fff",
+          background: ACCENT.iris,
+          borderRadius: 999,
+          padding: "5px 11px",
+          lineHeight: 1.25,
+          maxWidth: "100%",
+        }}
+      >
+        {badge}
+      </span>
+      {hint ? (
+        <span
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 12,
+            fontWeight: 500,
+            color: dark ? "rgba(255,255,255,0.72)" : "rgba(14,10,26,0.72)",
+          }}
+        >
+          {hint}
+        </span>
+      ) : null}
     </span>
+  )
+}
+
+function PriceOfferLine({
+  dark,
+  priceLine,
+  savingsBadge,
+  muted,
+}: {
+  dark: boolean
+  priceLine: string
+  savingsBadge: string
+  muted?: boolean
+}) {
+  const tok = dark ? T.dark : T.light
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: "8px 12px",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "var(--font-inter)",
+          fontSize: 13,
+          color: muted ? tok.t3 : dark ? "rgba(255,255,255,0.72)" : "#000000",
+          letterSpacing: "0.02em",
+        }}
+      >
+        {priceLine}
+      </span>
+      <SavingsBadge dark={dark} badge={savingsBadge} />
+    </div>
   )
 }
 
@@ -246,12 +320,10 @@ function Hero({
   dark,
   onConoce,
   onDiagnostico,
-  onAgentPromptCopy,
 }: {
   dark: boolean
   onConoce: () => void
   onDiagnostico: () => void
-  onAgentPromptCopy?: () => void
 }) {
   const tok = dark ? T.dark : T.light
   const isLight = !dark
@@ -337,7 +409,7 @@ function Hero({
                 marginBottom: 16,
               }}
             >
-              Dale estructura a tu práctica digital y avanza con <GradientText>{LANDING_META.headlineAccent}</GradientText>
+              {LANDING_META.headline}
             </motion.h1>
 
             <motion.p
@@ -347,12 +419,56 @@ function Hero({
                 fontSize: isMobile ? 16 : "clamp(15px, 1.65vw, 17px)",
                 lineHeight: 1.6,
                 color: tok.t2,
-                marginBottom: 22,
+                marginBottom: 16,
                 maxWidth: 560,
               }}
             >
               {LANDING_META.lede}
             </motion.p>
+
+            <motion.ul
+              variants={fadeUp}
+              aria-label="Herramientas principales"
+              style={{
+                listStyle: "none",
+                margin: "0 0 22px",
+                padding: 0,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                maxWidth: 560,
+              }}
+            >
+              {LANDING_HERO_SERVICES.map((service) => (
+                <li key={service.label}>
+                  <GlassEffect
+                    className="rounded-full"
+                    style={{
+                      background: dark
+                        ? "linear-gradient(135deg, rgba(16, 10, 30, 0.36), rgba(38, 16, 58, 0.30))"
+                        : "linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(245, 238, 255, 0.28))",
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: 0,
+                        padding: "8px 18px",
+                        fontFamily: "var(--font-jura)",
+                        fontWeight: 700,
+                        fontSize: 13,
+                        letterSpacing: "-0.01em",
+                        color: tok.t1,
+                        lineHeight: 1.2,
+                        textAlign: "center",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {service.label}
+                    </p>
+                  </GlassEffect>
+                </li>
+              ))}
+            </motion.ul>
 
             <motion.div
               variants={fadeUp}
@@ -369,21 +485,12 @@ function Hero({
                 </GlassCta>
               </div>
             </motion.div>
-            <motion.p
-              variants={fadeUp}
-              style={{
-                fontFamily: "var(--font-inter)",
-                fontSize: 13,
-                color: dark ? "rgba(255,255,255,0.72)" : "#000000",
-                marginTop: 14,
-                letterSpacing: "0.02em",
-              }}
-            >
-              {LANDING_META.priceLine}
-            </motion.p>
-
-            <motion.div variants={fadeUp}>
-              <AgentPromptCard dark={dark} onCopy={onAgentPromptCopy} />
+            <motion.div variants={fadeUp} style={{ marginTop: 14 }}>
+              <PriceOfferLine
+                dark={dark}
+                priceLine={LANDING_META.priceLine}
+                savingsBadge={LANDING_META.savingsBadge}
+              />
             </motion.div>
           </div>
 
@@ -453,10 +560,10 @@ function BenefitsSection({ dark, onExplore }: { dark: boolean; onExplore: (id: s
   return <MembershipResources dark={dark} onExplore={onExplore} />
 }
 
-function SectionAtmosphere({ dark, id }: { dark: boolean; id: string }) {
+function SectionAtmosphere({ dark }: { dark: boolean }) {
   return (
     <>
-      <LiquidGradientBackground key={`${id}-${dark ? "dark" : "light"}`} dark={dark} showControls={false} />
+      <LiquidGradientBackground dark={dark} showControls={false} />
       <div
         aria-hidden
         style={{
@@ -488,7 +595,7 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
         isolation: "isolate",
       }}
     >
-      <SectionAtmosphere dark={dark} id="diagnostico" />
+      <SectionAtmosphere dark={dark} />
       <div style={{ position: "relative", zIndex: 2, maxWidth: 720, marginInline: "auto", textAlign: "center", color: tok.t1 }}>
         <SectionLabel>{LANDING_ASSESSMENT_TEASER.label}</SectionLabel>
         <SectionHeading tok={tok}>{LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].heading}</SectionHeading>
@@ -649,7 +756,15 @@ function JourneySection({ dark }: { dark: boolean }) {
   )
 }
 
-function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (plan: MembershipPlan | "invitation") => void }) {
+function MembershipSection({
+  dark,
+  onContinue,
+  onAgentPromptCopy,
+}: {
+  dark: boolean
+  onContinue: (plan: MembershipPlan | "invitation") => void
+  onAgentPromptCopy?: () => void
+}) {
   const [plan, setPlan] = useState<MembershipPlan>("monthly")
   const tok = dark ? T.dark : T.light
   const copy = LANDING_MEMBERSHIP
@@ -722,9 +837,12 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
               {copy.community.priceMonthlyLabel}
               <span style={{ fontSize: 16, fontWeight: 400, color: tok.t2 }}>{copy.community.priceMonthlySuffix}</span>
             </p>
-            <p style={{ ...bodyStyle, marginBottom: 24 }}>
-              o <strong style={{ color: tok.t1 }}>{copy.community.priceAnnual}</strong>
-            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 12px", marginBottom: 24 }}>
+              <p style={{ ...bodyStyle, margin: 0 }}>
+                o <strong style={{ color: tok.t1 }}>{copy.community.priceAnnual}</strong>
+              </p>
+              <SavingsBadge dark={dark} badge={copy.community.savingsBadge} />
+            </div>
             <ul style={{ ...bodyStyle, paddingLeft: 20, display: "grid", gap: 10 }}>
               {copy.community.includes.map((line) => (
                 <li key={line}>{line}</li>
@@ -750,7 +868,10 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
                     }}
                   >
                     <input type="radio" name="membership-plan" value={value} checked={plan === value} onChange={() => setPlan(value)} />
-                    {value === "monthly" ? copy.community.planMonthly : copy.community.planAnnual}
+                    <span style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, flex: 1 }}>
+                      {value === "monthly" ? copy.community.planMonthly : copy.community.planAnnual}
+                      {value === "annual" ? <SavingsBadge dark={dark} badge={copy.community.savingsBadge} /> : null}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -786,6 +907,7 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
             <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>{copy.invitation.emailNote}</p>
           </article>
         </div>
+        <AgentPromptCard dark={dark} onCopy={onAgentPromptCopy} />
         <p style={{ ...bodyStyle, marginTop: 20 }}>{copy.praxisNote}</p>
       </div>
     </section>
@@ -848,7 +970,7 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
         isolation: "isolate",
       }}
     >
-      <SectionAtmosphere dark={dark} id="final" />
+      <SectionAtmosphere dark={dark} />
       <div style={{ position: "relative", zIndex: 2, maxWidth: 560, margin: "0 auto", color: tok.t1 }}>
         <h2
           style={{
@@ -877,9 +999,14 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
         <GlassCta href="#membresia" onClick={onMembership} dark={dark}>
           {LANDING_CTAS.membership.label}
         </GlassCta>
-        <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 14 }}>
-          {LANDING_FINAL.priceLine}
-        </p>
+        <div style={{ marginTop: 14 }}>
+          <PriceOfferLine
+            dark={dark}
+            priceLine={LANDING_FINAL.priceLine}
+            savingsBadge={LANDING_FINAL.savingsBadge}
+            muted
+          />
+        </div>
       </div>
     </section>
   )
@@ -951,14 +1078,6 @@ export default function LandingPage() {
           dark={dark}
           onConoce={() => handleMembership("hero")}
           onDiagnostico={() => handleDiagnostico("hero")}
-          onAgentPromptCopy={() =>
-            onTrack("cta_click", {
-              section: "hero",
-              ctaLabel: "Copiar prompt",
-              action: "agent_prompt_copy",
-              intent: "lead",
-            })
-          }
         />
         <TrustBar dark={dark} />
         <BenefitsSection
@@ -978,6 +1097,14 @@ export default function LandingPage() {
               intent: "lead",
               plan,
               action: plan === "invitation" ? "invitation_contact_click" : "membership_review_continue",
+            })
+          }
+          onAgentPromptCopy={() =>
+            onTrack("cta_click", {
+              section: "membresia",
+              ctaLabel: "Copiar prompt",
+              action: "agent_prompt_copy",
+              intent: "lead",
             })
           }
         />
