@@ -203,3 +203,21 @@ ul {
     @apply font-sans;
   }
 }
+
+/*
+ * Server semantic shell: keep copy in the DOM for agents without opacity:0,
+ * display:none, or the hidden attribute. Clipped from the visual layout only.
+ */
+.landing-semantic-shell {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
