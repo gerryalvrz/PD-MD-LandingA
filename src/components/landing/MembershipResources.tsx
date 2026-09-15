@@ -87,7 +87,7 @@ export function MembershipResources({
               marginBottom: 16,
             }}
           >
-            Incluido en tu membresía
+            Qué incluye
           </p>
           <h2
             id="beneficios-title"
@@ -101,10 +101,10 @@ export function MembershipResources({
               margin: 0,
             }}
           >
-            Recursos para dar el siguiente paso
+            Todo esto está incluido en tu membresía
           </h2>
           <p className={styles.body}>
-            La Membresía de Práctica Digital es tu entrada comunitaria al bloque Fundamentos. Reúne recursos, formación y comunidad para organizar tu práctica online. Talleres y supervisión se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión. El Pase Motus Beta también es aparte.
+            Recursos, formación, IA y comunidad para estructurar tu práctica digital.
           </p>
         </div>
 

@@ -149,8 +149,8 @@ export const LANDING_MEMBERSHIP = {
     priceAnnual: "USD 120/año precio fundador",
     savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
     includes: [
-      "Manual clínico-operativo y biblioteca virtual.",
-      "Actividades de formación continua e introducción a PsyChat.",
+      "Manual clínico-operativo y biblioteca profesional.",
+      "Formación continua e incorporación de IA con PsyChat.",
       "Comunidad de práctica y encuentros según calendario.",
     ],
     planLegend: "Elige tu plan",
@@ -200,7 +200,7 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Qué incluye la membresía?",
     answer:
-      "Manual clínico-operativo, biblioteca virtual, actividades de formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario.",
+      "Manual clínico-operativo, biblioteca profesional, formación continua, PsyChat, comunidad de práctica y encuentros según calendario.",
   },
   {
     question: "¿Membresía y pase son lo mismo?",

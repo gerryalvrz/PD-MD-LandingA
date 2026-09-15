@@ -19,31 +19,31 @@ export type InteractiveSelectorOption = {
 const DEFAULT_OPTIONS: InteractiveSelectorOption[] = [
   {
     title: "Manual clínico-operativo",
-    description: "Referencia para estructurar tu práctica digital",
+    description: "Guías y referencias para organizar tu consulta online.",
     image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80",
     icon: <BookOpen size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "Biblioteca virtual",
-    description: "Recursos para consultar y seguir aprendiendo",
+    title: "Biblioteca profesional",
+    description: "Recursos actualizados sobre práctica digital, tecnología y salud mental.",
     image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80",
     icon: <Library size={22} className="text-white" aria-hidden="true" />,
   },
   {
     title: "Formación continua",
-    description: "Actividades para desarrollar tu práctica profesional",
+    description: "Actividades para desarrollar y actualizar tu práctica profesional.",
     image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
     icon: <GraduationCap size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "Introducción a PsyChat",
-    description: "Herramientas de apoyo con criterio clínico",
+    title: "PsyChat",
+    description: "Aprende a incorporar IA a tu trabajo con criterio profesional.",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
     icon: <Sparkles size={22} className="text-white" aria-hidden="true" />,
   },
   {
     title: "Comunidad de práctica",
-    description: "Comparte el recorrido con otros profesionales",
+    description: "Comparte casos, dudas y aprendizajes con otros profesionales.",
     image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
     icon: <Users size={22} className="text-white" aria-hidden="true" />,
   },
