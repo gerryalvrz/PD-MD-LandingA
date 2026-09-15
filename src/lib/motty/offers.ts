@@ -53,10 +53,10 @@ export const MOTTY_OFFERS: MottyOffer[] = [
   },
   {
     id: "skill",
-    label: "SKILL.md",
-    summary: "Instrucciones para agentes IA sobre esta landing y la ruta PSM.",
+    label: "Brief para asistentes",
+    summary: "Resumen oficial para pegar en ChatGPT/Claude sobre esta landing y la ruta PSM.",
     href: `${SITE}/SKILL.md`,
-    cta: "Ver SKILL.md",
+    cta: "Ver brief",
   },
 ];
 

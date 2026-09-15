@@ -66,6 +66,6 @@ A: La formación y la revisión interna no sustituyen tu autorización profesion
 
 ## Optional
 
-- Agent skill: https://academia.motusdao.org/SKILL.md
+- Assistant brief (paste into ChatGPT/Claude): https://academia.motusdao.org/SKILL.md
 - Full site map: https://academia.motusdao.org/sitemap.xml
 - Organization site: https://www.motusdao.org/

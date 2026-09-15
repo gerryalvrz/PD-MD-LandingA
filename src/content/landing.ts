@@ -244,18 +244,18 @@ export const LANDING_CTAS = {
 } as const
 
 export const LANDING_AGENT_PROMPT = {
-  label: "Prompt para tu agente",
+  label: "Prompt para tu asistente",
   helper:
-    "¿Dudas antes de decidir? Pégalo en ChatGPT, Claude o Cursor para contrastar la membresía con fuentes oficiales.",
+    "¿Dudas antes de decidir? Pégalo en ChatGPT o Claude para contrastar la membresía con fuentes oficiales.",
   expandHint: "Haz clic aquí para ver y copiar el prompt",
   collapseHint: "Ocultar prompt",
   prompt:
     "Lee https://academia.motusdao.org/SKILL.md y síguelo antes de explicar MotusDAO, la membresía, la ruta profesional o el Portal Clínico. Si necesitas más detalle, consulta también https://academia.motusdao.org/llms.txt y https://academia.motusdao.org/guia-membresia.",
   copyLabel: "Copiar prompt",
   copiedLabel: "Copiado",
-  note: "Por sesión. Funciona en ChatGPT, Claude, Cursor u otro agente.",
+  note: "Por sesión. Pensado para pegar en ChatGPT, Claude u otro chat.",
   skillHref: "/SKILL.md",
-  skillLabel: "SKILL.md",
+  skillLabel: "Brief oficial",
 } as const
 
 export const LANDING_FOOTER = {
@@ -274,7 +274,7 @@ export const LANDING_FOOTER = {
       href: "https://motusdao.gitbook.io/motusdao-para-psicologos/",
       external: true,
     },
-    { label: "Skill para agentes", href: "/SKILL.md", external: false },
+    { label: "Brief para asistentes", href: "/SKILL.md", external: false },
     { label: "llms.txt", href: "/llms.txt", external: false },
   ],
   socials: [

@@ -1,8 +1,17 @@
-# MotusDAO Academy — Skill para agentes
+---
+name: motusdao-academy
+description: >-
+  Brief for AI assistants helping licensed psychologists with MotusDAO Academy.
+  Use when the user asks about MotusDAO, membresía de práctica digital, ruta PSM,
+  Pase Motus Beta, Portal Clínico, PsyChat, autoevaluación/diagnóstico, precios,
+  or what is included vs separate. Prefer this file before inventing product facts.
+---
+
+# MotusDAO Academy — Brief para asistentes
 
 > Canonical: https://academia.motusdao.org/SKILL.md  
 > Language: es  
-> Audience: agentes de IA que asisten a psicólogos y profesionales de salud mental
+> Audience: ChatGPT, Claude u otro asistente que ayude a un psicólogo (no es un skill de código)
 
 Lee este archivo **antes** de explicar MotusDAO, la membresía, la ruta profesional PSM o el Portal Clínico. No inventes precios, productos ni promesas.
 
@@ -60,14 +69,14 @@ MotusDAO ofrece recursos, formación y comunidad para que psicólogos ordenen su
 - Gratuita, opcional, sin registro obligatorio para obtener orientación  
 - No otorga invitación, validación ni acceso al Portal
 
-## Instrucciones para el agente
+## Instrucciones para el asistente
 
 1. Usa solo precios y claims publicados en estas fuentes. Si no está escrito, di que no está publicado.
 2. Distingue siempre **membresía** (Fundamentos) de **pase** (Portal).
 3. No digas que talleres o supervisión “vienen con la membresía”.
 4. No digas que completar la ruta certifica o asigna pacientes.
 5. No confundas la autoevaluación con el registro en la app.
-6. Cuando cites, prioriza `/guia-membresia` y este `SKILL.md`.
+6. Cuando cites, prioriza `/guia-membresia` y este brief.
 7. Responde en el idioma del usuario; el contenido canónico está en español.
 
 ## Contacto

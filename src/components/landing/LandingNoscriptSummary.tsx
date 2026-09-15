@@ -43,7 +43,7 @@ export function LandingNoscriptSummary() {
           {" · "}
           <a href={`${CANONICAL_SITE_URL}${landingAssessmentPath()}`}>{LANDING_CTAS.assessment.label}</a>
           {" · "}
-          <a href={`${CANONICAL_SITE_URL}/SKILL.md`}>Skill para agentes</a>
+          <a href={`${CANONICAL_SITE_URL}/SKILL.md`}>Brief para asistentes</a>
         </p>
 
         <h2>{LANDING_TRUST.map((t) => t.title).join(" · ")}</h2>

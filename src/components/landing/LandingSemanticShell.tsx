@@ -41,7 +41,7 @@ export function LandingSemanticShell() {
           {" · "}
           <a href={`${CANONICAL_SITE_URL}${landingAssessmentPath()}`}>{LANDING_CTAS.assessment.label}</a>
           {" · "}
-          <a href={`${CANONICAL_SITE_URL}/SKILL.md`}>Skill para agentes</a>
+          <a href={`${CANONICAL_SITE_URL}/SKILL.md`}>Brief para asistentes</a>
         </p>
       </header>
 

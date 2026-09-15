@@ -28,13 +28,20 @@ const checks = [
     path: "/SKILL.md",
     expectStatus: 200,
     mustInclude: [
-      "Skill para agentes",
+      "name: motusdao-academy",
+      "Brief para asistentes",
       "Membresía vs Pase",
       "USD 20/mes",
       "No inventes precios",
       "guia-membresia",
     ],
   },
+  {
+    path: "/skill.md",
+    expectStatus: 200,
+    mustInclude: ["motusdao-academy", "USD 20/mes"],
+  },
+
   {
     path: "/robots.txt",
     expectStatus: 200,
