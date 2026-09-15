@@ -1,0 +1,150 @@
+.card {
+  margin-top: 22px;
+  max-width: 560px;
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-family: var(--font-inter);
+}
+
+.summary {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.headerRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.skillLink {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.skillLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.chevron,
+.chevronOpen {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.helper {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.panel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(155, 138, 255, 0.18);
+}
+
+.card[data-theme="light"] .panel {
+  border-top-color: rgba(112, 37, 174, 0.14);
+}
+
+.prompt {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.card[data-theme="light"] .prompt {
+  background: rgba(14, 10, 26, 0.04);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 12px;
+}
+
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.copyBtn:hover {
+  filter: brightness(1.06);
+}
+
+.note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  max-width: 36ch;
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-top: 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

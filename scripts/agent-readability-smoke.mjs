@@ -22,7 +22,18 @@ const checks = [
     path: "/llms.txt",
     expectStatus: 200,
     contentTypeIncludes: "text/plain",
-    mustInclude: ["guia-membresia", "USD 20", "Non-claims"],
+    mustInclude: ["guia-membresia", "USD 20", "Non-claims", "SKILL.md"],
+  },
+  {
+    path: "/SKILL.md",
+    expectStatus: 200,
+    mustInclude: [
+      "Skill para agentes",
+      "Membresía vs Pase",
+      "USD 20/mes",
+      "No inventes precios",
+      "guia-membresia",
+    ],
   },
   {
     path: "/robots.txt",
@@ -32,7 +43,7 @@ const checks = [
   {
     path: "/sitemap.xml",
     expectStatus: 200,
-    mustInclude: ["guia-membresia", "academia.motusdao.org"],
+    mustInclude: ["guia-membresia", "academia.motusdao.org", "SKILL.md"],
   },
   {
     path: "/guia-membresia",

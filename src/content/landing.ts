@@ -233,6 +233,49 @@ export const LANDING_CTAS = {
   invitation: { label: "Consultar sobre la invitación", href: "mailto:contact@motusdao.org" },
 } as const
 
+export const LANDING_AGENT_PROMPT = {
+  label: "Prompt para tu agente",
+  helper:
+    "Pégalo en ChatGPT, Claude, Cursor u otro asistente para que consulte MotusDAO con fuentes oficiales.",
+  expandHint: "Haz clic aquí para ver y copiar el prompt",
+  collapseHint: "Ocultar prompt",
+  prompt:
+    "Lee https://academia.motusdao.org/SKILL.md y síguelo antes de explicar MotusDAO, la membresía, la ruta profesional o el Portal Clínico. Si necesitas más detalle, consulta también https://academia.motusdao.org/llms.txt y https://academia.motusdao.org/guia-membresia.",
+  copyLabel: "Copiar prompt",
+  copiedLabel: "Copiado",
+  note: "Por sesión. Funciona en ChatGPT, Claude, Cursor u otro agente.",
+  skillHref: "/SKILL.md",
+  skillLabel: "SKILL.md",
+} as const
+
+export const LANDING_FOOTER = {
+  brand: "MotusDAO",
+  socialLabel: "Síguenos en @motusdao",
+  resources: [
+    { label: "Guía de membresía", href: "/guia-membresia", external: false },
+    { label: "Evaluar mi práctica", href: "/diagnostico", external: false },
+    { label: "App MotusDAO", href: "https://app.motusdao.org", external: true },
+    { label: "Sitio MotusDAO", href: "https://www.motusdao.org", external: true },
+  ],
+  docs: [
+    { label: "Manifiesto", href: "https://motusdao.gitbook.io/manifiesto/", external: true },
+    {
+      label: "MotusDAO para psicólogos",
+      href: "https://motusdao.gitbook.io/motusdao-para-psicologos/",
+      external: true,
+    },
+    { label: "Skill para agentes", href: "/SKILL.md", external: false },
+    { label: "llms.txt", href: "/llms.txt", external: false },
+  ],
+  socials: [
+    { id: "instagram", label: "Instagram", href: "https://www.instagram.com/motusdao/" },
+    { id: "x", label: "X", href: "https://x.com/motusdao" },
+    { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/motusdao" },
+    { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@motusdao" },
+    { id: "telegram", label: "Telegram", href: "https://t.me/motusdaoresearch" },
+  ],
+} as const
+
 export const LANDING_NAV = {
   beneficios: { label: "Beneficios", href: "#beneficios" },
   ruta: { label: "Ruta", href: "#recorrido" },

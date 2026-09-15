@@ -3,6 +3,7 @@ import {
   LANDING_CTAS,
   LANDING_FAQS,
   LANDING_FINAL,
+  LANDING_FOOTER,
   LANDING_JOURNEY,
   LANDING_MEMBERSHIP,
   LANDING_META,
@@ -36,6 +37,8 @@ export function LandingSemanticShell() {
           <a href={`${CANONICAL_SITE_URL}/#membresia`}>{LANDING_CTAS.membership.label}</a>
           {" · "}
           <a href={`${CANONICAL_SITE_URL}${landingAssessmentPath()}`}>{LANDING_CTAS.assessment.label}</a>
+          {" · "}
+          <a href={`${CANONICAL_SITE_URL}/SKILL.md`}>Skill para agentes</a>
         </p>
       </header>
 
@@ -120,11 +123,32 @@ export function LandingSemanticShell() {
             <li key={line}>{line}</li>
           ))}
         </ul>
+        <h2>Recursos</h2>
+        <ul>
+          {LANDING_FOOTER.resources.map((item) => (
+            <li key={item.href}>
+              <a href={item.external ? item.href : `${CANONICAL_SITE_URL}${item.href}`}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+        <h2>Documentación</h2>
+        <ul>
+          {LANDING_FOOTER.docs.map((item) => (
+            <li key={item.href}>
+              <a href={item.external ? item.href : `${CANONICAL_SITE_URL}${item.href}`}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+        <h2>Redes</h2>
+        <ul>
+          {LANDING_FOOTER.socials.map((item) => (
+            <li key={item.id}>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
         <p>
           {LANDING_META.footerBrand}. {LANDING_META.footerLegal}
-        </p>
-        <p>
-          Guía citable: <a href={`${CANONICAL_SITE_URL}/guia-membresia`}>Qué es la membresía MotusDAO</a>
         </p>
       </footer>
     </article>

@@ -23,6 +23,8 @@ import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
 import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
+import { LandingFooter } from "@/components/landing/LandingFooter"
+import { AgentPromptCard } from "@/components/landing/AgentPromptCard"
 import { HeroBackground, HeroGlobe } from "@/components/landing/HeroVisual"
 import { useLandingAnalytics } from "@/components/landing/useLandingAnalytics"
 import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
@@ -243,10 +245,12 @@ function Hero({
   dark,
   onConoce,
   onDiagnostico,
+  onAgentPromptCopy,
 }: {
   dark: boolean
   onConoce: () => void
   onDiagnostico: () => void
+  onAgentPromptCopy?: () => void
 }) {
   const tok = dark ? T.dark : T.light
   const isLight = !dark
@@ -376,6 +380,10 @@ function Hero({
             >
               {LANDING_META.priceLine}
             </motion.p>
+
+            <motion.div variants={fadeUp}>
+              <AgentPromptCard dark={dark} onCopy={onAgentPromptCopy} />
+            </motion.div>
           </div>
 
           <motion.div variants={fadeUp}>
@@ -741,7 +749,7 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
     <section
       style={{
         background: tok.bg,
-        padding: "clamp(80px, 14vh, 160px) clamp(24px, 6vw, 120px)",
+        padding: "clamp(52px, 8vh, 88px) clamp(24px, 6vw, 120px) clamp(40px, 6vh, 64px)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
@@ -796,43 +804,6 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
   )
 }
 
-function Footer({ dark }: { dark: boolean }) {
-  const tok = dark ? T.dark : T.light
-
-  return (
-    <footer
-      style={{
-        background: tok.bgAlt,
-        borderTop: `1px solid ${tok.cardBorder}`,
-        padding: "24px clamp(24px, 6vw, 120px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: 12,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <img src="/logo.svg" alt="MotusDAO logo" style={{ width: 20, height: 20, borderRadius: 6, objectFit: "cover" }} />
-        <span style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 14, color: tok.t3 }}>
-          {LANDING_META.footerBrand}
-        </span>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-        <Link
-          href="/guia-membresia"
-          style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, textDecoration: "underline" }}
-        >
-          Guía de membresía
-        </Link>
-        <span style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3 }}>
-          {LANDING_META.footerLegal}
-        </span>
-      </div>
-    </footer>
-  )
-}
-
 function StickyConversionBar({ onMembership }: { onMembership: () => void }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/20 bg-[#160d25]/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden">
@@ -871,14 +842,25 @@ export default function LandingPage() {
         background: dark ? T.dark.bg : T.light.bg,
         transition: "background 0.35s ease",
         minHeight: "100vh",
-        paddingBottom: 84,
       }}
     >
       <style>{`a:focus-visible, button:focus-visible { outline: 3px solid ${ACCENT.iris}; outline-offset: 4px; } @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }`}</style>
       <GlassFilter />
       <Nav dark={dark} onToggle={() => setDark((d) => !d)} onMembership={() => handleMembership("nav")} />
       <main>
-        <Hero dark={dark} onConoce={() => handleMembership("hero")} onDiagnostico={() => handleDiagnostico("hero")} />
+        <Hero
+          dark={dark}
+          onConoce={() => handleMembership("hero")}
+          onDiagnostico={() => handleDiagnostico("hero")}
+          onAgentPromptCopy={() =>
+            onTrack("cta_click", {
+              section: "hero",
+              ctaLabel: "Copiar prompt",
+              action: "agent_prompt_copy",
+              intent: "lead",
+            })
+          }
+        />
         <TrustBar dark={dark} />
         <BenefitsSection
           dark={dark}
@@ -905,7 +887,7 @@ export default function LandingPage() {
         <FinalCTA dark={dark} onMembership={() => handleMembership("final")} />
       </main>
       <StickyConversionBar onMembership={() => handleMembership("sticky")} />
-      <Footer dark={dark} />
+      <LandingFooter dark={dark} />
     </div>
   )
 }

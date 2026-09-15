@@ -31,5 +31,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${siteUrl}/SKILL.md`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}/llms.txt`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
   ]
 }
