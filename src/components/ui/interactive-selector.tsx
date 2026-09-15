@@ -231,18 +231,12 @@ export function InteractiveSelector({
                 <div className={cn(styles.shadow, isActive ? styles.shadowActive : styles.shadowInactive)} />
 
                 <div className={cn(styles.label, isActive ? styles.labelActive : styles.labelInactive)}>
-                  <div className={cn(styles.iconWrap, !dark && styles.iconWrapLight)}>{option.icon}</div>
-                  <div className={cn(styles.info, !dark && styles.infoLight)}>
+                  <div className={styles.iconWrap}>{option.icon}</div>
+                  <div className={styles.info}>
                     <div className={cn(styles.main, isActive ? styles.mainVisible : styles.mainHidden)}>
                       {option.title}
                     </div>
-                    <div
-                      className={cn(
-                        styles.sub,
-                        !dark && styles.subLight,
-                        isActive ? styles.subVisible : styles.subHidden,
-                      )}
-                    >
+                    <div className={cn(styles.sub, isActive ? styles.subVisible : styles.subHidden)}>
                       {option.description}
                     </div>
                   </div>

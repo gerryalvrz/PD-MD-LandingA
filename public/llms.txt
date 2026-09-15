@@ -15,13 +15,13 @@ For a clear “what it is / what it is not” summary, prefer:
 ## Producto principal
 
 - Membresía de Práctica Digital (Bloque 02 — Fundamentos): USD 20/mes o USD 120/año fundador
-- Incluye: manual clínico-operativo, biblioteca virtual, formación continua, introducción a PsyChat, comunidad de práctica, recordatorios y encuentros según calendario
+- Incluye: manual clínico-operativo, biblioteca virtual, formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario
 
 ## Ruta de cinco bloques
 
 1. Génesis — acceso gratuito a la comunidad
 2. Fundamentos — membresía (precios arriba)
-3. Praxis — talleres (USD 15), supervisión (USD 50/sesión) y cursos con precio propio
+3. Praxis — talleres (USD 15 por taller), supervisión (USD 50 por sesión) y cursos con precio propio
 4. Validación — revisión de requisitos; Pase Motus Beta comunitario USD 29/mes o USD 290/año; pase directo por invitación USD 79/mes o USD 790/año beta
 5. Portal Clínico — herramientas profesionales según aprobación y permisos (incluido en el pase durante la beta)
 
@@ -35,19 +35,19 @@ For a clear “what it is / what it is not” summary, prefer:
 ## FAQ
 
 Q: ¿Qué incluye la membresía?
-A: Manual clínico-operativo, biblioteca virtual, actividades de formación continua, introducción a PsyChat, comunidad de práctica, recordatorios y encuentros según calendario.
+A: Manual clínico-operativo, biblioteca virtual, actividades de formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario.
 
 Q: ¿Membresía y pase son lo mismo?
 A: Son productos distintos. La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte.
 
 Q: ¿Los talleres y la supervisión están incluidos?
-A: Se contratan aparte en Praxis: taller USD 15 y supervisión USD 50 por sesión. Los cursos tienen precios propios.
+A: Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.
 
 Q: ¿Puedo entrar directamente al Portal?
 A: La vía profesional directa es por invitación y requiere revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.
 
 Q: ¿Tengo que hacer el diagnóstico para incorporarme?
-A: No. La autoevaluación de práctica digital es gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal.
+A: No. La autoevaluación es gratuita y opcional; orienta tu práctica digital, pero no es requisito para incorporarte a la membresía ni a la ruta. No sustituye el registro como psicólogo en la app de MotusDAO, que es un proceso aparte.
 
 Q: ¿La ruta certifica o garantiza pacientes?
 A: La formación y la revisión interna no sustituyen tu autorización profesional ni garantizan asignación de pacientes.

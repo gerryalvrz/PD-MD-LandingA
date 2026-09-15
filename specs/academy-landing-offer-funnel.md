@@ -40,7 +40,7 @@ Base: `main`
 |---|---|---|
 | 01 Génesis | Gratis | Sin compromiso. Comunidad + mapa + perfil. |
 | 02 Fundamentos / Membresía de Práctica Digital | USD 20/mes o USD 120/año | No es certificación ni Portal. |
-| 03 Praxis | Desde USD 15; programa avanzado USD 40 | Supervisión es capa aparte (referencia USD 50). |
+| 03 Praxis | Taller USD 15; supervisión USD 50/sesión; cursos con precio propio | Se contratan aparte; no incluidos en la membresía. |
 | 04 Validación | No es un curso | Revisión interna. |
 | 05 Portal Profesional beta | Vía Pase Motus Beta + aprobación | No es automático. |
 
@@ -173,8 +173,8 @@ Cards:
    Lenguaje común de clínica digital, encuadre, ética, perfil y encuentros.  
    No incluye certificación oficial ni acceso al Portal.
 
-3. **Praxis** — desde USD 15  
-   Cursos y talleres a la carta. Supervisión clínica aparte.  
+3. **Praxis** — USD 15 por taller; USD 50 por sesión de supervisión  
+   Talleres y supervisión a la carta; cursos con precio propio.  
    Completar cursos no valida ni asigna pacientes.
 
 ### Diagnóstico
@@ -195,7 +195,7 @@ Lead: `Avanzas cuando tú quieras. Los bloques 3, 4 y 5 se ven cuando llegues.`
 |---|---|---|---|
 | 1 | Génesis | Orientación y comunidad. Estás aquí. | Gratis |
 | 2 | Fundamentos | Membresía de Práctica Digital. | USD 20/mes |
-| 3 | Praxis | Formación aplicada, a la carta. | Desde USD 15 |
+| 3 | Praxis | Formación aplicada, a la carta. | USD 15/taller · USD 50/sesión |
 | 4 | Validación | Revisión interna. No es un curso. | — |
 | 5 | Portal beta | Consultorio y herramientas, con aprobación. | No automático |
 
@@ -235,7 +235,7 @@ Hasta cerrar SKU: en la card, **no** mostrar “USD —”. Mostrar `Incluido en
 
 ### FAQ
 
-1. **¿Qué compro en Academia?** Génesis es gratis. La membresía de Fundamentos es USD 20/mes o USD 120/año. Los cursos de Praxis empiezan en USD 15.
+1. **¿Qué compro en Academia?** Génesis es gratis. La membresía de Fundamentos es USD 20/mes o USD 120/año. En Praxis: USD 15 por taller y USD 50 por sesión de supervisión; los cursos tienen precios propios.
 2. **¿Qué incluye la membresía / qué no?** Incluye lenguaje común, encuadre, ética, perfil y encuentros. No entrega certificación oficial, licencia, pacientes ni Portal automático.
 3. **¿Puedo contratar solo videollamada, chat o un agente?** Sí, como servicios de operación dentro del ecosistema. El precio individual se confirma al activarlos; no están atados a un curso.
 4. **¿El diagnóstico certifica?** No. Es orientación de práctica digital, no evaluación clínica ni de licencia.
@@ -329,7 +329,7 @@ Objetivo: el visitante entiende **qué compra y cuánto cuesta**.
 
 **Hecho cuando:**
 
-- [ ] Visible Génesis USD 0, Fundamentos USD 20/mes · 120/año, Praxis desde USD 15
+- [ ] Visible Génesis USD 0, Fundamentos USD 20/mes · 120/año, Praxis USD 15/taller · USD 50/sesión
 - [ ] Disclaimer de lo que la membresía **no** entrega
 - [ ] No hay 6 pilares genéricos (Formación/Comunidad/…)
 - [ ] Browser: scroll desde nav y desde hero (si hay ancla) llega a las 3 cards

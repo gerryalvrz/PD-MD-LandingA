@@ -12,6 +12,20 @@ export const EXPERIENCE_GENESIS = {
   exploreId: "genesis",
 } as const
 
+export const EXPERIENCE_APP_CTA = {
+  href: "https://app.motusdao.org",
+  label: "Explora y regístrate",
+  exploreId: "app_register",
+} as const
+
+export const EXPERIENCE_APP_SHOWCASE = {
+  imageSrc: "/experience/app-wallet.png",
+  imageAlt:
+    "Pantalla de la App MotusDAO: enviar y recibir cripto desde la wallet integrada, con tokens y Motus Name",
+  imageWidth: 512,
+  imageHeight: 512,
+} as const
+
 export type AppModuleIcon =
   | "ai"
   | "profile"

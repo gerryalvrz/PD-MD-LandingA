@@ -28,12 +28,10 @@ const SELECTOR_IMAGE_POSITION: Partial<Record<string, string>> = {
   comunidad: "right center",
 }
 
-function buildSelectorOptions(items: MembershipResource[], dark: boolean): InteractiveSelectorOption[] {
-  const iconClass = dark ? "text-white" : "text-[#6E56CF]"
-
+function buildSelectorOptions(items: MembershipResource[]): InteractiveSelectorOption[] {
   return items.map((item) => {
     const Icon = icons[item.icon as keyof typeof icons]
-    const icon: ReactNode = <Icon size={22} className={iconClass} aria-hidden="true" />
+    const icon: ReactNode = <Icon size={22} className="text-white" aria-hidden="true" />
 
     return {
       title: item.title,
@@ -57,7 +55,7 @@ export function MembershipResources({
     () => MEMBERSHIP_RESOURCES.filter((item) => item.group === "recursos" && item.status !== "Próximamente"),
     [],
   )
-  const selectorOptions = useMemo(() => buildSelectorOptions(selectorItems, dark), [selectorItems, dark])
+  const selectorOptions = useMemo(() => buildSelectorOptions(selectorItems), [selectorItems])
   const [activeIndex, setActiveIndex] = useState(0)
 
   const handleSelectorSelect = (index: number, source?: "auto" | "user") => {
@@ -106,7 +104,7 @@ export function MembershipResources({
             Recursos para dar el siguiente paso
           </h2>
           <p className={styles.body}>
-            La Membresía de Práctica Digital es tu entrada comunitaria al bloque Fundamentos. Reúne recursos, formación y comunidad para organizar tu práctica online. Talleres, supervisión y Pase Motus Beta se contratan aparte.
+            La Membresía de Práctica Digital es tu entrada comunitaria al bloque Fundamentos. Reúne recursos, formación y comunidad para organizar tu práctica online. Talleres y supervisión se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión. El Pase Motus Beta también es aparte.
           </p>
         </div>
 

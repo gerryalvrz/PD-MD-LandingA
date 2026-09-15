@@ -15,6 +15,7 @@ import { getOrCreateSessionId, getStoredLeadContext } from "@/lib/funnel-session
 import { SocialIconRow } from "@/components/ui/social-icon"
 import { PsychologistTypeCard } from "@/components/share/PsychologistTypeCard"
 import { PSYCHOLOGIST_TYPES } from "@/lib/psychologist-types"
+import { glassCtaStyle } from "@/lib/landing-theme"
 import styles from "./ShareModal.module.css"
 
 function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -176,10 +177,12 @@ export function ShareInviteButton({
   draft,
   label = "Compartir con un colega",
   full = true,
+  dark = true,
 }: {
   draft: ShareDraft
   label?: string
   full?: boolean
+  dark?: boolean
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -187,7 +190,10 @@ export function ShareInviteButton({
       <button
         type="button"
         className={styles.trigger}
-        style={full ? undefined : { width: "auto", marginTop: 0 }}
+        style={{
+          ...glassCtaStyle({ dark, variant: "outline", full }),
+          ...(full ? undefined : { width: "auto", marginTop: 0 }),
+        }}
         onClick={() => setOpen(true)}
       >
         {label}

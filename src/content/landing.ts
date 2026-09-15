@@ -43,30 +43,89 @@ export const LANDING_TRUST = [
   },
 ] as const
 
+export type JourneyStage = {
+  label: string
+  title: string
+  ordinal: string
+  job: string
+  line: string
+  chips: readonly string[]
+  cta: string
+  href: string
+  imageSrc: string
+  imageAlt: string
+}
+
 export const LANDING_JOURNEY = {
   label: "Una ruta progresiva",
   heading: "Cinco bloques para avanzar contigo",
   lede:
     "Empieza en Génesis y continúa con Fundamentos y Praxis. La revisión en Validación habilita el acceso al Portal Clínico mediante el pase, según los requisitos profesionales. La membresía y el pase son productos distintos.",
+  communityPathLabel: "Ruta comunitaria",
+  fastPathLabel: "Ruta rápida",
+  fastPathNote: "Validación y Portal Clínico también se pueden alcanzar por invitación, con revisión y onboarding.",
   stages: [
-    { label: "01 — Génesis", line: "Conoce MotusDAO y entra a la comunidad global. Acceso gratuito." },
+    {
+      label: "01 — Génesis",
+      title: "Génesis",
+      ordinal: "01",
+      job: "Entra a la comunidad",
+      line: "Conoce MotusDAO y entra a la comunidad global. Acceso gratuito.",
+      chips: ["Gratis", "Comunidad", "Academia"],
+      cta: "Abrir Génesis",
+      href: "https://app.motusdao.org/academia/01-genesis",
+      imageSrc: "/experience/ruta/01-genesis.jpg",
+      imageAlt: "Ilustración del Bloque Génesis: hub de MotusDAO donde comienza el viaje",
+    },
     {
       label: "02 — Fundamentos",
+      title: "Fundamentos",
+      ordinal: "02",
+      job: "Ordena tu práctica digital",
       line: "Ordena tu práctica con la Membresía de Práctica Digital: USD 20/mes o USD 120/año fundador.",
+      chips: ["Membresía", "USD 20/mes", "Manual"],
+      cta: "Ver membresía",
+      href: "#membresia",
+      imageSrc: "/experience/ruta/02-fundamentos.jpg",
+      imageAlt: "Ilustración del Bloque Fundamentos: aprender el lenguaje común de la práctica digital",
     },
     {
       label: "03 — Praxis",
-      line: "Profundiza con talleres, cursos y supervisión. Taller: USD 15; supervisión: USD 50/sesión. Cursos con precio propio.",
+      title: "Praxis",
+      ordinal: "03",
+      job: "Profundiza con práctica aplicada",
+      line: "Profundiza con talleres, cursos y supervisión. Taller: USD 15 por taller; supervisión: USD 50 por sesión. Cursos con precio propio.",
+      chips: ["Talleres", "Cursos", "Supervisión"],
+      cta: "Ver membresía",
+      href: "#membresia",
+      imageSrc: "/experience/ruta/03-praxis.jpg",
+      imageAlt: "Ilustración del Bloque Praxis: laboratorio para aprender, aplicar e iterar",
     },
     {
       label: "04 — Validación",
+      title: "Validación",
+      ordinal: "04",
+      job: "Revisa requisitos del pase",
       line: "Revisión interna de requisitos para el Pase Motus Beta. Pase comunitario: USD 29/mes o USD 290/año. Pase directo por invitación: USD 79/mes o USD 790/año beta.",
+      chips: ["Pase Motus Beta", "Revisión", "Invitación"],
+      cta: "Ver planes",
+      href: "#membresia",
+      imageSrc: "/experience/ruta/04-validacion.jpg",
+      imageAlt: "Ilustración del Bloque Validación: evidencia, medición y mejora",
     },
     {
       label: "05 — Portal Clínico",
+      title: "Portal Clínico",
+      ordinal: "05",
+      job: "Opera con herramientas profesionales",
       line: "Opera con herramientas profesionales según aprobación y permisos. Incluido en el Pase Motus Beta durante la beta.",
+      chips: ["Portal", "Consultorio", "Beta"],
+      cta: "Ver planes",
+      href: "#membresia",
+      imageSrc: "/experience/ruta/05-portal-clinico.jpg",
+      imageAlt: "Ilustración del Portal Clínico: espacio seguro de atención y bienestar",
     },
-  ],
+  ] satisfies readonly JourneyStage[],
 } as const
 
 export const LANDING_MEMBERSHIP = {
@@ -83,7 +142,7 @@ export const LANDING_MEMBERSHIP = {
     includes: [
       "Manual clínico-operativo y biblioteca virtual.",
       "Actividades de formación continua e introducción a PsyChat.",
-      "Comunidad de práctica, recordatorios y encuentros según calendario.",
+      "Comunidad de práctica y encuentros según calendario.",
     ],
     planLegend: "Elige tu plan",
     planMonthly: "Mensual · USD 20/mes",
@@ -111,7 +170,7 @@ export const LANDING_MEMBERSHIP = {
       "Se abrirá tu aplicación de correo. También puedes escribir a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.",
   },
   praxisNote:
-    "Praxis se contrata aparte: taller USD 15 y supervisión USD 50 por sesión. Cada curso tiene su propio precio.",
+    "Praxis se contrata aparte: USD 15 por taller y USD 50 por sesión de supervisión. Cada curso tiene su propio precio.",
 } as const
 
 export const LANDING_ASSESSMENT_TEASER = {
@@ -131,7 +190,7 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Qué incluye la membresía?",
     answer:
-      "Manual clínico-operativo, biblioteca virtual, actividades de formación continua, introducción a PsyChat, comunidad de práctica, recordatorios y encuentros según calendario.",
+      "Manual clínico-operativo, biblioteca virtual, actividades de formación continua, introducción a PsyChat, comunidad de práctica y encuentros según calendario.",
   },
   {
     question: "¿Membresía y pase son lo mismo?",
@@ -141,7 +200,7 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Los talleres y la supervisión están incluidos?",
     answer:
-      "Se contratan aparte en Praxis: taller USD 15 y supervisión USD 50 por sesión. Los cursos tienen precios propios.",
+      "Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.",
   },
   {
     question: "¿Puedo entrar directamente al Portal?",
@@ -151,7 +210,7 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Tengo que hacer el diagnóstico para incorporarme?",
     answer:
-      "No. La autoevaluación de práctica digital es gratuita y opcional. Su resultado no otorga invitación, validación ni acceso al Portal.",
+      "No. La autoevaluación es gratuita y opcional; orienta tu práctica digital, pero no es requisito para incorporarte a la membresía ni a la ruta. No sustituye el registro como psicólogo en la app de MotusDAO, que es un proceso aparte.",
   },
   {
     question: "¿La ruta certifica o garantiza pacientes?",

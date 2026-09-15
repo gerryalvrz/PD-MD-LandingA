@@ -119,7 +119,7 @@ export function AppModuleModal({
 
         <div className={styles.actions}>
           <button type="button" className={styles.primary} onClick={onMembership}>
-            Ver planes
+            Explora y regístrate
           </button>
           <button
             type="button"

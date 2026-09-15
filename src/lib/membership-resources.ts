@@ -11,7 +11,7 @@ export const MEMBERSHIP_RESOURCE_GROUPS: {
     id: "recursos",
     label: "Recursos",
     name: "Incluido en tu membresía",
-    description: "Manual, biblioteca, formación y comunidad para organizar tu práctica online. Talleres, supervisión y Pase Motus Beta se contratan aparte.",
+    description: "Manual, biblioteca, formación y comunidad para organizar tu práctica online. Talleres y supervisión se contratan aparte en Praxis (USD 15 por taller; USD 50 por sesión). El Pase Motus Beta también es aparte.",
   },
   {
     id: "herramientas",
@@ -94,7 +94,7 @@ export const MEMBERSHIP_RESOURCES: MembershipResource[] = [
     id: "acompanamiento",
     group: "recursos",
     title: "Acompañamiento",
-    line: "Recordatorios de avance y encuentros según calendario.",
+    line: "Sesiones y encuentros programados según calendario.",
     href: null,
     frameSrc: null,
     status: "Próximamente",

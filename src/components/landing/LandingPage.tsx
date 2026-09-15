@@ -22,6 +22,7 @@ import { genericShareDraft } from "@/lib/share-card"
 import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
+import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
 import { HeroBackground, HeroGlobe } from "@/components/landing/HeroVisual"
 import { useLandingAnalytics } from "@/components/landing/useLandingAnalytics"
 import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
@@ -112,32 +113,6 @@ function SectionHeading({ children, tok }: { children: React.ReactNode; tok: Tok
     >
       {children}
     </h2>
-  )
-}
-
-function PillarCard({
-  label,
-  line,
-  tok,
-}: {
-  label: string
-  line: string
-  tok: Tok
-}) {
-  return (
-    <div
-      style={{
-        background: tok.card,
-        border: `1px solid ${tok.cardBorder}`,
-        borderRadius: 14,
-        padding: "16px 18px",
-      }}
-    >
-      <p style={{ margin: 0, fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 16, color: tok.t1 }}>{label}</p>
-      <p style={{ margin: "6px 0 0", fontFamily: "var(--font-inter)", fontSize: 14, color: tok.t2, lineHeight: 1.5 }}>
-        {line}
-      </p>
-    </div>
   )
 }
 
@@ -440,7 +415,7 @@ function TrustBar({ dark }: { dark: boolean }) {
             bgColor: "#EDE8F7",
             textColor: "#0E0A1A",
             icon: <Globe className={iconClass} color="#0E0A1A" aria-hidden="true" strokeWidth={2} />,
-            media: <OzzyShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
+            media: <OzzyShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark />,
           },
           {
             title: LANDING_TRUST[1].title,
@@ -448,7 +423,7 @@ function TrustBar({ dark }: { dark: boolean }) {
             bgColor: "#6E56CF",
             textColor: "#ffffff",
             icon: <Sparkles className={iconClass} color="#ffffff" aria-hidden="true" strokeWidth={2} />,
-            media: <ThiagoShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
+            media: <ThiagoShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark />,
             mediaClassName: "-translate-y-[20%]",
           },
           {
@@ -457,7 +432,7 @@ function TrustBar({ dark }: { dark: boolean }) {
             bgColor: "#0E0A1A",
             textColor: "#ffffff",
             icon: <CreditCard className={iconClass} color="#ffffff" aria-hidden="true" strokeWidth={2} />,
-            media: <ErurouniShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark={dark} />,
+            media: <ErurouniShaderPanel className="aspect-[5/3] min-h-[88px] w-full" dark />,
           },
         ]}
       />
@@ -481,12 +456,13 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
         scrollMarginTop: 88,
       }}
     >
-      <div style={{ maxWidth: 720 }}>
+      <div style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <SectionLabel>{LANDING_ASSESSMENT_TEASER.label}</SectionLabel>
         <SectionHeading tok={tok}>{LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].heading}</SectionHeading>
         <p
           style={{
             marginTop: 12,
+            marginInline: "auto",
             fontFamily: "var(--font-inter)",
             fontSize: 15,
             color: tok.t2,
@@ -496,7 +472,7 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
         >
           {LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].lede}
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "center" }}>
           <GlassCta href={landingAssessmentPath()} onClick={onDiagnostico} dark={dark}>
             {LANDING_CTAS.assessment.label}
           </GlassCta>
@@ -504,9 +480,18 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
             draft={genericShareDraft(landingAssessmentPath())}
             label={LANDING_ASSESSMENT_TEASER.inviteColleague}
             full={false}
+            dark={dark}
           />
         </div>
-        <p style={{ fontFamily: "var(--font-inter)", fontSize: 13, color: tok.t3, marginTop: 12, lineHeight: 1.5 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: 13,
+            color: tok.t3,
+            marginTop: 12,
+            lineHeight: 1.5,
+          }}
+        >
           {LANDING_ASSESSMENT_TEASER.disclaimer}
         </p>
       </div>
@@ -517,6 +502,8 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
 function JourneySection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const stages = LANDING_JOURNEY.stages
+  const communityStages = stages.slice(0, 3)
+  const fastStages = stages.slice(3)
 
   return (
     <section
@@ -527,46 +514,103 @@ function JourneySection({ dark }: { dark: boolean }) {
         scrollMarginTop: 88,
       }}
     >
-      <div style={{ marginBottom: 28, maxWidth: 720 }}>
+      <div style={{ marginBottom: 28, maxWidth: 920, marginInline: "auto", textAlign: "center" }}>
         <SectionLabel>{LANDING_JOURNEY.label}</SectionLabel>
         <SectionHeading tok={tok}>{LANDING_JOURNEY.heading}</SectionHeading>
-        <p style={{ marginTop: 12, fontFamily: "var(--font-inter)", fontSize: 15, color: tok.t2, lineHeight: 1.6 }}>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 20,
+            marginBottom: 18,
+          }}
+        >
+          {stages.map((stage, i) => (
+            <span key={stage.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-jura)",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  color: "#ffffff",
+                  background: ACCENT.deep,
+                  border: `1px solid ${ACCENT.iris}`,
+                  borderRadius: 99,
+                  padding: "7px 14px",
+                }}
+              >
+                {stage.label}
+              </span>
+              {i < stages.length - 1 && <span style={{ color: ACCENT.iris }}>→</span>}
+            </span>
+          ))}
+        </div>
+
+        <p
+          style={{
+            margin: "0 auto",
+            maxWidth: 720,
+            fontFamily: "var(--font-inter)",
+            fontSize: 15,
+            color: tok.t2,
+            lineHeight: 1.6,
+            textAlign: "center",
+          }}
+        >
           {LANDING_JOURNEY.lede}
         </p>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", marginBottom: 28 }}>
-        {stages.map((stage, i) => (
-          <span key={stage.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span
-              style={{
-                fontFamily: "var(--font-jura)",
-                fontWeight: 700,
-                fontSize: 13,
-                color: tok.t1,
-                background: tok.card,
-                border: `1px solid ${tok.cardBorder}`,
-                borderRadius: 99,
-                padding: "6px 12px",
-              }}
-            >
-              {stage.label}
-            </span>
-            {i < stages.length - 1 && <span style={{ color: tok.t3 }}>→</span>}
-          </span>
-        ))}
-      </div>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <p
+          style={{
+            margin: "0 0 14px",
+            fontFamily: "var(--font-inter)",
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: "0.10em",
+            textTransform: "uppercase",
+            color: ACCENT.iris,
+            textAlign: "center",
+          }}
+        >
+          {LANDING_JOURNEY.communityPathLabel}
+        </p>
+        <JourneyPathCards stages={communityStages} dark={dark} variant="community" />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
-          gap: 12,
-        }}
-      >
-        {stages.map((stage) => (
-          <PillarCard key={stage.label} label={stage.label} line={stage.line} tok={tok} />
-        ))}
+        <div style={{ marginTop: 36, marginBottom: 14, textAlign: "center" }}>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "var(--font-inter)",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.10em",
+              textTransform: "uppercase",
+              color: ACCENT.iris,
+            }}
+          >
+            {LANDING_JOURNEY.fastPathLabel}
+          </p>
+          <p
+            style={{
+              margin: "8px auto 0",
+              maxWidth: 560,
+              fontFamily: "var(--font-inter)",
+              fontSize: 14,
+              color: tok.t2,
+              lineHeight: 1.55,
+            }}
+          >
+            {LANDING_JOURNEY.fastPathNote}
+          </p>
+        </div>
+
+        <JourneyPathCards stages={fastStages} dark={dark} variant="fast" />
       </div>
     </section>
   )

@@ -13,8 +13,9 @@ import {
   Video,
   Wallet,
 } from "lucide-react"
-import { APP_MODULES, EXPERIENCE_GENESIS, type AppModule, type AppModuleIcon } from "@/lib/app-experience"
+import { APP_MODULES, EXPERIENCE_APP_CTA, EXPERIENCE_APP_SHOWCASE, EXPERIENCE_GENESIS, type AppModule, type AppModuleIcon } from "@/lib/app-experience"
 import { AppModuleModal } from "@/components/landing/AppModuleModal"
+import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { T, type Tok } from "@/lib/landing-theme"
 import styles from "./AppExperience.module.css"
 
@@ -38,10 +39,10 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
     setActive(item)
   }
 
-  function goMembership() {
-    onExplore("membership_from_module")
+  function goApp() {
+    onExplore(EXPERIENCE_APP_CTA.exploreId)
     setActive(null)
-    document.getElementById("membresia")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    window.open(EXPERIENCE_APP_CTA.href, "_blank", "noopener,noreferrer")
   }
 
   return (
@@ -49,9 +50,20 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
       id="experiencia"
       className={styles.section}
       data-theme={dark ? "dark" : "light"}
-      style={{ background: tok.bgAlt, color: tok.t1 }}
+      style={{ color: tok.t1 }}
       aria-labelledby="experience-title"
     >
+      <LiquidGradientBackground key={dark ? "exp-dark" : "exp-light"} dark={dark} showControls={false} />
+      <div
+        className={styles.veil}
+        aria-hidden
+        style={{
+          background: dark
+            ? "linear-gradient(180deg, rgba(8,5,14,0.62) 0%, rgba(14,10,26,0.78) 55%, rgba(14,10,26,0.88) 100%)"
+            : "linear-gradient(180deg, rgba(244,240,252,0.55) 0%, rgba(240,236,249,0.72) 55%, rgba(240,236,249,0.86) 100%)",
+        }}
+      />
+
       <div className={styles.container}>
         <p className={styles.eyebrow}>En la App MotusDAO</p>
         <h2 id="experience-title" className={styles.heading}>
@@ -115,10 +127,28 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
           })}
         </ol>
 
+        <figure className={styles.showcase}>
+          <Image
+            src={EXPERIENCE_APP_SHOWCASE.imageSrc}
+            alt={EXPERIENCE_APP_SHOWCASE.imageAlt}
+            width={EXPERIENCE_APP_SHOWCASE.imageWidth}
+            height={EXPERIENCE_APP_SHOWCASE.imageHeight}
+            sizes="(max-width: 760px) 88vw, 320px"
+          />
+        </figure>
+
         <div className={styles.footer}>
-          <p>Toca “Saber más” para ver qué hace cada módulo. Sin login: la explicación está aquí.</p>
-          <a href="#membresia" className={styles.link}>
-            Ver planes <span aria-hidden="true">→</span>
+          <p>Explora la app ahora y regístrate para entrar a la comunidad, la Academia y las herramientas de tu práctica digital.</p>
+          <a
+            href={EXPERIENCE_APP_CTA.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+            onClick={() => onExplore(EXPERIENCE_APP_CTA.exploreId)}
+          >
+            {EXPERIENCE_APP_CTA.label}
+            <ArrowUpRight size={17} aria-hidden="true" />
+            <span className="sr-only"> (abre otra pestaña)</span>
           </a>
         </div>
       </div>
@@ -129,7 +159,7 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
           dark={dark}
           icon={<ModuleIcon id={active.icon} />}
           onClose={() => setActive(null)}
-          onMembership={goMembership}
+          onMembership={goApp}
         />
       ) : null}
     </section>

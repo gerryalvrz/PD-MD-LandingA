@@ -68,7 +68,7 @@ export const PSYCHOLOGIST_TYPES: Record<PsychologistTypeId, PsychologistType> = 
     kicker: "Una vez configurado, se hace solo",
     blurb: "No solo usa herramientas: conecta todo. Agenda → formulario → expediente → recordatorio → seguimiento.",
     quote: "Una vez configurado, se hace solo.",
-    shareLine: "Conecto agenda, formularios, recordatorios y seguimiento.",
+    shareLine: "Conecto agenda, formularios y seguimiento.",
     image: `${ART}/automatizado.jpg`,
   },
   anonimus: {
