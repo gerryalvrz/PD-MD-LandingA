@@ -904,6 +904,10 @@ export default function LandingPage() {
   const [dark, setDark] = useState(true)
   const { onTrack } = useLandingAnalytics()
 
+  useEffect(() => {
+    document.documentElement.dataset.landingTheme = dark ? "dark" : "light"
+  }, [dark])
+
   const handleDiagnostico = (section: string) => {
     onTrack("cta_click", { section, ctaLabel: LANDING_CTAS.assessment.label, intent: "lead" })
   }
