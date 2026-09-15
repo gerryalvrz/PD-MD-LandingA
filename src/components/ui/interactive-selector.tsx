@@ -11,6 +11,8 @@ export type InteractiveSelectorOption = {
   title: string
   description: string
   image: string
+  /** CSS background-position; use e.g. "right center" when the focal area is on one edge. */
+  imagePosition?: string
   icon: ReactNode
 }
 
@@ -216,8 +218,9 @@ export function InteractiveSelector({
                 )}
                 style={{
                   backgroundImage: `url('${option.image}')`,
-                  backgroundSize: isActive ? "auto 100%" : "auto 120%",
-                  backgroundPosition: "center",
+                  backgroundSize: isActive ? "cover" : "auto 120%",
+                  backgroundPosition: option.imagePosition ?? "center",
+                  backgroundRepeat: "no-repeat",
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateX(0)" : "translateX(-60px)",
                   transition:

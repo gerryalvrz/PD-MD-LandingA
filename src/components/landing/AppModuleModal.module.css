@@ -1,0 +1,165 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(6, 3, 12, 0.72);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 520px);
+  max-height: min(92svh, 720px);
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid;
+  padding: 22px 22px 20px;
+  font-family: var(--font-inter);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+}
+
+.close:hover {
+  opacity: 0.85;
+}
+
+.header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding-right: 44px;
+  margin-bottom: 14px;
+}
+
+.iconWrap {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.kicker {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--font-jura);
+  font-weight: 700;
+  font-size: clamp(22px, 3vw, 26px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.detail {
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+
+.detail p {
+  margin: 0 0 12px;
+}
+
+.detail p:last-child {
+  margin-bottom: 0;
+}
+
+.inlineLink {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inlineLink:hover {
+  opacity: 0.9;
+}
+
+.aside {
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+
+.points {
+  margin: 0 0 22px;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.points li + li {
+  margin-top: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid var(--motus-glass-cta-border-dark, rgba(253, 230, 255, 0.36));
+  background-color: var(--motus-glass-cta-bg-dark, rgba(255, 255, 255, 0.015));
+  background-image: var(--motus-glass-cta-shine-dark), var(--motus-glass-cta-candy-dark);
+  box-shadow: var(--motus-glass-cta-neon-shadow);
+  backdrop-filter: var(--motus-glass-cta-blur, blur(22px) saturate(210%));
+  -webkit-backdrop-filter: var(--motus-glass-cta-blur, blur(22px) saturate(210%));
+  color: #fff;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  opacity: 0.85;
+}
+
+.backdrop[data-theme="light"] .primary {
+  border-color: var(--motus-glass-cta-border-light, rgba(112, 37, 174, 0.35));
+  background-color: var(--motus-glass-cta-bg-light, rgba(255, 255, 255, 0.55));
+  background-image: var(--motus-glass-cta-shine-light), var(--motus-glass-cta-candy-light);
+  color: #2a1a4a;
+  text-shadow: none;
+}

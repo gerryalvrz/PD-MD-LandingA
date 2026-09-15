@@ -16,11 +16,16 @@ const icons = {
 }
 
 const SELECTOR_IMAGES: Record<string, string> = {
-  manual: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80",
-  biblioteca: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80",
-  formacion: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
-  psychat: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
-  comunidad: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
+  manual: "/experience/membresia/manual-clinico.jpg",
+  biblioteca: "/experience/membresia/biblioteca-virtual.jpg",
+  formacion: "/experience/membresia/formacion-continua.jpg",
+  psychat: "/experience/membresia/psychat.png",
+  comunidad: "/experience/membresia/comunidad-practica.jpg",
+}
+
+/** Prefer right/left when the subject sits on an edge (avoids center-crop clipping). */
+const SELECTOR_IMAGE_POSITION: Partial<Record<string, string>> = {
+  comunidad: "right center",
 }
 
 function buildSelectorOptions(items: MembershipResource[], dark: boolean): InteractiveSelectorOption[] {
@@ -34,6 +39,7 @@ function buildSelectorOptions(items: MembershipResource[], dark: boolean): Inter
       title: item.title,
       description: item.line,
       image: SELECTOR_IMAGES[item.id] ?? SELECTOR_IMAGES.manual,
+      imagePosition: SELECTOR_IMAGE_POSITION[item.id],
       icon,
     }
   })

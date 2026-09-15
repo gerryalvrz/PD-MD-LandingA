@@ -2,74 +2,141 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { ArrowUpRight, BookOpen, Library, Users, Sparkles, GraduationCap, MessagesSquare, UserRound, CalendarDays, Video, Wallet, NotebookPen } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { EXPERIENCE_FEATURES, EXPERIENCE_STAGES, type ExperienceStage } from "@/lib/app-experience"
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  GraduationCap,
+  MessagesSquare,
+  NotebookPen,
+  Sparkles,
+  UserRound,
+  Video,
+  Wallet,
+} from "lucide-react"
+import { APP_MODULES, EXPERIENCE_GENESIS, type AppModule, type AppModuleIcon } from "@/lib/app-experience"
+import { AppModuleModal } from "@/components/landing/AppModuleModal"
 import { T, type Tok } from "@/lib/landing-theme"
 import styles from "./AppExperience.module.css"
 
-const icons = { academy: GraduationCap, library: Library, community: Users, ai: Sparkles, course: BookOpen, supervision: MessagesSquare, profile: UserRound, calendar: CalendarDays, video: Video, payments: Wallet, users: Users, journal: NotebookPen }
+const icons: Record<AppModuleIcon, typeof Sparkles> = {
+  ai: Sparkles,
+  profile: UserRound,
+  reputation: BadgeCheck,
+  supervision: MessagesSquare,
+  academy: GraduationCap,
+  payments: Wallet,
+  video: Video,
+  journal: NotebookPen,
+}
 
 export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (id: string) => void }) {
-  const [stage, setStage] = useState<ExperienceStage>("membership")
   const tok: Tok = dark ? T.dark : T.light
-  const selected = EXPERIENCE_STAGES.find((item) => item.id === stage)!
-  const cards = EXPERIENCE_FEATURES.filter((item) => item.stage === stage)
+  const [active, setActive] = useState<AppModule | null>(null)
+
+  function openModule(item: AppModule) {
+    onExplore(item.id)
+    setActive(item)
+  }
+
+  function goMembership() {
+    onExplore("membership_from_module")
+    setActive(null)
+    document.getElementById("membresia")?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
 
   return (
-    <section id="experiencia" className={styles.section} data-theme={dark ? "dark" : "light"} style={{ background: tok.bgAlt, color: tok.t1 }} aria-labelledby="experience-title">
+    <section
+      id="experiencia"
+      className={styles.section}
+      data-theme={dark ? "dark" : "light"}
+      style={{ background: tok.bgAlt, color: tok.t1 }}
+      aria-labelledby="experience-title"
+    >
       <div className={styles.container}>
-        <p className={styles.eyebrow}>TU EXPERIENCIA EN MOTUSDAO</p>
-        <h2 id="experience-title" className={styles.heading}>Una ruta que se convierte<br className={styles.desktopBreak} /> en herramientas para tu práctica.</h2>
-        <p className={styles.intro}>Descubre qué puedes aprender, qué recursos te acompañan y cómo se abre el camino hacia tu consultorio digital.</p>
+        <p className={styles.eyebrow}>En la App MotusDAO</p>
+        <h2 id="experience-title" className={styles.heading}>
+          Lo que tienes en la App MotusDAO
+        </h2>
+        <p className={styles.intro}>
+          Herramientas concretas para tu práctica digital: IA clínica, perfil, reputación, supervisión, academia,
+          pagos, videochat seguro y bitácora — en un solo lugar.
+        </p>
 
         <div className={styles.featured}>
           <figure className={styles.cover}>
-            <Image src="/experience/fundamentos-cover.png" alt="Portada ilustrada del bloque Fundamentos de MotusDAO Academy" width={1905} height={826} sizes="(max-width: 760px) 100vw, 55vw" />
-            <figcaption>Portada del bloque publicada en Academia</figcaption>
+            <Image
+              src={EXPERIENCE_GENESIS.imageSrc}
+              alt={EXPERIENCE_GENESIS.imageAlt}
+              width={EXPERIENCE_GENESIS.imageWidth}
+              height={EXPERIENCE_GENESIS.imageHeight}
+              sizes="(max-width: 760px) 100vw, 55vw"
+              priority={false}
+            />
           </figure>
           <div className={styles.sample}>
-            <p className={styles.eyebrow}>UNA MUESTRA DE FUNDAMENTOS</p>
-            <h3>Tu encuadre listo en 20 minutos</h3>
-            <p>Una lección con un ejercicio de media página para definir espacio, tiempo, confidencialidad y presencia digital.</p>
-            <a href="https://app.motusdao.org/academia/02-fundamentos/leccion/tu-encuadre-listo" target="_blank" rel="noopener noreferrer" onClick={() => onExplore("encuadre-preview")} className={styles.link}>Ver la lección de muestra <ArrowUpRight size={17} aria-hidden="true" /><span className="sr-only"> (abre otra pestaña)</span></a>
+            <p className={styles.eyebrow}>{EXPERIENCE_GENESIS.eyebrow}</p>
+            <h3>{EXPERIENCE_GENESIS.title}</h3>
+            <p>{EXPERIENCE_GENESIS.body}</p>
+            <a
+              href={EXPERIENCE_GENESIS.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => onExplore(EXPERIENCE_GENESIS.exploreId)}
+              className={styles.link}
+            >
+              {EXPERIENCE_GENESIS.ctaLabel}
+              <ArrowUpRight size={17} aria-hidden="true" />
+              <span className="sr-only"> (abre otra pestaña)</span>
+            </a>
           </div>
         </div>
 
-        <div className={styles.filters} role="group" aria-label="Explorar funciones por etapa">
-          {EXPERIENCE_STAGES.map((item, index) => (
-            <Button key={item.id} variant="ghost" className={styles.filter} aria-pressed={stage === item.id} aria-controls="experience-cards" onClick={() => setStage(item.id)}>
-              <span className={styles.step}>{String(index + 1).padStart(2, "0")}</span>{item.label}
-            </Button>
-          ))}
-        </div>
-
-        <div className={styles.stageIntro}>
-          <p className={styles.stageName}>{selected.stage}</p>
-          <p>{selected.description}</p>
-          <span className={styles.count} aria-live="polite">{cards.length} funciones y recursos · {selected.label}</span>
-        </div>
-
-        <div id="experience-cards" className={styles.grid}>
-          {cards.map((item) => {
+        <ol className={styles.moduleList} aria-label="Módulos de la App MotusDAO">
+          {APP_MODULES.map((item, index) => {
             const Icon = icons[item.icon]
             return (
-              <Card key={item.id} className={styles.card}>
-                <CardContent className={styles.cardContent}>
-                  <div className={styles.cardTop}><span className={styles.icon}><Icon size={22} aria-hidden="true" /></span><span className={styles.status} data-status={item.status}>{item.status}</span></div>
-                  <h3>{item.title}</h3>
-                  <p className={styles.benefit}>{item.benefit}</p>
-                  <ul>{item.examples.map((example) => <li key={example}>{example}</li>)}</ul>
-                  <div className={styles.access}><span>CUÁNDO ACCEDES</span><p>{item.access}</p></div>
-                  <a href={item.href} target="_blank" rel="noopener noreferrer" onClick={() => onExplore(item.id)} className={styles.link}>{item.linkLabel}<ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> (abre otra pestaña)</span></a>
-                </CardContent>
-              </Card>
+              <li key={item.id} className={styles.moduleRow}>
+                <span className={styles.moduleIndex} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className={styles.moduleIcon} aria-hidden="true">
+                  <Icon size={20} strokeWidth={2} />
+                </span>
+                <div className={styles.moduleBody}>
+                  <h3 className={styles.moduleTitle}>{item.title}</h3>
+                  <p className={styles.moduleLine}>{item.line}</p>
+                  <button type="button" className={styles.linkButton} onClick={() => openModule(item)}>
+                    {item.linkLabel}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </li>
             )
           })}
+        </ol>
+
+        <div className={styles.footer}>
+          <p>Toca “Saber más” para ver qué hace cada módulo. Sin login: la explicación está aquí.</p>
+          <a href="#membresia" className={styles.link}>
+            Ver planes <span aria-hidden="true">→</span>
+          </a>
         </div>
-        <div className={styles.footer}><p>Los enlaces abren la app. Algunas herramientas requieren iniciar sesión y contar con permisos. Las funciones próximas se muestran para que conozcas el recorrido.</p><a href="#membresia" className={styles.link}>Volver a la membresía <span aria-hidden="true">→</span></a></div>
       </div>
+
+      {active ? (
+        <AppModuleModal
+          module={active}
+          dark={dark}
+          icon={<ModuleIcon id={active.icon} />}
+          onClose={() => setActive(null)}
+          onMembership={goMembership}
+        />
+      ) : null}
     </section>
   )
+}
+
+function ModuleIcon({ id }: { id: AppModuleIcon }) {
+  const Icon = icons[id]
+  return <Icon size={22} strokeWidth={2} aria-hidden="true" />
 }
