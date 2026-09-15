@@ -83,14 +83,14 @@ function GradientText({ children }: { children: React.ReactNode }) {
   )
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children, color = ACCENT.iris }: { children: React.ReactNode; color?: string }) {
   return (
     <div
       style={{
         fontFamily: "var(--font-inter)",
         fontSize: 12,
         fontWeight: 500,
-        color: ACCENT.iris,
+        color,
         letterSpacing: "0.10em",
         textTransform: "uppercase",
         marginBottom: 16,
@@ -459,7 +459,7 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
     <section
       id="diagnostico"
       style={{
-        background: tok.bg,
+        background: tok.bgAlt,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
         scrollMarginTop: 88,
       }}
@@ -628,7 +628,30 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
   const [plan, setPlan] = useState<MembershipPlan>("monthly")
   const tok = dark ? T.dark : T.light
   const copy = LANDING_MEMBERSHIP
-  const cardStyle: React.CSSProperties = { border: `1px solid ${tok.cardBorder}`, borderRadius: 20, padding: "clamp(22px, 3vw, 36px)", background: tok.card }
+  const communityAccent = ACCENT.pink
+  const invitationAccent = dark ? "#67E8F9" : "#0891B2"
+  const communityCard: React.CSSProperties = {
+    border: `1px solid ${dark ? "rgba(244,114,182,0.42)" : "rgba(236,72,153,0.32)"}`,
+    borderRadius: 20,
+    padding: "clamp(22px, 3vw, 36px)",
+    background: dark
+      ? "linear-gradient(165deg, rgba(244,114,182,0.14) 0%, rgba(14,10,26,0.55) 42%, rgba(14,10,26,0.82) 100%)"
+      : "linear-gradient(165deg, rgba(251,113,133,0.16) 0%, rgba(255,255,255,0.88) 48%, rgba(248,246,255,0.96) 100%)",
+    boxShadow: dark
+      ? "0 0 0 1px rgba(253,230,255,0.08), 0 0 36px rgba(244,114,182,0.16), 0 18px 40px rgba(8,4,20,0.35)"
+      : "0 0 0 1px rgba(244,114,182,0.08), 0 14px 32px rgba(190,24,93,0.08)",
+  }
+  const invitationCard: React.CSSProperties = {
+    border: `1px solid ${dark ? "rgba(103,232,249,0.28)" : "rgba(8,145,178,0.24)"}`,
+    borderRadius: 20,
+    padding: "clamp(22px, 3vw, 36px)",
+    background: dark
+      ? "linear-gradient(165deg, rgba(34,211,238,0.08) 0%, rgba(14,10,26,0.72) 45%, rgba(14,10,26,0.9) 100%)"
+      : "linear-gradient(165deg, rgba(165,243,252,0.35) 0%, rgba(255,255,255,0.92) 50%, rgba(240,249,255,0.98) 100%)",
+    boxShadow: dark
+      ? "0 0 28px rgba(34,211,238,0.08), 0 16px 36px rgba(8,4,20,0.28)"
+      : "0 12px 28px rgba(8,145,178,0.06)",
+  }
   const bodyStyle: React.CSSProperties = { fontFamily: "var(--font-inter)", color: tok.t2, fontSize: 15, lineHeight: 1.65 }
   return (
     <section id="membresia" style={{ background: tok.bgAlt, padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)", scrollMarginTop: 88 }}>
@@ -637,12 +660,42 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
         <SectionHeading tok={tok}>{copy.heading}</SectionHeading>
         <p style={{ ...bodyStyle, maxWidth: 740, margin: "16px 0 28px" }}>{copy.lede}</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 20, alignItems: "start" }}>
-          <article style={{ ...cardStyle, background: tok.cardHighBg, borderColor: tok.cardHighBorder }}>
-            <SectionLabel>{copy.community.label}</SectionLabel>
+          <article style={communityCard}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: communityAccent,
+                  letterSpacing: "0.10em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {copy.community.label}
+              </p>
+              <span
+                style={{
+                  flexShrink: 0,
+                  fontFamily: "var(--font-inter)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: dark ? "#0E0A1A" : "#fff",
+                  background: communityAccent,
+                  borderRadius: 999,
+                  padding: "5px 10px",
+                }}
+              >
+                Recomendado
+              </span>
+            </div>
             <h3 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 28, color: tok.t1, lineHeight: 1.2 }}>{copy.community.title}</h3>
-            <p style={{ color: tok.t1, fontSize: 36, fontWeight: 700, margin: "24px 0 4px" }}>
+            <p style={{ color: communityAccent, fontSize: 36, fontWeight: 700, margin: "24px 0 4px" }}>
               {copy.community.priceMonthlyLabel}
-              <span style={{ fontSize: 16, fontWeight: 400 }}>{copy.community.priceMonthlySuffix}</span>
+              <span style={{ fontSize: 16, fontWeight: 400, color: tok.t2 }}>{copy.community.priceMonthlySuffix}</span>
             </p>
             <p style={{ ...bodyStyle, marginBottom: 24 }}>
               o <strong style={{ color: tok.t1 }}>{copy.community.priceAnnual}</strong>
@@ -656,7 +709,21 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
               <legend style={{ ...bodyStyle, marginBottom: 10, color: tok.t1 }}>{copy.community.planLegend}</legend>
               <div style={{ display: "grid", gap: 10 }}>
                 {(["monthly", "annual"] as const).map((value) => (
-                  <label key={value} style={{ ...bodyStyle, display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 10, cursor: "pointer", border: `1px solid ${plan === value ? "#a855f7" : tok.cardBorder}`, color: tok.t1 }}>
+                  <label
+                    key={value}
+                    style={{
+                      ...bodyStyle,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "12px 14px",
+                      borderRadius: 10,
+                      cursor: "pointer",
+                      border: `1px solid ${plan === value ? communityAccent : tok.cardBorder}`,
+                      background: plan === value ? (dark ? "rgba(244,114,182,0.10)" : "rgba(244,114,182,0.08)") : "transparent",
+                      color: tok.t1,
+                    }}
+                  >
                     <input type="radio" name="membership-plan" value={value} checked={plan === value} onChange={() => setPlan(value)} />
                     {value === "monthly" ? copy.community.planMonthly : copy.community.planAnnual}
                   </label>
@@ -667,7 +734,7 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
               {copy.community.continueLabel}
             </GlassCta>
             <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>{copy.community.continueNote}</p>
-            <div style={{ borderTop: `1px solid ${tok.cardBorder}`, marginTop: 24, paddingTop: 20 }}>
+            <div style={{ borderTop: `1px solid ${dark ? "rgba(244,114,182,0.22)" : "rgba(236,72,153,0.18)"}`, marginTop: 24, paddingTop: 20 }}>
               <p style={{ ...bodyStyle, margin: 0 }}>
                 <strong style={{ color: tok.t1 }}>{copy.community.portalNoteTitle}</strong>
                 <br />
@@ -675,12 +742,12 @@ function MembershipSection({ dark, onContinue }: { dark: boolean; onContinue: (p
               </p>
             </div>
           </article>
-          <article style={cardStyle}>
-            <SectionLabel>{copy.invitation.label}</SectionLabel>
+          <article style={invitationCard}>
+            <SectionLabel color={invitationAccent}>{copy.invitation.label}</SectionLabel>
             <h3 style={{ fontFamily: "var(--font-jura)", fontWeight: 700, fontSize: 24, color: tok.t1 }}>{copy.invitation.title}</h3>
-            <p style={{ color: tok.t1, fontSize: 30, fontWeight: 700, margin: "24px 0 4px" }}>
+            <p style={{ color: invitationAccent, fontSize: 30, fontWeight: 700, margin: "24px 0 4px" }}>
               {copy.invitation.priceMonthlyLabel}
-              <span style={{ fontSize: 16, fontWeight: 400 }}>{copy.invitation.priceMonthlySuffix}</span>
+              <span style={{ fontSize: 16, fontWeight: 400, color: tok.t2 }}>{copy.invitation.priceMonthlySuffix}</span>
             </p>
             <p style={bodyStyle}>
               o <strong style={{ color: tok.t1 }}>{copy.invitation.priceAnnual}</strong>
@@ -748,26 +815,13 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
   return (
     <section
       style={{
-        background: tok.bg,
+        background: tok.bgAlt,
         padding: "clamp(52px, 8vh, 88px) clamp(24px, 6vw, 120px) clamp(40px, 6vh, 64px)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          bottom: "-20%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: 600,
-          height: 300,
-          background: `radial-gradient(ellipse, ${ACCENT.glow} 0%, transparent 70%)`,
-          pointerEvents: "none",
-        }}
-      />
-
       <div style={{ position: "relative", maxWidth: 560, margin: "0 auto" }}>
         <h2
           style={{
