@@ -1,14 +1,9 @@
 .footer {
   padding: 36px clamp(20px, 5vw, 72px) 28px;
+  /* Clear the fixed sticky CTA (all viewports) */
+  padding-bottom: calc(28px + 72px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid transparent;
   font-family: var(--font-inter);
-}
-
-@media (max-width: 767px) {
-  .footer {
-    /* Clear the fixed sticky CTA on mobile only */
-    padding-bottom: calc(28px + 72px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
 .grid {

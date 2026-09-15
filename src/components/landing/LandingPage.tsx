@@ -412,7 +412,7 @@ function TrustBar({ dark }: { dark: boolean }) {
       <ScrollSplitCard
         imageSrc="/experience/recorrido-bloques.jpg"
         imageAlt="Recorrido de cinco bloques: Génesis, Fundamentos, Praxis, Validación y Portal Clínico"
-        stickyClassName={`${dark ? "bg-[#130D22]" : "bg-[#F0ECF9]"} pb-[84px] md:pb-0`}
+        stickyClassName={`${dark ? "bg-[#130D22]" : "bg-[#F0ECF9]"} pb-[84px]`}
         startLabel="Desliza"
         endLabel="Empieza con la membresía"
         startLabelClassName="text-[#9B8AFF]"
@@ -885,13 +885,27 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
   )
 }
 
+/** Height of sticky CTA chrome (pt + button), excluding safe-area — Motty clears this via CSS var. */
+const STICKY_CTA_CONTENT_H = "72px"
+
 function StickyConversionBar({ onMembership }: { onMembership: () => void }) {
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty(
+      "--landing-sticky-cta-offset",
+      `calc(${STICKY_CTA_CONTENT_H} + env(safe-area-inset-bottom, 0px))`,
+    )
+    return () => {
+      root.style.removeProperty("--landing-sticky-cta-offset")
+    }
+  }, [])
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/20 bg-[#160d25]/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-[95] border-t border-white/20 bg-[#160d25]/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl">
       <a
         href="#membresia"
         onClick={onMembership}
-        className="block text-center text-sm font-semibold"
+        className="mx-auto block max-w-xl text-center text-sm font-semibold"
         style={{ ...glassCtaStyle({ dark: true, full: true, small: true }), padding: "12px 16px" }}
       >
         {LANDING_CTAS.membershipSticky.label}

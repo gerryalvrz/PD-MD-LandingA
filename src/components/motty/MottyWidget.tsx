@@ -11,7 +11,8 @@ import type { MottyMessage } from "@/lib/motty/types";
 
 const REVEAL_MS = 4500;
 const REVEAL_SCROLL_RATIO = 0.7;
-const MOTTY_Z = 90;
+/** Above landing sticky CTA (z-95) so FAB stays visible and tappable. */
+const MOTTY_Z = 100;
 
 type ChatLine = MottyMessage;
 
@@ -126,8 +127,12 @@ export function MottyWidget() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-[max(16px,env(safe-area-inset-right))] flex flex-col items-end gap-3"
-      style={{ zIndex: MOTTY_Z }}
+      className="pointer-events-none fixed right-[max(16px,env(safe-area-inset-right))] flex flex-col items-end gap-3"
+      style={{
+        zIndex: MOTTY_Z,
+        /* Sit above sticky CTA when LandingPage sets --landing-sticky-cta-offset */
+        bottom: "calc(var(--landing-sticky-cta-offset, 0px) + 12px)",
+      }}
     >
       {open ? (
         <section
