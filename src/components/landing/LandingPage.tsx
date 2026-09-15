@@ -26,6 +26,7 @@ import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
 import { LandingFooter } from "@/components/landing/LandingFooter"
 import { AgentPromptCard } from "@/components/landing/AgentPromptCard"
 import { HeroBackground, HeroGlobe } from "@/components/landing/HeroVisual"
+import { LiquidGradientBackground } from "@/components/hero/LiquidGradientBackground"
 import { useLandingAnalytics } from "@/components/landing/useLandingAnalytics"
 import { ScrollSplitCard } from "@/components/ui/scroll-split-card"
 import { ErurouniShaderPanel } from "@/components/ui/erurouni-shader-panel"
@@ -452,6 +453,26 @@ function BenefitsSection({ dark, onExplore }: { dark: boolean; onExplore: (id: s
   return <MembershipResources dark={dark} onExplore={onExplore} />
 }
 
+function SectionAtmosphere({ dark, id }: { dark: boolean; id: string }) {
+  return (
+    <>
+      <LiquidGradientBackground key={`${id}-${dark ? "dark" : "light"}`} dark={dark} showControls={false} />
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          pointerEvents: "none",
+          background: dark
+            ? "linear-gradient(180deg, rgba(8,5,14,0.62) 0%, rgba(14,10,26,0.78) 55%, rgba(14,10,26,0.88) 100%)"
+            : "linear-gradient(180deg, rgba(244,240,252,0.55) 0%, rgba(240,236,249,0.72) 55%, rgba(240,236,249,0.86) 100%)",
+        }}
+      />
+    </>
+  )
+}
+
 function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boolean; onDiagnostico: () => void }) {
   const tok = dark ? T.dark : T.light
 
@@ -459,12 +480,16 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
     <section
       id="diagnostico"
       style={{
-        background: tok.bgAlt,
+        background: dark ? "#0e0a1a" : "#f0ecf9",
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
         scrollMarginTop: 88,
+        position: "relative",
+        overflow: "hidden",
+        isolation: "isolate",
       }}
     >
-      <div style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
+      <SectionAtmosphere dark={dark} id="diagnostico" />
+      <div style={{ position: "relative", zIndex: 2, maxWidth: 720, marginInline: "auto", textAlign: "center", color: tok.t1 }}>
         <SectionLabel>{LANDING_ASSESSMENT_TEASER.label}</SectionLabel>
         <SectionHeading tok={tok}>{LANDING_ASSESSMENT_COPY[LANDING_ASSESSMENT].heading}</SectionHeading>
         <p
@@ -815,14 +840,16 @@ function FinalCTA({ dark, onMembership }: { dark: boolean; onMembership: () => v
   return (
     <section
       style={{
-        background: tok.bgAlt,
+        background: dark ? "#0e0a1a" : "#f0ecf9",
         padding: "clamp(52px, 8vh, 88px) clamp(24px, 6vw, 120px) clamp(40px, 6vh, 64px)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
+        isolation: "isolate",
       }}
     >
-      <div style={{ position: "relative", maxWidth: 560, margin: "0 auto" }}>
+      <SectionAtmosphere dark={dark} id="final" />
+      <div style={{ position: "relative", zIndex: 2, maxWidth: 560, margin: "0 auto", color: tok.t1 }}>
         <h2
           style={{
             fontFamily: "var(--font-jura)",
