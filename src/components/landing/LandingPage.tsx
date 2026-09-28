@@ -7,6 +7,8 @@ import { motion } from "framer-motion"
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
 import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
 import { LANDING_ASSESSMENT, LANDING_ASSESSMENT_COPY, landingAssessmentPath } from "@/lib/active-assessment"
+import { EXPERIENCE_APP_CTA, EXPERIENCE_GENESIS } from "@/lib/app-experience"
+import { trackCta } from "@/lib/track-cta"
 import {
   LANDING_ASSESSMENT_TEASER,
   LANDING_CTAS,
@@ -1050,10 +1052,17 @@ export default function LandingPage() {
   }, [dark])
 
   const handleDiagnostico = (section: string) => {
+    trackCta(LANDING_CTAS.assessment.label, {
+      location: section,
+      href: landingAssessmentPath(),
+    })
     onTrack("cta_click", { section, ctaLabel: LANDING_CTAS.assessment.label, intent: "lead" })
   }
 
   const handleMembership = (section: string) => {
+    const isSticky = section === "sticky"
+    const label = isSticky ? LANDING_CTAS.membershipSticky.label : LANDING_CTAS.membership.label
+    trackCta(label, { location: section, href: "/#membresia" })
     onTrack("cta_click", {
       section,
       ctaLabel: LANDING_CTAS.membership.label,
@@ -1086,27 +1095,54 @@ export default function LandingPage() {
             onTrack("cta_click", { section: "beneficios", ctaLabel: feature, action: "resource_select" })
           }}
         />
-        <AppExperience dark={dark} onExplore={(feature) => onTrack("cta_click", { section: "experiencia", ctaLabel: feature, action: "app_feature_explore" })} />
+        <AppExperience
+          dark={dark}
+          onExplore={(feature) => {
+            if (feature === EXPERIENCE_GENESIS.exploreId) {
+              trackCta(EXPERIENCE_GENESIS.ctaLabel, {
+                location: "experiencia",
+                href: EXPERIENCE_GENESIS.href,
+              })
+            } else if (feature === EXPERIENCE_APP_CTA.exploreId) {
+              trackCta(EXPERIENCE_APP_CTA.label, {
+                location: "experiencia",
+                href: EXPERIENCE_APP_CTA.href,
+              })
+            }
+            onTrack("cta_click", { section: "experiencia", ctaLabel: feature, action: "app_feature_explore" })
+          }}
+        />
         <JourneySection dark={dark} />
         <MembershipSection
           dark={dark}
-          onContinue={(plan) =>
+          onContinue={(plan) => {
+            const isInvitation = plan === "invitation"
+            const label = isInvitation
+              ? LANDING_MEMBERSHIP.invitation.ctaLabel
+              : LANDING_MEMBERSHIP.community.continueLabel
+            trackCta(label, {
+              location: "membresia",
+              href: isInvitation
+                ? INVITATION_CONTACT_URL
+                : membershipUrl(plan as MembershipPlan),
+            })
             onTrack("cta_click", {
               section: "membresia",
-              ctaLabel: plan === "invitation" ? LANDING_MEMBERSHIP.invitation.ctaLabel : LANDING_MEMBERSHIP.community.continueLabel,
+              ctaLabel: label,
               intent: "lead",
               plan,
-              action: plan === "invitation" ? "invitation_contact_click" : "membership_review_continue",
+              action: isInvitation ? "invitation_contact_click" : "membership_review_continue",
             })
-          }
-          onAgentPromptCopy={() =>
+          }}
+          onAgentPromptCopy={() => {
+            trackCta("Copiar prompt", { location: "membresia" })
             onTrack("cta_click", {
               section: "membresia",
               ctaLabel: "Copiar prompt",
               action: "agent_prompt_copy",
               intent: "lead",
             })
-          }
+          }}
         />
         <DigitalPracticeDiagnosticSection dark={dark} onDiagnostico={() => handleDiagnostico("diagnostico")} />
         <ObjectionFaq dark={dark} />
