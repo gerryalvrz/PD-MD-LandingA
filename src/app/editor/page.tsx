@@ -105,7 +105,9 @@ export default function EditorPage() {
   const previewText = renderTemplateString(text, previewVars)
   const previewHtmlFromHtml = renderTemplateString(html, previewVars)
   const previewMarkdown = renderTemplateString(markdown, previewVars)
-  const previewHtmlFromMarkdown = previewMarkdown.trim() ? marked.parse(previewMarkdown) : ""
+  const previewHtmlFromMarkdown = previewMarkdown.trim()
+    ? (marked.parse(previewMarkdown, { async: false }) as string)
+    : ""
   const previewHtml = previewHtmlFromHtml.trim() ? previewHtmlFromHtml : previewHtmlFromMarkdown
 
   return (
