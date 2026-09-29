@@ -30,7 +30,7 @@ import { genericShareDraft } from "@/lib/share-card"
 import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
-import { DualPathSelector } from "@/components/landing/DualPathSelector"
+import { DualPathSection } from "@/components/landing/DualPathSelector"
 import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
 import { LandingFooter } from "@/components/landing/LandingFooter"
 import { AgentPromptCard } from "@/components/landing/AgentPromptCard"
@@ -650,10 +650,12 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
 function JourneySection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const stages = LANDING_JOURNEY.stages
+  const communityStages = stages.slice(0, 3)
+  const fastStages = stages.slice(3)
 
   return (
     <section
-      id="ruta"
+      id="recorrido"
       style={{
         background: tok.bgAlt,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
@@ -661,11 +663,44 @@ function JourneySection({ dark }: { dark: boolean }) {
       }}
     >
       <div style={{ marginBottom: 28, maxWidth: 920, marginInline: "auto", textAlign: "center" }}>
-        <SectionLabel>{LANDING_JOURNEY.label}</SectionLabel>
-        <SectionHeading tok={tok}>{LANDING_JOURNEY.heading}</SectionHeading>
+        <SectionLabel>{LANDING_JOURNEY.stagesLabel}</SectionLabel>
+        <SectionHeading tok={tok}>{LANDING_JOURNEY.stagesHeading}</SectionHeading>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 20,
+            marginBottom: 18,
+          }}
+        >
+          {stages.map((stage, i) => (
+            <span key={stage.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-jura)",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  color: "#ffffff",
+                  background: ACCENT.deep,
+                  border: `1px solid ${ACCENT.iris}`,
+                  borderRadius: 99,
+                  padding: "7px 14px",
+                }}
+              >
+                {stage.label}
+              </span>
+              {i < stages.length - 1 && <span style={{ color: ACCENT.iris }}>→</span>}
+            </span>
+          ))}
+        </div>
+
         <p
           style={{
-            margin: "16px auto 0",
+            margin: "0 auto",
             maxWidth: 720,
             fontFamily: "var(--font-inter)",
             fontSize: 15,
@@ -674,17 +709,31 @@ function JourneySection({ dark }: { dark: boolean }) {
             textAlign: "center",
           }}
         >
-          {LANDING_JOURNEY.lede}
+          {LANDING_JOURNEY.stagesLede}
         </p>
       </div>
 
-      <DualPathSelector dark={dark} />
-
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ marginBottom: 22, textAlign: "center" }}>
+        <p
+          style={{
+            margin: "0 0 14px",
+            fontFamily: "var(--font-inter)",
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: "0.10em",
+            textTransform: "uppercase",
+            color: ACCENT.iris,
+            textAlign: "center",
+          }}
+        >
+          {LANDING_JOURNEY.communityPathLabel}
+        </p>
+        <JourneyPathCards stages={communityStages} dark={dark} variant="community" />
+
+        <div style={{ marginTop: 36, marginBottom: 14, textAlign: "center" }}>
           <p
             style={{
-              margin: "0 0 10px",
+              margin: 0,
               fontFamily: "var(--font-inter)",
               fontSize: 12,
               fontWeight: 600,
@@ -693,34 +742,23 @@ function JourneySection({ dark }: { dark: boolean }) {
               color: ACCENT.iris,
             }}
           >
-            {LANDING_JOURNEY.stagesLabel}
+            {LANDING_JOURNEY.fastPathLabel}
           </p>
-          <h3
-            style={{
-              margin: 0,
-              fontFamily: "var(--font-jura)",
-              fontWeight: 700,
-              fontSize: "clamp(22px, 3vw, 28px)",
-              color: tok.t1,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {LANDING_JOURNEY.stagesHeading}
-          </h3>
           <p
             style={{
-              margin: "12px auto 0",
-              maxWidth: 720,
+              margin: "8px auto 0",
+              maxWidth: 560,
               fontFamily: "var(--font-inter)",
-              fontSize: 15,
+              fontSize: 14,
               color: tok.t2,
-              lineHeight: 1.6,
+              lineHeight: 1.55,
             }}
           >
-            {LANDING_JOURNEY.stagesLede}
+            {LANDING_JOURNEY.fastPathNote}
           </p>
         </div>
-        <JourneyPathCards stages={stages} dark={dark} variant="community" />
+
+        <JourneyPathCards stages={fastStages} dark={dark} variant="fast" />
       </div>
     </section>
   )
@@ -1067,6 +1105,7 @@ export default function LandingPage() {
           onConoce={() => handleMembership("hero")}
           onDiagnostico={() => handleDiagnostico("hero")}
         />
+        <DualPathSection dark={dark} />
         <TrustBar dark={dark} />
         <BenefitsSection
           dark={dark}

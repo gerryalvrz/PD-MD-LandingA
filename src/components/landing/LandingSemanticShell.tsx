@@ -92,16 +92,24 @@ export function LandingSemanticShell() {
           </p>
         </div>
         <p>{LANDING_JOURNEY.dualPath.convergenceLabel}</p>
-        <ol>
-          {LANDING_JOURNEY.dualPath.convergenceSteps.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
         <p>{LANDING_JOURNEY.dualPath.microcopy}</p>
         <h3>{LANDING_JOURNEY.stagesHeading}</h3>
         <p>{LANDING_JOURNEY.stagesLede}</p>
+        <p>{LANDING_JOURNEY.communityPathLabel}</p>
         <ol>
-          {LANDING_JOURNEY.stages.map((stage) => (
+          {LANDING_JOURNEY.stages.slice(0, 3).map((stage) => (
+            <li key={stage.label}>
+              <strong>{stage.label}</strong> — {stage.line}{" "}
+              <a href={stage.href.startsWith("#") ? `${CANONICAL_SITE_URL}/${stage.href}` : stage.href}>
+                {stage.cta}
+              </a>
+            </li>
+          ))}
+        </ol>
+        <p>{LANDING_JOURNEY.fastPathLabel}</p>
+        <p>{LANDING_JOURNEY.fastPathNote}</p>
+        <ol>
+          {LANDING_JOURNEY.stages.slice(3).map((stage) => (
             <li key={stage.label}>
               <strong>{stage.label}</strong> — {stage.line}{" "}
               <a href={stage.href.startsWith("#") ? `${CANONICAL_SITE_URL}/${stage.href}` : stage.href}>

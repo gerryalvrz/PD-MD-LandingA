@@ -67,12 +67,11 @@ export type JourneyStage = {
 export const LANDING_JOURNEY = {
   label: "¿Dónde estás hoy?",
   heading: "Dos caminos. Un mismo punto de revisión.",
-  lede:
-    "Entra → aprende → practica → valida → opera. Ambas rutas convergen en Validación humana. Ninguna garantiza aprobación. El Portal Clínico requiere aprobación e invitación.",
+  lede: "Elige cómo entrar. Ambas rutas llegan a la misma revisión humana.",
   dualPath: {
     community: {
       audience: "Quiero construir mi práctica",
-      title: "Construye tu ruta con Motus.",
+      title: "Construye tu ruta con Motus",
       steps: ["Génesis", "Fundamentos", "Praxis"] as const,
       primaryCta: { label: "Empezar mi ruta", href: "#membresia" },
       secondaryCta: {
@@ -82,28 +81,24 @@ export const LANDING_JOURNEY = {
     },
     professional: {
       audience: "Ya tengo una práctica activa",
-      title: "Solicita ingreso profesional directo.",
-      steps: ["Revisión de perfil", "Onboarding profesional"] as const,
+      title: "Ingreso profesional directo",
+      steps: ["Revisión de perfil", "Onboarding"] as const,
       primaryCta: {
         label: "Iniciar registro profesional",
         href: "https://app.motusdao.org/registro",
       },
     },
-    convergenceLabel: "Ambas rutas pasan por revisión humana.",
-    convergenceSteps: [
-      "Revisión y Validación",
-      "Aprobación",
-      "Invitación",
-      "Portal Clínico",
-    ] as const,
-    microcopy:
-      "Ninguna ruta garantiza aprobación. El acceso al Portal Clínico requiere revisión, aprobación e invitación.",
+    convergenceLabel: "Ambas rutas → Validación → Aprobación → Invitación → Portal Clínico",
+    microcopy: "Ninguna ruta garantiza aprobación.",
   },
-  stagesLabel: "Ruta Comunitaria — detalle",
+  stagesLabel: "Una ruta progresiva",
   stagesHeading: "Cinco bloques para avanzar contigo",
   stagesLede:
-    "Si construyes o ordenas tu práctica, este es el recorrido formativo. Después, Validación humana e invitación preparan el acceso al Portal Clínico. Completar la ruta no garantiza aprobación.",
+    "Empieza en Génesis y continúa con Fundamentos y Praxis. Después, la Validación humana y la invitación preparan el acceso al Portal Clínico. Completar la ruta no garantiza aprobación.",
   communityPathLabel: "Ruta comunitaria",
+  fastPathLabel: "Ruta rápida",
+  fastPathNote:
+    "Validación y Portal Clínico también se pueden alcanzar por ingreso profesional directo, con revisión y onboarding.",
   stages: [
     {
       label: "01 — Génesis",

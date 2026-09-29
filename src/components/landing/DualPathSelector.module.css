@@ -1,153 +1,202 @@
 .wrap {
-  max-width: 980px;
-  margin: 0 auto 48px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.grid {
+.branches,
+.merge {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 6vw, 72px);
+}
+
+.branches {
   align-items: stretch;
 }
 
-@media (max-width: 760px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card {
+.branch {
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  padding: clamp(20px, 3vw, 28px);
-  min-height: 100%;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
 }
 
-.audience {
-  margin: 0 0 10px;
+.entry {
+  margin: 0;
   font-family: var(--font-inter);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  line-height: 1.4;
+  max-width: 16ch;
 }
 
-.title {
-  margin: 0 0 18px;
+.route {
+  margin: 0;
   font-family: var(--font-jura);
   font-weight: 700;
-  font-size: clamp(20px, 2.4vw, 24px);
+  font-size: clamp(16px, 1.8vw, 19px);
+  letter-spacing: -0.02em;
   line-height: 1.25;
+  max-width: 18ch;
 }
 
-.steps {
-  list-style: none;
-  margin: 0 0 22px;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-  flex: 1;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.node {
+  margin: 0;
   font-family: var(--font-inter);
   font-size: 15px;
-  line-height: 1.4;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
-.stepArrow {
+.destination {
+  margin: 0;
+  font-family: var(--font-jura);
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 26px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.line {
+  width: 1px;
+  height: 14px;
+  margin: 6px 0;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.stepBlock {
   display: flex;
-  justify-content: center;
-  width: 18px;
-  font-size: 12px;
-  opacity: 0.75;
-  margin: -2px 0;
-  padding-left: 4px;
+  flex-direction: column;
+  align-items: center;
 }
 
 .actions {
-  display: grid;
-  gap: 10px;
-  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 4px;
 }
 
 .secondaryLink {
-  display: inline-block;
-  text-align: center;
   font-family: var(--font-inter);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  padding: 8px 4px;
 }
 
 .secondaryLink:hover {
   text-decoration: underline;
 }
 
-.convergence {
-  margin-top: 8px;
-  text-align: center;
-}
-
-.join {
-  display: flex;
-  justify-content: center;
-  gap: clamp(40px, 18vw, 180px);
-  height: 28px;
-  margin-bottom: 4px;
-}
-
-.joinArm {
+.branchTail {
   width: 1px;
+  flex: 1 1 24px;
+  min-height: 28px;
+  margin-top: 14px;
+  opacity: 0.9;
+}
+
+.merge {
+  position: relative;
+  height: 44px;
+}
+
+.mergeArm {
+  position: relative;
   height: 100%;
-  opacity: 0.7;
+  pointer-events: none;
 }
 
-@media (max-width: 760px) {
-  .join {
-    display: none;
-  }
+.mergeArm::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 50%;
+  transform: translateX(-50%);
+  background: currentColor;
 }
 
-.convergenceLabel {
-  margin: 0 0 14px;
-  font-family: var(--font-inter);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
+.mergeArm::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  background: currentColor;
 }
 
-.flow {
+.mergeArm:first-child::after {
+  left: 50%;
+  right: 0;
+}
+
+.mergeArm:nth-child(2)::after {
+  left: 0;
+  right: 50%;
+}
+
+.mergeStem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 50%;
+  transform: translateX(-50%);
+}
+
+.shared {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 0 auto 14px;
-}
-
-.flowPill {
-  font-family: var(--font-jura);
-  font-weight: 700;
-  font-size: 13px;
-  border-radius: 99px;
-  padding: 7px 14px;
-  color: #ffffff;
-}
-
-.flowArrow {
-  font-size: 13px;
+  text-align: center;
+  margin-top: 4px;
 }
 
 .microcopy {
-  margin: 0 auto;
-  max-width: 560px;
+  margin: 20px 0 0;
+  max-width: 420px;
   font-family: var(--font-inter);
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .branches {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  .branchTail {
+    display: none;
+  }
+
+  .merge {
+    display: block;
+    grid-template-columns: none;
+    height: 32px;
+    margin-top: 4px;
+  }
+
+  .mergeArm {
+    display: none;
+  }
+
+  .mergeStem {
+    position: static;
+    transform: none;
+    height: 32px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .entry,
+  .route {
+    max-width: none;
+  }
 }
