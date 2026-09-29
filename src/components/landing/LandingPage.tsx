@@ -5,7 +5,12 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { GlassEffect, GlassFilter } from "@/components/ui/liquid-glass"
-import { membershipUrl, INVITATION_CONTACT_URL, type MembershipPlan } from "@/lib/membership-links"
+import {
+  membershipUrl,
+  INVITATION_CONTACT_URL,
+  PROFESSIONAL_REGISTRO_URL,
+  type MembershipPlan,
+} from "@/lib/membership-links"
 import { LANDING_ASSESSMENT, LANDING_ASSESSMENT_COPY, landingAssessmentPath } from "@/lib/active-assessment"
 import { EXPERIENCE_APP_CTA, EXPERIENCE_GENESIS } from "@/lib/app-experience"
 import { trackCta } from "@/lib/track-cta"
@@ -25,6 +30,7 @@ import { genericShareDraft } from "@/lib/share-card"
 import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
+import { DualPathSelector } from "@/components/landing/DualPathSelector"
 import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
 import { LandingFooter } from "@/components/landing/LandingFooter"
 import { AgentPromptCard } from "@/components/landing/AgentPromptCard"
@@ -644,12 +650,10 @@ function DigitalPracticeDiagnosticSection({ dark, onDiagnostico }: { dark: boole
 function JourneySection({ dark }: { dark: boolean }) {
   const tok = dark ? T.dark : T.light
   const stages = LANDING_JOURNEY.stages
-  const communityStages = stages.slice(0, 3)
-  const fastStages = stages.slice(3)
 
   return (
     <section
-      id="recorrido"
+      id="ruta"
       style={{
         background: tok.bgAlt,
         padding: "clamp(52px, 8vh, 96px) clamp(20px, 5vw, 72px)",
@@ -659,42 +663,9 @@ function JourneySection({ dark }: { dark: boolean }) {
       <div style={{ marginBottom: 28, maxWidth: 920, marginInline: "auto", textAlign: "center" }}>
         <SectionLabel>{LANDING_JOURNEY.label}</SectionLabel>
         <SectionHeading tok={tok}>{LANDING_JOURNEY.heading}</SectionHeading>
-
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 8,
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 20,
-            marginBottom: 18,
-          }}
-        >
-          {stages.map((stage, i) => (
-            <span key={stage.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-jura)",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  color: "#ffffff",
-                  background: ACCENT.deep,
-                  border: `1px solid ${ACCENT.iris}`,
-                  borderRadius: 99,
-                  padding: "7px 14px",
-                }}
-              >
-                {stage.label}
-              </span>
-              {i < stages.length - 1 && <span style={{ color: ACCENT.iris }}>→</span>}
-            </span>
-          ))}
-        </div>
-
         <p
           style={{
-            margin: "0 auto",
+            margin: "16px auto 0",
             maxWidth: 720,
             fontFamily: "var(--font-inter)",
             fontSize: 15,
@@ -707,27 +678,13 @@ function JourneySection({ dark }: { dark: boolean }) {
         </p>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <p
-          style={{
-            margin: "0 0 14px",
-            fontFamily: "var(--font-inter)",
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: "0.10em",
-            textTransform: "uppercase",
-            color: ACCENT.iris,
-            textAlign: "center",
-          }}
-        >
-          {LANDING_JOURNEY.communityPathLabel}
-        </p>
-        <JourneyPathCards stages={communityStages} dark={dark} variant="community" />
+      <DualPathSelector dark={dark} />
 
-        <div style={{ marginTop: 36, marginBottom: 14, textAlign: "center" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ marginBottom: 22, textAlign: "center" }}>
           <p
             style={{
-              margin: 0,
+              margin: "0 0 10px",
               fontFamily: "var(--font-inter)",
               fontSize: 12,
               fontWeight: 600,
@@ -736,23 +693,34 @@ function JourneySection({ dark }: { dark: boolean }) {
               color: ACCENT.iris,
             }}
           >
-            {LANDING_JOURNEY.fastPathLabel}
+            {LANDING_JOURNEY.stagesLabel}
           </p>
-          <p
+          <h3
             style={{
-              margin: "8px auto 0",
-              maxWidth: 560,
-              fontFamily: "var(--font-inter)",
-              fontSize: 14,
-              color: tok.t2,
-              lineHeight: 1.55,
+              margin: 0,
+              fontFamily: "var(--font-jura)",
+              fontWeight: 700,
+              fontSize: "clamp(22px, 3vw, 28px)",
+              color: tok.t1,
+              letterSpacing: "-0.02em",
             }}
           >
-            {LANDING_JOURNEY.fastPathNote}
+            {LANDING_JOURNEY.stagesHeading}
+          </h3>
+          <p
+            style={{
+              margin: "12px auto 0",
+              maxWidth: 720,
+              fontFamily: "var(--font-inter)",
+              fontSize: 15,
+              color: tok.t2,
+              lineHeight: 1.6,
+            }}
+          >
+            {LANDING_JOURNEY.stagesLede}
           </p>
         </div>
-
-        <JourneyPathCards stages={fastStages} dark={dark} variant="fast" />
+        <JourneyPathCards stages={stages} dark={dark} variant="community" />
       </div>
     </section>
   )
@@ -764,7 +732,7 @@ function MembershipSection({
   onAgentPromptCopy,
 }: {
   dark: boolean
-  onContinue: (plan: MembershipPlan | "invitation") => void
+  onContinue: (plan: MembershipPlan | "registro" | "consult") => void
   onAgentPromptCopy?: () => void
 }) {
   const [plan, setPlan] = useState<MembershipPlan>("monthly")
@@ -903,9 +871,20 @@ function MembershipSection({
             <p style={{ ...bodyStyle, marginTop: 20 }}>{copy.invitation.body}</p>
             <p style={{ ...bodyStyle, marginTop: 16 }}>{copy.invitation.inviteRequired}</p>
             <p style={{ ...bodyStyle, margin: "16px 0" }}>{copy.invitation.contactNote}</p>
-            <GlassCta full variant="outline" dark={dark} href={INVITATION_CONTACT_URL} onClick={() => onContinue("invitation")}>
+            <GlassCta full dark={dark} href={PROFESSIONAL_REGISTRO_URL} onClick={() => onContinue("registro")}>
               {copy.invitation.ctaLabel}
             </GlassCta>
+            <div style={{ marginTop: 10 }}>
+              <GlassCta
+                full
+                variant="outline"
+                dark={dark}
+                href={INVITATION_CONTACT_URL}
+                onClick={() => onContinue("consult")}
+              >
+                {copy.invitation.secondaryCtaLabel}
+              </GlassCta>
+            </div>
             <p style={{ ...bodyStyle, fontSize: 13, marginTop: 12 }}>{copy.invitation.emailNote}</p>
           </article>
         </div>
@@ -1116,22 +1095,32 @@ export default function LandingPage() {
         <MembershipSection
           dark={dark}
           onContinue={(plan) => {
-            const isInvitation = plan === "invitation"
-            const label = isInvitation
+            const isRegistro = plan === "registro"
+            const isConsult = plan === "consult"
+            const label = isRegistro
               ? LANDING_MEMBERSHIP.invitation.ctaLabel
-              : LANDING_MEMBERSHIP.community.continueLabel
+              : isConsult
+                ? LANDING_MEMBERSHIP.invitation.secondaryCtaLabel
+                : LANDING_MEMBERSHIP.community.continueLabel
+            const href = isRegistro
+              ? PROFESSIONAL_REGISTRO_URL
+              : isConsult
+                ? INVITATION_CONTACT_URL
+                : membershipUrl(plan)
             trackCta(label, {
               location: "membresia",
-              href: isInvitation
-                ? INVITATION_CONTACT_URL
-                : membershipUrl(plan as MembershipPlan),
+              href,
             })
             onTrack("cta_click", {
               section: "membresia",
               ctaLabel: label,
               intent: "lead",
               plan,
-              action: isInvitation ? "invitation_contact_click" : "membership_review_continue",
+              action: isRegistro
+                ? "professional_registro_click"
+                : isConsult
+                  ? "invitation_contact_click"
+                  : "membership_review_continue",
             })
           }}
           onAgentPromptCopy={() => {

@@ -65,13 +65,45 @@ export type JourneyStage = {
 }
 
 export const LANDING_JOURNEY = {
-  label: "Una ruta progresiva",
-  heading: "Cinco bloques para avanzar contigo",
+  label: "¿Dónde estás hoy?",
+  heading: "Dos caminos. Un mismo punto de revisión.",
   lede:
-    "Empieza en Génesis y continúa con Fundamentos y Praxis. Después, la Validación humana y la invitación preparan el acceso al Portal Clínico / PSM activo. La membresía y el pase son productos distintos.",
+    "Entra → aprende → practica → valida → opera. Ambas rutas convergen en Validación humana. Ninguna garantiza aprobación. El Portal Clínico requiere aprobación e invitación.",
+  dualPath: {
+    community: {
+      audience: "Quiero construir mi práctica",
+      title: "Construye tu ruta con Motus.",
+      steps: ["Génesis", "Fundamentos", "Praxis"] as const,
+      primaryCta: { label: "Empezar mi ruta", href: "#membresia" },
+      secondaryCta: {
+        label: "Abrir Génesis gratis",
+        href: "https://app.motusdao.org/academia/01-genesis",
+      },
+    },
+    professional: {
+      audience: "Ya tengo una práctica activa",
+      title: "Solicita ingreso profesional directo.",
+      steps: ["Revisión de perfil", "Onboarding profesional"] as const,
+      primaryCta: {
+        label: "Iniciar registro profesional",
+        href: "https://app.motusdao.org/registro",
+      },
+    },
+    convergenceLabel: "Ambas rutas pasan por revisión humana.",
+    convergenceSteps: [
+      "Revisión y Validación",
+      "Aprobación",
+      "Invitación",
+      "Portal Clínico",
+    ] as const,
+    microcopy:
+      "Ninguna ruta garantiza aprobación. El acceso al Portal Clínico requiere revisión, aprobación e invitación.",
+  },
+  stagesLabel: "Ruta Comunitaria — detalle",
+  stagesHeading: "Cinco bloques para avanzar contigo",
+  stagesLede:
+    "Si construyes o ordenas tu práctica, este es el recorrido formativo. Después, Validación humana e invitación preparan el acceso al Portal Clínico. Completar la ruta no garantiza aprobación.",
   communityPathLabel: "Ruta comunitaria",
-  fastPathLabel: "Ruta rápida",
-  fastPathNote: "Validación y Portal Clínico también se pueden alcanzar por invitación, con revisión y onboarding.",
   stages: [
     {
       label: "01 — Génesis",
@@ -113,11 +145,11 @@ export const LANDING_JOURNEY = {
       label: "04 — Validación",
       title: "Validación",
       ordinal: "04",
-      job: "Revisa requisitos del pase",
-      line: "Revisión interna de requisitos para el Pase Motus Beta. Pase comunitario: USD 29/mes o USD 290/año. Pase directo por invitación: USD 79/mes o USD 790/año beta.",
-      chips: ["Pase Motus Beta", "Revisión", "Invitación"],
-      cta: "Ver planes",
-      href: "#membresia",
+      job: "Revisión humana compartida",
+      line: "Punto de convergencia: revisión de requisitos y trayectoria. Completar la Ruta Comunitaria no garantiza aprobación. Pase comunitario de referencia: USD 29/mes o USD 290/año.",
+      chips: ["Revisión humana", "Sin garantía", "Invitación"],
+      cta: "Conocer Validación",
+      href: "https://app.motusdao.org/academia/04-validacion",
       imageSrc: "/experience/ruta/04-validacion.jpg",
       imageAlt: "Ilustración del Bloque Validación: evidencia, medición y mejora",
     },
@@ -126,10 +158,10 @@ export const LANDING_JOURNEY = {
       title: "Portal Clínico",
       ordinal: "05",
       job: "Opera con herramientas profesionales",
-      line: "Sin compra pública. Tras Praxis y Validación humana, MotusDAO envía invitación si hay aprobación. Incluido en el Pase Motus Beta durante la beta.",
-      chips: ["Portal", "Consultorio", "Beta"],
-      cta: "Ver planes",
-      href: "#membresia",
+      line: "Sin compra pública. Tras Validación humana, MotusDAO envía invitación si hay aprobación. Incluido en el Pase Motus Beta durante la beta.",
+      chips: ["Portal", "Aprobación", "Invitación"],
+      cta: "Qué es el Portal",
+      href: "https://app.motusdao.org/academia/05-portal-clinico",
       imageSrc: "/experience/ruta/05-portal-clinico.jpg",
       imageAlt: "Ilustración del Portal Clínico: espacio seguro de atención y bienestar",
     },
@@ -138,11 +170,11 @@ export const LANDING_JOURNEY = {
 
 export const LANDING_MEMBERSHIP = {
   label: "Elige tu entrada",
-  heading: "Empieza con la membresía. Avanza a tu ritmo.",
+  heading: "Dos formas de entrar. Misma revisión humana.",
   lede:
-    "Deja de improvisar tu consulta online: encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico. La entrada profesional directa al Portal es por invitación, con revisión y onboarding.",
+    "Ruta Comunitaria vía Fundamentos, o ingreso profesional directo con el registro existente. Ambas pasan por revisión. Ninguna garantiza aprobación ni acceso automático al Portal.",
   community: {
-    label: "Entrada comunitaria · Bloque 02",
+    label: "Ruta Comunitaria · Bloque 02",
     title: "Membresía de Práctica Digital",
     priceMonthlyLabel: "USD 20",
     priceMonthlySuffix: "/mes",
@@ -166,19 +198,21 @@ export const LANDING_MEMBERSHIP = {
       "El Pase Motus Beta comunitario se contrata aparte, tras la revisión de requisitos: USD 29/mes o USD 290/año.",
   },
   invitation: {
-    label: "Entrada profesional · Por invitación",
-    title: "Pase Motus Beta directo",
+    label: "Ingreso profesional directo",
+    title: "Ya tienes una práctica activa",
     priceMonthlyLabel: "USD 79",
     priceMonthlySuffix: "/mes",
     priceAnnual: "USD 790/año beta",
     body:
-      "Para profesionales invitados que ingresan mediante revisión y onboarding. Incluye el Portal Clínico durante la beta, según aprobación y permisos.",
-    inviteRequired: "La invitación es necesaria para acceder a esta vía.",
+      "Para profesionales con práctica activa que solicitan ingreso mediante revisión y onboarding profesional (flujo existente). El Portal Clínico, durante la beta, depende de aprobación, invitación y permisos.",
+    inviteRequired:
+      "Completar el registro no garantiza aprobación. El acceso al Portal requiere revisión, aprobación e invitación.",
     contactNote:
-      "Contacta al equipo para conocer los requisitos de revisión y onboarding. Enviar una consulta no concede acceso al pase.",
-    ctaLabel: "Consultar sobre la invitación",
+      "Empieza el registro profesional en el Hub. Si prefieres hablar antes con el equipo, puedes enviar una consulta — eso tampoco concede acceso.",
+    ctaLabel: "Iniciar registro profesional",
+    secondaryCtaLabel: "Consultar antes",
     emailNote:
-      "Se abrirá tu aplicación de correo. También puedes escribir a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.",
+      "El registro abre el onboarding profesional en app.motusdao.org. La consulta abre tu correo a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.",
   },
   praxisNote:
     "Praxis se contrata aparte: cursos desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar Praxis no es Validación ni acceso al Portal.",
@@ -222,7 +256,12 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Puedo entrar directamente al Portal?",
     answer:
-      "No hay compra pública del Portal. La vía profesional directa es por invitación y requiere validación humana, revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.",
+      "No hay compra pública del Portal. Si ya tienes práctica activa, puedes solicitar ingreso profesional directo vía el registro en el Hub; esa vía también pasa por revisión humana, aprobación e invitación. Completar la Ruta Comunitaria tampoco garantiza aprobación. Referencia beta del pase directo: USD 79/mes o USD 790/año.",
+  },
+  {
+    question: "¿Hay dos formas de llegar al Portal?",
+    answer:
+      "Sí. Ruta Comunitaria (Génesis → Fundamentos → Praxis) si construyes o ordenas tu práctica; ingreso profesional directo (revisión + onboarding) si ya tienes práctica activa. Ambas convergen en Validación humana. Ninguna garantiza aprobación.",
   },
   {
     question: "¿Tengo que hacer el diagnóstico para incorporarme?",
@@ -247,7 +286,16 @@ export const LANDING_CTAS = {
   membership: { label: "Empezar mi membresía", href: "/#membresia" },
   membershipSticky: { label: "Empezar mi membresía · USD 20/mes", href: "/#membresia" },
   assessment: { label: "Evaluar mi práctica", href: "/diagnostico" },
-  invitation: { label: "Consultar sobre la invitación", href: "mailto:contact@motusdao.org" },
+  dualPathStart: { label: "Empezar mi ruta", href: "/#membresia" },
+  dualPathGenesis: {
+    label: "Abrir Génesis gratis",
+    href: "https://app.motusdao.org/academia/01-genesis",
+  },
+  dualPathRegistro: {
+    label: "Iniciar registro profesional",
+    href: "https://app.motusdao.org/registro",
+  },
+  invitation: { label: "Consultar antes", href: "mailto:contact@motusdao.org" },
 } as const
 
 export const LANDING_AGENT_PROMPT = {
@@ -295,6 +343,6 @@ export const LANDING_FOOTER = {
 
 export const LANDING_NAV = {
   beneficios: { label: "Beneficios", href: "#beneficios" },
-  ruta: { label: "Ruta", href: "#recorrido" },
+  ruta: { label: "Ruta", href: "#ruta" },
   membresia: { label: "Membresía", href: "#membresia" },
 } as const

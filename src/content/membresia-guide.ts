@@ -46,7 +46,8 @@ export const MEMBRESIA_GUIDE = {
       paragraphs: [
         "La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte.",
         `Pase comunitario: USD ${LANDING_OFFERS.passCommunityMonthly.price}/mes o USD ${LANDING_OFFERS.passCommunityAnnual.price}/año.`,
-        `Pase directo por invitación: USD ${LANDING_OFFERS.passDirectMonthly.price}/mes o USD ${LANDING_OFFERS.passDirectAnnual.price}/año beta. Requiere revisión y onboarding.`,
+        `Pase directo (referencia beta): USD ${LANDING_OFFERS.passDirectMonthly.price}/mes o USD ${LANDING_OFFERS.passDirectAnnual.price}/año. El ingreso profesional directo usa el registro existente en el Hub y también pasa por revisión humana; completar el registro no garantiza aprobación.`,
+        "Dos rutas: Ruta Comunitaria (Génesis → Fundamentos → Praxis) o ingreso profesional directo (/registro). Ambas convergen en Validación humana → aprobación → invitación → Portal.",
       ],
     },
     {
@@ -58,6 +59,7 @@ export const MEMBRESIA_GUIDE = {
   faqs: LANDING_FAQS,
   ctas: [
     { label: LANDING_CTAS.membership.label, href: `${CANONICAL_SITE_URL}/#membresia` },
+    { label: LANDING_CTAS.dualPathRegistro.label, href: LANDING_CTAS.dualPathRegistro.href },
     { label: "Volver al inicio", href: CANONICAL_SITE_URL },
     { label: "llms.txt", href: `${CANONICAL_SITE_URL}/llms.txt` },
   ],

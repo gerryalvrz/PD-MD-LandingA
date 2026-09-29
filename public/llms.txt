@@ -24,21 +24,32 @@ For a clear “what it is / what it is not” summary, also use:
 - Incluye solo: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros)
 - No incluye: cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo, Portal Clínico
 
-## Ruta de cinco bloques
+## Dos rutas hacia Validación / Portal
+
+¿Dónde estás hoy?
+
+1. Ruta Comunitaria (construir/ordenar práctica): Génesis → Fundamentos → Praxis → Validación. Empezar: https://academia.motusdao.org/#membresia · Génesis: https://app.motusdao.org/academia/01-genesis
+2. Ingreso profesional directo (práctica activa): revisión + onboarding en https://app.motusdao.org/registro
+
+Ambas → Validación humana → aprobación → invitación → Portal Clínico. Ninguna garantiza aprobación.
+
+## Ruta de cinco bloques (detalle comunitario)
 
 1. Génesis — Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional; no bloquea la compra de Fundamentos)
 2. Fundamentos — membresía (precios e incluye arriba)
 3. Praxis — colección progresiva aparte (promesa: «Construye tu formación clínica a tu ritmo.»). Cursos desde USD 15 (Escucha, Formulación, Razonamiento, Ética USD 15; Avanzado USD 40); colección completa USD 100. Escucha es recomendado para empezar. Completar Praxis (0/5→5/5) ≠ Validación ≠ Portal. Tras Praxis: Validación humana + invitación. Catálogo: https://app.motusdao.org/academia/03-praxis#catalogo
-4. Validación — Validación humana e invitación; Pase Motus Beta comunitario USD 29/mes o USD 290/año; pase directo por invitación USD 79/mes o USD 790/año beta
-5. Portal Clínico — sin compra pública; requiere Validación humana e invitación / pase (incluido en el pase durante la beta; no en los USD 20; no se obtiene solo por completar Praxis)
+4. Validación — revisión humana compartida; Pase Motus Beta comunitario USD 29/mes o USD 290/año; pase directo USD 79/mes o USD 790/año beta. Hub: https://app.motusdao.org/academia/04-validacion
+5. Portal Clínico — sin compra pública; requiere Validación + aprobación + invitación / pase (incluido en el pase durante la beta; no en los USD 20; no se obtiene solo por completar Praxis). Hub: https://app.motusdao.org/academia/05-portal-clinico
 
 ## CTAs
 
-- Empezar mi membresía: https://academia.motusdao.org/#membresia
+- Empezar mi ruta / membresía: https://academia.motusdao.org/#membresia
+- Abrir Génesis gratis: https://app.motusdao.org/academia/01-genesis
+- Iniciar registro profesional: https://app.motusdao.org/registro
 - Explorar Praxis (catálogo): https://app.motusdao.org/academia/03-praxis#catalogo
 - Guía de membresía (citable): https://academia.motusdao.org/guia-membresia
 - Evaluar práctica (autoevaluación gratuita): https://academia.motusdao.org/diagnostico
-- Consulta por invitación al pase directo: contact@motusdao.org
+- Consultar antes (mailto): contact@motusdao.org
 
 ## FAQ
 
@@ -55,7 +66,10 @@ Q: ¿Los cursos de Praxis están incluidos?
 A: No. Praxis es una colección progresiva aparte: cursos individuales desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar la colección no es Validación ni acceso al Portal.
 
 Q: ¿Puedo entrar directamente al Portal?
-A: No hay compra pública del Portal. La vía profesional directa es por invitación y requiere validación humana, revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.
+A: No hay compra pública del Portal. Si ya tienes práctica activa, solicita ingreso profesional directo en https://app.motusdao.org/registro; también pasa por revisión humana, aprobación e invitación. Completar la Ruta Comunitaria tampoco garantiza aprobación. Referencia beta del pase directo: USD 79/mes o USD 790/año.
+
+Q: ¿Hay dos formas de llegar?
+A: Sí. Ruta Comunitaria (Génesis → Fundamentos → Praxis) o ingreso profesional directo (/registro). Ambas convergen en Validación humana. Ninguna garantiza aprobación.
 
 Q: ¿Tengo que hacer el diagnóstico para incorporarme?
 A: No. La autoevaluación es gratuita y opcional; orienta tu práctica digital, pero no es requisito para incorporarte a la membresía ni a la ruta. No sustituye el registro como psicólogo en la app de MotusDAO, que es un proceso aparte.

@@ -57,6 +57,27 @@ export function LandingNoscriptSummary() {
 
         <h2>{LANDING_JOURNEY.heading}</h2>
         <p>{LANDING_JOURNEY.lede}</p>
+        <h3>{LANDING_JOURNEY.dualPath.community.audience}</h3>
+        <p>{LANDING_JOURNEY.dualPath.community.title}</p>
+        <p>
+          <a href={`${CANONICAL_SITE_URL}/#membresia`}>
+            {LANDING_JOURNEY.dualPath.community.primaryCta.label}
+          </a>
+          {" · "}
+          <a href={LANDING_JOURNEY.dualPath.community.secondaryCta.href}>
+            {LANDING_JOURNEY.dualPath.community.secondaryCta.label}
+          </a>
+        </p>
+        <h3>{LANDING_JOURNEY.dualPath.professional.audience}</h3>
+        <p>{LANDING_JOURNEY.dualPath.professional.title}</p>
+        <p>
+          <a href={LANDING_JOURNEY.dualPath.professional.primaryCta.href}>
+            {LANDING_JOURNEY.dualPath.professional.primaryCta.label}
+          </a>
+        </p>
+        <p>{LANDING_JOURNEY.dualPath.convergenceLabel}</p>
+        <p>{LANDING_JOURNEY.dualPath.microcopy}</p>
+        <h3>{LANDING_JOURNEY.stagesHeading}</h3>
         <ol>
           {LANDING_JOURNEY.stages.map((stage) => (
             <li key={stage.label}>

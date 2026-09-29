@@ -58,10 +58,55 @@ export function LandingSemanticShell() {
       <section aria-label={LANDING_JOURNEY.heading}>
         <h2>{LANDING_JOURNEY.heading}</h2>
         <p>{LANDING_JOURNEY.lede}</p>
+        <div>
+          <h3>{LANDING_JOURNEY.dualPath.community.audience}</h3>
+          <p>{LANDING_JOURNEY.dualPath.community.title}</p>
+          <ol>
+            {LANDING_JOURNEY.dualPath.community.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <p>
+            <a href={`${CANONICAL_SITE_URL}/#membresia`}>
+              {LANDING_JOURNEY.dualPath.community.primaryCta.label}
+            </a>
+          </p>
+          <p>
+            <a href={LANDING_JOURNEY.dualPath.community.secondaryCta.href}>
+              {LANDING_JOURNEY.dualPath.community.secondaryCta.label}
+            </a>
+          </p>
+        </div>
+        <div>
+          <h3>{LANDING_JOURNEY.dualPath.professional.audience}</h3>
+          <p>{LANDING_JOURNEY.dualPath.professional.title}</p>
+          <ol>
+            {LANDING_JOURNEY.dualPath.professional.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <p>
+            <a href={LANDING_JOURNEY.dualPath.professional.primaryCta.href}>
+              {LANDING_JOURNEY.dualPath.professional.primaryCta.label}
+            </a>
+          </p>
+        </div>
+        <p>{LANDING_JOURNEY.dualPath.convergenceLabel}</p>
+        <ol>
+          {LANDING_JOURNEY.dualPath.convergenceSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p>{LANDING_JOURNEY.dualPath.microcopy}</p>
+        <h3>{LANDING_JOURNEY.stagesHeading}</h3>
+        <p>{LANDING_JOURNEY.stagesLede}</p>
         <ol>
           {LANDING_JOURNEY.stages.map((stage) => (
             <li key={stage.label}>
-              <strong>{stage.label}</strong> — {stage.line}
+              <strong>{stage.label}</strong> — {stage.line}{" "}
+              <a href={stage.href.startsWith("#") ? `${CANONICAL_SITE_URL}/${stage.href}` : stage.href}>
+                {stage.cta}
+              </a>
             </li>
           ))}
         </ol>
@@ -91,6 +136,12 @@ export function LandingSemanticShell() {
             {LANDING_MEMBERSHIP.invitation.priceAnnual}
           </p>
           <p>{LANDING_MEMBERSHIP.invitation.body}</p>
+          <p>
+            <a href="https://app.motusdao.org/registro">{LANDING_MEMBERSHIP.invitation.ctaLabel}</a>
+          </p>
+          <p>
+            <a href="mailto:contact@motusdao.org">{LANDING_MEMBERSHIP.invitation.secondaryCtaLabel}</a>
+          </p>
         </article>
         <p>{LANDING_MEMBERSHIP.praxisNote}</p>
       </section>
