@@ -68,7 +68,7 @@ export const LANDING_JOURNEY = {
   label: "Una ruta progresiva",
   heading: "Cinco bloques para avanzar contigo",
   lede:
-    "Empieza en Génesis y continúa con Fundamentos y Praxis. La revisión en Validación habilita el acceso al Portal Clínico mediante el pase, según los requisitos profesionales. La membresía y el pase son productos distintos.",
+    "Empieza en Génesis y continúa con Fundamentos y Praxis. Después, la Validación humana y la invitación preparan el acceso al Portal Clínico / PSM activo. La membresía y el pase son productos distintos.",
   communityPathLabel: "Ruta comunitaria",
   fastPathLabel: "Ruta rápida",
   fastPathNote: "Validación y Portal Clínico también se pueden alcanzar por invitación, con revisión y onboarding.",
@@ -101,11 +101,11 @@ export const LANDING_JOURNEY = {
       label: "03 — Praxis",
       title: "Praxis",
       ordinal: "03",
-      job: "Profundiza con práctica aplicada",
-      line: "Profundiza con talleres, cursos y supervisión. Taller: USD 15 por taller; supervisión: USD 50 por sesión. Cursos con precio propio.",
-      chips: ["Talleres", "Cursos", "Supervisión"],
-      cta: "Ver membresía",
-      href: "#membresia",
+      job: "Construye tu formación clínica a tu ritmo.",
+      line: "Colección progresiva en la Ruta Comunitaria: cursos individuales desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar la colección (0/5→5/5) no es Validación ni acceso al Portal.",
+      chips: ["Desde USD 15", "Colección", "Escucha"],
+      cta: "Explorar Praxis",
+      href: "https://app.motusdao.org/academia/03-praxis#catalogo",
       imageSrc: "/experience/ruta/03-praxis.jpg",
       imageAlt: "Ilustración del Bloque Praxis: laboratorio para aprender, aplicar e iterar",
     },
@@ -126,7 +126,7 @@ export const LANDING_JOURNEY = {
       title: "Portal Clínico",
       ordinal: "05",
       job: "Opera con herramientas profesionales",
-      line: "Opera con herramientas profesionales según aprobación y permisos. Incluido en el Pase Motus Beta durante la beta.",
+      line: "Sin compra pública. Tras Praxis y Validación humana, MotusDAO envía invitación si hay aprobación. Incluido en el Pase Motus Beta durante la beta.",
       chips: ["Portal", "Consultorio", "Beta"],
       cta: "Ver planes",
       href: "#membresia",
@@ -181,7 +181,7 @@ export const LANDING_MEMBERSHIP = {
       "Se abrirá tu aplicación de correo. También puedes escribir a contact@motusdao.org. No envíes documentos ni datos de pacientes por esta vía.",
   },
   praxisNote:
-    "Praxis se contrata aparte: USD 15 por taller y USD 50 por sesión de supervisión. Cada curso tiene su propio precio.",
+    "Praxis se contrata aparte: cursos desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar Praxis no es Validación ni acceso al Portal.",
 } as const
 
 export const LANDING_ASSESSMENT_TEASER = {
@@ -215,9 +215,9 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
       "Son productos distintos. La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte.",
   },
   {
-    question: "¿Los talleres y la supervisión están incluidos?",
+    question: "¿Los cursos de Praxis están incluidos?",
     answer:
-      "No. Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.",
+      "No. Praxis es una colección progresiva aparte: cursos individuales desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar la colección no es Validación ni acceso al Portal.",
   },
   {
     question: "¿Puedo entrar directamente al Portal?",

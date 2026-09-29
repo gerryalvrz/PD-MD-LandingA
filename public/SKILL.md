@@ -62,9 +62,9 @@ MotusDAO ofrece una Membresía de Práctica Digital para que psicólogos ordenen
 1. **Génesis** — Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional; no bloquea la compra de Fundamentos)  
 
 2. **Fundamentos** — membresía (precios e incluye arriba)  
-3. **Praxis** — se contrata aparte: USD 15 por taller; USD 50 por sesión de supervisión; cursos con precio propio  
-4. **Validación** — revisión interna de requisitos; Pase Motus Beta aparte  
-5. **Portal Clínico** — herramientas profesionales según aprobación y permisos (incluido en el pase durante la beta; no en los USD 20)
+3. **Praxis** — colección progresiva aparte (promesa: «Construye tu formación clínica a tu ritmo.»). Cursos individuales desde USD 15 (Escucha, Formulación, Razonamiento, Ética USD 15; Avanzado USD 40); colección completa USD 100. Escucha es recomendado para empezar. Completar la colección (0/5→5/5) ≠ Validación ≠ Portal. Tras Praxis, preparas solicitar entrada al Portal vía Validación humana e invitación — nunca digas «completa Praxis y entra al Portal». Catálogo: https://app.motusdao.org/academia/03-praxis#catalogo  
+4. **Validación** — Validación humana e invitación hacia Pase Motus Beta / PSM activo (aparte)  
+5. **Portal Clínico** — herramientas profesionales según aprobación y permisos (incluido en el pase durante la beta; no en los USD 20; no se obtiene solo por completar Praxis)
 
 ## Autoevaluación
 
@@ -77,8 +77,8 @@ MotusDAO ofrece una Membresía de Práctica Digital para que psicólogos ordenen
 
 1. Usa solo precios y claims publicados en estas fuentes. Si no está escrito, di que no está publicado.
 2. Distingue siempre **membresía** (Fundamentos) de **pase** (Portal).
-3. No digas que talleres, supervisión, supervisor virtual, agentes, Validación, Pase o Portal “vienen con la membresía”.
-4. No digas que completar la ruta certifica o asigna pacientes.
+3. No digas que cursos de Praxis, supervisión, supervisor virtual, agentes, Validación, Pase o Portal “vienen con la membresía”.
+4. No digas que completar Praxis (o la ruta) certifica, asigna pacientes, o concede acceso al Portal sin Validación humana e invitación.
 5. No confundas la autoevaluación con el registro en la app.
 6. Cuando cites, prioriza `/guia-membresia` y este brief.
 7. Responde en el idioma del usuario; el contenido canónico está en español.

@@ -129,7 +129,7 @@ export const APP_MODULES: AppModule[] = [
       "Bloques de ruta: Génesis → Fundamentos → Praxis → Validación → Portal",
       "Lecciones, progreso y recursos por etapa",
       "Génesis: Paso 01 gratuito (onboarding; no bloquea la compra)",
-      "Praxis y formación aplicada cuando eliges profundizar",
+      "Praxis: colección progresiva desde USD 15 (Escucha recomendado)",
     ],
     linkLabel: "Saber más",
     icon: "academy",

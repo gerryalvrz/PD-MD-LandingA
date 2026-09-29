@@ -27,7 +27,7 @@ export const MEMBRESIA_GUIDE = {
       paragraphs: [
         "La Membresía de Práctica Digital es la entrada comunitaria al Bloque 02 (Fundamentos). Promesa: deja de improvisar tu consulta online — encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico.",
         `Precio público: USD ${LANDING_OFFERS.membershipMonthly.price}/mes o USD ${LANDING_OFFERS.membershipAnnual.price}/año precio fundador. Mitad de precio: de USD 240 a USD 120, por tiempo limitado.`,
-        "Génesis es el Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional). No bloquea la compra de Fundamentos: puedes empezar por la membresía y recorrer Génesis en el Hub, o abrir Génesis gratis antes de comprar. La ruta completa tiene cinco bloques (Génesis → Fundamentos → Praxis → Validación → Portal Clínico). La membresía y el pase son productos distintos; Praxis, supervisión, Portal y Pase no están incluidos en los USD 20.",
+        "Génesis es el Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional). No bloquea la compra de Fundamentos: puedes empezar por la membresía y recorrer Génesis en el Hub, o abrir Génesis gratis antes de comprar. La ruta completa tiene cinco bloques (Génesis → Fundamentos → Praxis → Validación humana → invitación → Portal Clínico / PSM activo). La membresía y el pase son productos distintos; Praxis, Portal y Pase no están incluidos en los USD 20.",
       ],
     },
     {

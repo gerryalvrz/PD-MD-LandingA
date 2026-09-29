@@ -24,9 +24,9 @@ export const MOTTY_OFFERS: MottyOffer[] = [
     id: "praxis",
     label: "Praxis",
     summary:
-      "Talleres (USD 15 por taller) y supervisión clínica digital (USD 50 por sesión). Complemento opcional a la membresía.",
-    href: `${SITE}/#praxis`,
-    cta: "Conocer Praxis",
+      "Construye tu formación clínica a tu ritmo. Colección progresiva en la Ruta Comunitaria: cursos desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar Praxis no es Validación ni Portal.",
+    href: "https://app.motusdao.org/academia/03-praxis#catalogo",
+    cta: "Explorar Praxis",
   },
   {
     id: "assessment",

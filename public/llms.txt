@@ -28,13 +28,14 @@ For a clear “what it is / what it is not” summary, also use:
 
 1. Génesis — Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional; no bloquea la compra de Fundamentos)
 2. Fundamentos — membresía (precios e incluye arriba)
-3. Praxis — talleres (USD 15 por taller), supervisión (USD 50 por sesión) y cursos con precio propio (se pagan aparte)
-4. Validación — revisión de requisitos; Pase Motus Beta comunitario USD 29/mes o USD 290/año; pase directo por invitación USD 79/mes o USD 790/año beta
-5. Portal Clínico — sin compra pública; requiere validación humana e invitación / pase (incluido en el pase durante la beta; no en los USD 20)
+3. Praxis — colección progresiva aparte (promesa: «Construye tu formación clínica a tu ritmo.»). Cursos desde USD 15 (Escucha, Formulación, Razonamiento, Ética USD 15; Avanzado USD 40); colección completa USD 100. Escucha es recomendado para empezar. Completar Praxis (0/5→5/5) ≠ Validación ≠ Portal. Tras Praxis: Validación humana + invitación. Catálogo: https://app.motusdao.org/academia/03-praxis#catalogo
+4. Validación — Validación humana e invitación; Pase Motus Beta comunitario USD 29/mes o USD 290/año; pase directo por invitación USD 79/mes o USD 790/año beta
+5. Portal Clínico — sin compra pública; requiere Validación humana e invitación / pase (incluido en el pase durante la beta; no en los USD 20; no se obtiene solo por completar Praxis)
 
 ## CTAs
 
 - Empezar mi membresía: https://academia.motusdao.org/#membresia
+- Explorar Praxis (catálogo): https://app.motusdao.org/academia/03-praxis#catalogo
 - Guía de membresía (citable): https://academia.motusdao.org/guia-membresia
 - Evaluar práctica (autoevaluación gratuita): https://academia.motusdao.org/diagnostico
 - Consulta por invitación al pase directo: contact@motusdao.org
@@ -50,8 +51,8 @@ A: No incluye cursos de Praxis, supervisión humana, supervisor virtual, agentes
 Q: ¿Membresía y pase son lo mismo?
 A: Son productos distintos. La membresía corresponde a Fundamentos. El Pase Motus Beta habilita el Portal Clínico tras la revisión de requisitos y se paga aparte.
 
-Q: ¿Los talleres y la supervisión están incluidos?
-A: No. Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.
+Q: ¿Los cursos de Praxis están incluidos?
+A: No. Praxis es una colección progresiva aparte: cursos individuales desde USD 15; colección completa USD 100. Escucha es recomendado para empezar. Completar la colección no es Validación ni acceso al Portal.
 
 Q: ¿Puedo entrar directamente al Portal?
 A: No hay compra pública del Portal. La vía profesional directa es por invitación y requiere validación humana, revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.

@@ -428,9 +428,9 @@ function recommendationFor(id: QuestionId): Recommendation {
   }
   if (id === "Q8" || id === "Q9") {
     return {
-      title: "Formación y consulta en Praxis",
+      title: "Formación clínica en Praxis",
       description:
-        "Puedes explorar cursos, talleres o supervisión según la oferta y sus requisitos. El resultado no habilita un pase ni sustituye esa revisión.",
+        "Colección progresiva desde USD 15; Escucha es recomendado para empezar. Completar Praxis no habilita Validación ni Portal.",
       href: PRAXIS_URL,
       linkLabel: "Explorar Praxis",
     }
