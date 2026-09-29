@@ -9,6 +9,8 @@ export const LANDING_META = {
   headline: "Dale estructura a tu práctica digital.",
   lede:
     "Formación, herramientas y comunidad para ejercer online con mayor claridad.",
+  accompanimentLine:
+    "Formación que te acompaña — con Acompañamiento Personalizado Digital.",
   audience: "Profesionales de salud mental",
   priceLine: "USD 20/mes · USD 120/año precio fundador",
   savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
@@ -17,6 +19,16 @@ export const LANDING_META = {
   contactEmail: "contact@motusdao.org",
   footerBrand: "MotusDAO · Ruta profesional PSM",
   footerLegal: "© 2026 MotusDAO · Todos los derechos reservados",
+} as const
+
+export const LANDING_APD = {
+  eyebrow: "Acompañamiento Personalizado Digital",
+  heading: "Formación que te acompaña.",
+  body:
+    "No solo tomas una formación. La recorres con acompañamiento personalizado digital: preguntas a tu ritmo, orientación en la ruta y conexión con los recursos de Motus.",
+  how: "MotusAI · herramientas del Hub · comunidad",
+  limit:
+    "MotusAI no sustituye supervisión humana ni valida clínicamente.",
 } as const
 
 export const LANDING_OFFERS = {
@@ -182,6 +194,8 @@ export const LANDING_MEMBERSHIP = {
       "Perfil profesional.",
       "Comunidad de colegas (Telegram + encuentros).",
     ],
+    accompanimentNote:
+      "Incluye Acompañamiento Personalizado Digital durante Fundamentos.",
     planLegend: "Elige tu plan",
     planMonthly: "Mensual · USD 20/mes",
     planAnnual: "Anual · USD 120/año precio fundador",
@@ -231,7 +245,7 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Qué incluye la membresía?",
     answer:
-      "Encuadre de la consulta online, herramientas esenciales para la práctica digital, ética digital, perfil profesional y comunidad de colegas (Telegram + encuentros).",
+      "Encuadre de la consulta online, herramientas esenciales para la práctica digital, ética digital, perfil profesional, comunidad de colegas (Telegram + encuentros) y Acompañamiento Personalizado Digital durante Fundamentos.",
   },
   {
     question: "¿Qué no incluye la membresía de USD 20?",

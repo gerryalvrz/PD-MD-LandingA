@@ -30,6 +30,7 @@ import { genericShareDraft } from "@/lib/share-card"
 import { ShareInviteButton } from "@/components/share/ShareModal"
 import { AppExperience } from "@/components/landing/AppExperience"
 import { MembershipResources } from "@/components/landing/MembershipResources"
+import { ApdBridge } from "@/components/landing/ApdBridge"
 import { DualPathSection } from "@/components/landing/DualPathSelector"
 import { JourneyPathCards } from "@/components/landing/JourneyPathCards"
 import { LandingFooter } from "@/components/landing/LandingFooter"
@@ -427,11 +428,26 @@ function Hero({
                 fontSize: isMobile ? 16 : "clamp(15px, 1.65vw, 17px)",
                 lineHeight: 1.6,
                 color: tok.t2,
-                marginBottom: 16,
+                marginBottom: 10,
                 maxWidth: 560,
               }}
             >
               {LANDING_META.lede}
+            </motion.p>
+
+            <motion.p
+              variants={fadeUp}
+              style={{
+                fontFamily: "var(--font-inter)",
+                fontSize: isMobile ? 14 : 15,
+                lineHeight: 1.55,
+                color: tok.t1,
+                marginBottom: 16,
+                maxWidth: 560,
+                fontWeight: 500,
+              }}
+            >
+              {LANDING_META.accompanimentLine}
             </motion.p>
 
             <motion.ul
@@ -856,6 +872,9 @@ function MembershipSection({
                 <li key={line}>{line}</li>
               ))}
             </ul>
+            <p style={{ ...bodyStyle, margin: "16px 0 0", color: tok.t1 }}>
+              {copy.community.accompanimentNote}
+            </p>
             <fieldset style={{ margin: "24px 0 18px", padding: 0, border: 0 }}>
               <legend style={{ ...bodyStyle, marginBottom: 10, color: tok.t1 }}>{copy.community.planLegend}</legend>
               <div style={{ display: "grid", gap: 10 }}>
@@ -1105,6 +1124,7 @@ export default function LandingPage() {
           onConoce={() => handleMembership("hero")}
           onDiagnostico={() => handleDiagnostico("hero")}
         />
+        <ApdBridge dark={dark} />
         <DualPathSection dark={dark} />
         <TrustBar dark={dark} />
         <BenefitsSection

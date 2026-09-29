@@ -21,8 +21,9 @@ For a clear “what it is / what it is not” summary, also use:
 
 - Membresía de Práctica Digital (Bloque 02 — Fundamentos): USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado)
 - Promesa: deja de improvisar tu consulta online — encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico
-- Incluye solo: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros)
+- Incluye: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros); Acompañamiento Personalizado Digital durante Fundamentos (Motty/MotusAI en el Hub autenticado — no sustituye supervisión humana ni valida clínicamente)
 - No incluye: cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo, Portal Clínico
+- Acompañamiento Personalizado Digital: formación que te acompaña — preguntas a tu ritmo, orientación en la ruta y conexión con recursos de Motus (MotusAI · herramientas del Hub · comunidad). En el Hub autenticado: https://app.motusdao.org/motusai
 
 ## Dos rutas hacia Validación / Portal
 
@@ -54,7 +55,7 @@ Ambas → Validación humana → aprobación → invitación → Portal Clínico
 ## FAQ
 
 Q: ¿Qué incluye la membresía?
-A: Encuadre de la consulta online, herramientas esenciales para la práctica digital, ética digital, perfil profesional y comunidad de colegas (Telegram + encuentros).
+A: Encuadre de la consulta online, herramientas esenciales para la práctica digital, ética digital, perfil profesional, comunidad de colegas (Telegram + encuentros) y Acompañamiento Personalizado Digital durante Fundamentos (Motty/MotusAI en el Hub; no sustituye supervisión humana).
 
 Q: ¿Qué no incluye la membresía de USD 20?
 A: No incluye cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo ni Portal Clínico.

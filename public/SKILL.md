@@ -46,8 +46,9 @@ MotusDAO ofrece una Membresía de Práctica Digital para que psicólogos ordenen
 
 - USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado)
 - Promesa: deja de improvisar tu consulta online — encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico
-- Incluye solo: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros)
+- Incluye: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros); Acompañamiento Personalizado Digital durante Fundamentos (Motty en el Hub autenticado; no sustituye supervisión humana)
 - **No** incluye: cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo, Portal Clínico
+- Acompañamiento Personalizado Digital: formación que te acompaña — preguntas a tu ritmo, orientación en la ruta y recursos de Motus. Hub: https://app.motusdao.org/motusai
 - CTA: https://academia.motusdao.org/#membresia
 
 **Pase Motus Beta** (habilita Portal Clínico tras revisión)

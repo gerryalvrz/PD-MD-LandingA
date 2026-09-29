@@ -61,14 +61,14 @@ export const APP_MODULES: AppModule[] = [
   {
     id: "motusai",
     title: "MotusAI",
-    line: "Asistente para profesionales: apoyo para pensar casos y preguntas del ecosistema.",
+    line: "Pieza del Acompañamiento Personalizado Digital: responde dudas de la ruta y ayuda a pensar lo que aplicas.",
     aside: "Usa casos anónimos. No sustituye tu juicio clínico ni es una historia clínica.",
     detail:
-      "MotusAI es el asistente orientado a profesionales clínicos de MotusDAO. Sirve para consultar el ecosistema, los cursos y para pensar casos — incluye un modo supervisor experimental. Está pensado como apoyo reflexivo, no como reemplazo de supervisión humana ni de tu criterio profesional.",
+      "MotusAI es la pieza conversacional del Acompañamiento Personalizado Digital en MotusDAO. Sirve para consultar el ecosistema, la Academia y la ruta, y para pensar casos con apoyo reflexivo (modo supervisor experimental). No sustituye supervisión humana ni tu criterio profesional.",
     points: [
-      "Preguntas sobre la ruta, la Academia y el Hub",
+      "Acompañamiento conversacional mientras avanzas en la Academia",
+      "Preguntas sobre la ruta, Fundamentos y el Hub",
       "Apoyo para formular hipótesis y revisar un caso (modo supervisor experimental)",
-      "Privacidad en el procesamiento; describe el caso sin datos identificables",
       "No diagnostica, no es expediente clínico y no atiende emergencias",
     ],
     linkLabel: "Saber más",
