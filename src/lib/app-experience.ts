@@ -124,11 +124,11 @@ export const APP_MODULES: AppModule[] = [
     title: "Academia",
     line: "Formación continua en la app: de Génesis a Portal, con lecciones y avance visible.",
     detail:
-      "La Academia es el catálogo de bloques, lecciones y progreso. Arrancas en Génesis gratis; Fundamentos y lo que sigue aparecen cuando quieras avanzar. Educación continua para tu práctica digital — no sustituye cédula, licencia ni supervisión clínica formal.",
+      "La Academia es el catálogo de bloques, lecciones y progreso. Génesis es el Paso 01 gratuito (onboarding); Fundamentos es la membresía. Educación continua para tu práctica digital — no sustituye cédula, licencia ni supervisión clínica formal.",
     points: [
       "Bloques de ruta: Génesis → Fundamentos → Praxis → Validación → Portal",
       "Lecciones, progreso y recursos por etapa",
-      "Génesis gratuito como puerta de entrada",
+      "Génesis: Paso 01 gratuito (onboarding; no bloquea la compra)",
       "Praxis y formación aplicada cuando eliges profundizar",
     ],
     linkLabel: "Saber más",

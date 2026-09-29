@@ -8,7 +8,7 @@ export const MOTTY_OFFERS: MottyOffer[] = [
     id: "genesis",
     label: "Génesis",
     summary:
-      "Entrada gratuita a la comunidad MotusDAO: acceso a recursos abiertos y primer contacto con la ruta PSM.",
+      "Paso 01 gratuito de la Ruta PSM: onboarding de todo profesional. No bloquea la compra de Fundamentos.",
     href: `${SITE}/#genesis`,
     cta: "Explorar Génesis",
   },
@@ -16,7 +16,7 @@ export const MOTTY_OFFERS: MottyOffer[] = [
     id: "membership",
     label: "Membresía de Práctica Digital",
     summary:
-      "Fundamentos del PSM: USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado). Incluye comunidad, recursos y estructura de práctica digital.",
+      "Membresía de Práctica Digital (Fundamentos): USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado). Incluye: encuadre, herramientas esenciales, ética digital, perfil profesional y comunidad de colegas (Telegram + encuentros). No incluye Praxis, supervisión, supervisor virtual, agentes, Validación, Pase ni Portal Clínico.",
     href: `${SITE}/#membresia`,
     cta: "Ver membresía",
   },

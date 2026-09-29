@@ -30,25 +30,25 @@ export const LANDING_OFFERS = {
 
 export const LANDING_TRUST = [
   {
-    title: "Formación y comunidad global",
-    description: "Formación continua y una red de profesionales de salud mental en distintos países.",
+    title: "Encuadre y práctica digital",
+    description: "Deja de improvisar tu consulta online: encuadre claro y herramientas justas para ejercer con orden.",
   },
   {
-    title: "Inteligencia Artificial",
-    description: "Aplica lo más reciente en IA a tu práctica clínica, con criterio profesional.",
+    title: "Ética digital",
+    description: "Criterio profesional para la consulta online: límites, cuidados y ética clara en tu práctica digital.",
   },
   {
-    title: "Pagos",
-    description: "Cobros inmediatos, sin comisión, desde cualquier parte del mundo. Selecciona tu moneda de cobro.",
+    title: "Comunidad de colegas",
+    description: "Colegas que entienden el trabajo clínico: Telegram y encuentros para no practicar en soledad.",
   },
 ] as const
 
-/** Thin hero chips that name the tools referenced in the lede. */
+/** Thin hero chips aligned with Fundamentos membership themes. */
 export const LANDING_HERO_SERVICES = [
-  { label: "Formación" },
-  { label: "IA" },
-  { label: "Pagos" },
-  { label: "Comunidad Global" },
+  { label: "Encuadre" },
+  { label: "Ética digital" },
+  { label: "Perfil profesional" },
+  { label: "Comunidad" },
 ] as const
 
 export type JourneyStage = {
@@ -77,9 +77,9 @@ export const LANDING_JOURNEY = {
       label: "01 — Génesis",
       title: "Génesis",
       ordinal: "01",
-      job: "Entra a la comunidad",
-      line: "Conoce MotusDAO y entra a la comunidad global. Acceso gratuito.",
-      chips: ["Gratis", "Comunidad", "Academia"],
+      job: "Onboarding de la Ruta PSM",
+      line: "Paso 01 gratuito: conoce MotusDAO y orienta tu práctica. Forma parte del onboarding de todo profesional; no bloquea la compra de Fundamentos.",
+      chips: ["Gratis", "Paso 01", "Onboarding"],
       cta: "Abrir Génesis",
       href: "https://app.motusdao.org/academia/01-genesis",
       imageSrc: "/experience/ruta/01-genesis.jpg",
@@ -90,8 +90,8 @@ export const LANDING_JOURNEY = {
       title: "Fundamentos",
       ordinal: "02",
       job: "Ordena tu práctica digital",
-      line: "Ordena tu práctica con la Membresía de Práctica Digital: USD 20/mes o USD 120/año precio fundador.",
-      chips: ["Membresía", "USD 20/mes", "Manual"],
+      line: "Membresía de Práctica Digital (USD 20/mes · USD 120/año precio fundador). Deja de improvisar tu consulta online: encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico.",
+      chips: ["Membresía", "USD 20/mes", "Encuadre"],
       cta: "Ver membresía",
       href: "#membresia",
       imageSrc: "/experience/ruta/02-fundamentos.jpg",
@@ -140,7 +140,7 @@ export const LANDING_MEMBERSHIP = {
   label: "Elige tu entrada",
   heading: "Empieza con la membresía. Avanza a tu ritmo.",
   lede:
-    "La ruta comunitaria comienza con formación y recursos. La entrada profesional directa al Portal es por invitación, con revisión y onboarding.",
+    "Deja de improvisar tu consulta online: encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico. La entrada profesional directa al Portal es por invitación, con revisión y onboarding.",
   community: {
     label: "Entrada comunitaria · Bloque 02",
     title: "Membresía de Práctica Digital",
@@ -149,16 +149,18 @@ export const LANDING_MEMBERSHIP = {
     priceAnnual: "USD 120/año precio fundador",
     savingsBadge: "Mitad de precio · de USD 240 a USD 120 · por tiempo limitado",
     includes: [
-      "Manual clínico-operativo y biblioteca profesional.",
-      "Formación continua e incorporación de IA con PsyChat.",
-      "Comunidad de práctica y encuentros según calendario.",
+      "Encuadre de la consulta online.",
+      "Herramientas esenciales para la práctica digital.",
+      "Ética digital.",
+      "Perfil profesional.",
+      "Comunidad de colegas (Telegram + encuentros).",
     ],
     planLegend: "Elige tu plan",
     planMonthly: "Mensual · USD 20/mes",
     planAnnual: "Anual · USD 120/año precio fundador",
     continueLabel: "Continuar a Fundamentos",
     continueNote:
-      "Acceso gratuito durante la revisión de contenido. Tu elección no genera un cobro ni activa una suscripción.",
+      "Precio: USD 20/mes · USD 120/año. Continuar abre Fundamentos en el Hub. Génesis (Paso 01) es onboarding de la Ruta PSM y no bloquea esta compra. El checkout público puede seguir en QA; eso no redefine la membresía como gratuita.",
     portalNoteTitle: "Al continuar hacia el Portal",
     portalNoteBody:
       "El Pase Motus Beta comunitario se contrata aparte, tras la revisión de requisitos: USD 29/mes o USD 290/año.",
@@ -200,7 +202,12 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Qué incluye la membresía?",
     answer:
-      "Manual clínico-operativo, biblioteca profesional, formación continua, PsyChat, comunidad de práctica y encuentros según calendario.",
+      "Encuadre de la consulta online, herramientas esenciales para la práctica digital, ética digital, perfil profesional y comunidad de colegas (Telegram + encuentros).",
+  },
+  {
+    question: "¿Qué no incluye la membresía de USD 20?",
+    answer:
+      "No incluye cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo ni Portal Clínico. Praxis se paga aparte; el Portal requiere validación humana e invitación.",
   },
   {
     question: "¿Membresía y pase son lo mismo?",
@@ -210,12 +217,12 @@ export const LANDING_FAQS: ReadonlyArray<{ question: string; answer: string }> =
   {
     question: "¿Los talleres y la supervisión están incluidos?",
     answer:
-      "Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.",
+      "No. Se contratan aparte en Praxis: USD 15 por taller y USD 50 por sesión de supervisión. Los cursos tienen precios propios.",
   },
   {
     question: "¿Puedo entrar directamente al Portal?",
     answer:
-      "La vía profesional directa es por invitación y requiere revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.",
+      "No hay compra pública del Portal. La vía profesional directa es por invitación y requiere validación humana, revisión y onboarding. Su precio beta es USD 79/mes o USD 790/año.",
   },
   {
     question: "¿Tengo que hacer el diagnóstico para incorporarme?",

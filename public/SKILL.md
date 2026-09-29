@@ -25,7 +25,7 @@ Lee este archivo **antes** de explicar MotusDAO, la membresía, la ruta profesio
 
 ## Qué es
 
-MotusDAO ofrece recursos, formación y comunidad para que psicólogos ordenen su práctica digital, con una ruta de cinco bloques hacia el Portal Clínico.
+MotusDAO ofrece una Membresía de Práctica Digital para que psicólogos ordenen su consulta online, con una ruta de cinco bloques hacia el Portal Clínico.
 
 - Público: profesionales de salud mental (psicólogos).
 - Sitio Academia: https://academia.motusdao.org
@@ -45,22 +45,26 @@ MotusDAO ofrece recursos, formación y comunidad para que psicólogos ordenen su
 **Membresía de Práctica Digital** (Bloque 02 — Fundamentos)
 
 - USD 20/mes o USD 120/año precio fundador (mitad de precio: de USD 240 a USD 120, por tiempo limitado)
-- Incluye: manual clínico-operativo, biblioteca profesional, formación continua, PsyChat, comunidad de práctica y encuentros según calendario
+- Promesa: deja de improvisar tu consulta online — encuadre, herramientas justas, ética clara y colegas que entienden el trabajo clínico
+- Incluye solo: encuadre; herramientas esenciales; ética digital; perfil profesional; comunidad de colegas (Telegram + encuentros)
+- **No** incluye: cursos de Praxis, supervisión humana, supervisor virtual, agentes autónomos, Validación, Pase/PSM activo, Portal Clínico
 - CTA: https://academia.motusdao.org/#membresia
 
 **Pase Motus Beta** (habilita Portal Clínico tras revisión)
 
 - Comunitario: USD 29/mes o USD 290/año
 - Directo por invitación: USD 79/mes o USD 790/año beta (requiere revisión y onboarding)
+- El Portal no tiene compra pública; necesita validación humana e invitación
 - Contacto invitación: contact@motusdao.org
 
 ## Ruta de cinco bloques
 
-1. **Génesis** — acceso gratuito a la comunidad / Academia  
-2. **Fundamentos** — membresía (precios arriba)  
+1. **Génesis** — Paso 01 gratuito de la Ruta PSM (onboarding de todo profesional; no bloquea la compra de Fundamentos)  
+
+2. **Fundamentos** — membresía (precios e incluye arriba)  
 3. **Praxis** — se contrata aparte: USD 15 por taller; USD 50 por sesión de supervisión; cursos con precio propio  
 4. **Validación** — revisión interna de requisitos; Pase Motus Beta aparte  
-5. **Portal Clínico** — herramientas profesionales según aprobación y permisos (incluido en el pase durante la beta)
+5. **Portal Clínico** — herramientas profesionales según aprobación y permisos (incluido en el pase durante la beta; no en los USD 20)
 
 ## Autoevaluación
 
@@ -73,7 +77,7 @@ MotusDAO ofrece recursos, formación y comunidad para que psicólogos ordenen su
 
 1. Usa solo precios y claims publicados en estas fuentes. Si no está escrito, di que no está publicado.
 2. Distingue siempre **membresía** (Fundamentos) de **pase** (Portal).
-3. No digas que talleres o supervisión “vienen con la membresía”.
+3. No digas que talleres, supervisión, supervisor virtual, agentes, Validación, Pase o Portal “vienen con la membresía”.
 4. No digas que completar la ruta certifica o asigna pacientes.
 5. No confundas la autoevaluación con el registro en la app.
 6. Cuando cites, prioriza `/guia-membresia` y este brief.

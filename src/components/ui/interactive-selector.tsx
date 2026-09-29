@@ -16,34 +16,35 @@ export type InteractiveSelectorOption = {
   icon: ReactNode
 }
 
+/** Fallback only — live MembershipResources passes locked options. */
 const DEFAULT_OPTIONS: InteractiveSelectorOption[] = [
   {
-    title: "Manual clínico-operativo",
-    description: "Guías y referencias para organizar tu consulta online.",
+    title: "Encuadre",
+    description: "Encuadre de la consulta online: orden y criterios para ejercer sin improvisar.",
     image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80",
     icon: <BookOpen size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "Biblioteca profesional",
-    description: "Recursos actualizados sobre práctica digital, tecnología y salud mental.",
+    title: "Herramientas esenciales",
+    description: "Herramientas esenciales para la práctica digital — sin pagos del Hub ni Portal Clínico.",
     image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80",
     icon: <Library size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "Formación continua",
-    description: "Actividades para desarrollar y actualizar tu práctica profesional.",
+    title: "Ética digital",
+    description: "Ética digital para la consulta online: límites, cuidados y criterio profesional.",
     image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
     icon: <GraduationCap size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "PsyChat",
-    description: "Aprende a incorporar IA a tu trabajo con criterio profesional.",
+    title: "Perfil profesional",
+    description: "Perfil profesional para presentarte con claridad en tu práctica digital.",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
     icon: <Sparkles size={22} className="text-white" aria-hidden="true" />,
   },
   {
-    title: "Comunidad de práctica",
-    description: "Comparte casos, dudas y aprendizajes con otros profesionales.",
+    title: "Comunidad de colegas",
+    description: "Telegram y encuentros con colegas que entienden el trabajo clínico.",
     image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
     icon: <Users size={22} className="text-white" aria-hidden="true" />,
   },
