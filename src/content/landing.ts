@@ -26,9 +26,9 @@ export const LANDING_APD = {
   heading: "Formación que te acompaña.",
   body:
     "No solo tomas una formación. La recorres con acompañamiento personalizado digital: preguntas a tu ritmo, orientación en la ruta y conexión con los recursos de Motus.",
-  how: "MotusAI · herramientas del Hub · comunidad",
+  how: "Psychat · herramientas del Hub · comunidad",
   limit:
-    "MotusAI no sustituye supervisión humana ni valida clínicamente.",
+    "Psychat no sustituye supervisión humana ni valida clínicamente.",
 } as const
 
 export const LANDING_OFFERS = {

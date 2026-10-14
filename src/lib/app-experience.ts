@@ -59,12 +59,12 @@ export function appModuleParagraphs(detail: AppModule["detail"]): AppModuleParag
 /** Hub product copy aligned with Genesis lesson “Lo que hay dentro” + PSM surfaces. */
 export const APP_MODULES: AppModule[] = [
   {
-    id: "motusai",
-    title: "MotusAI",
+    id: "psychat",
+    title: "Psychat",
     line: "Pieza del Acompañamiento Personalizado Digital: responde dudas de la ruta y ayuda a pensar lo que aplicas.",
     aside: "Usa casos anónimos. No sustituye tu juicio clínico ni es una historia clínica.",
     detail:
-      "MotusAI es la pieza conversacional del Acompañamiento Personalizado Digital en MotusDAO. Sirve para consultar el ecosistema, la Academia y la ruta, y para pensar casos con apoyo reflexivo (modo supervisor experimental). No sustituye supervisión humana ni tu criterio profesional.",
+      "Psychat es la pieza conversacional del Acompañamiento Personalizado Digital en MotusDAO. Sirve para consultar el ecosistema, la Academia y la ruta, y para pensar casos con apoyo reflexivo (modo supervisor experimental). No sustituye supervisión humana ni tu criterio profesional.",
     points: [
       "Acompañamiento conversacional mientras avanzas en la Academia",
       "Preguntas sobre la ruta, Fundamentos y el Hub",
@@ -109,11 +109,11 @@ export const APP_MODULES: AppModule[] = [
     title: "Supervisión",
     line: "Espacio para revisar casos con estructura profesional y seguimiento claro.",
     detail:
-      "La supervisión en MotusDAO te da un lugar para revisar casos con estructura: prioridad, notas y progreso. Complementa el modo supervisor de MotusAI (reflexión con IA) con un espacio de seguimiento profesional dentro del Hub.",
+      "La supervisión en MotusDAO te da un lugar para revisar casos con estructura: prioridad, notas y progreso. Complementa el modo supervisor de Psychat (reflexión con IA) con un espacio de seguimiento profesional dentro del Hub.",
     points: [
       "Organiza casos activos, pendientes y completados",
       "Notas y etiquetas para el seguimiento clínico",
-      "Complementa MotusAI: reflexión con IA vs. supervisión estructurada",
+      "Complementa Psychat: reflexión con IA vs. supervisión estructurada",
       "Parte del recorrido profesional de la práctica digital",
     ],
     linkLabel: "Saber más",

@@ -46,7 +46,7 @@ Base: `main`
 
 ### Precios no publicados (no inventar)
 
-Videollamada suelta, chat individual y agente-asistente personal **existen como superficies** (consultorio Jitsi, MotusAI, Agents) pero **no tienen SKU/precio en la fuente de verdad**. En copy: nombrarlos como disponibles en la ruta; no poner cifra hasta que el equipo la cierre. Placeholder interno: `TBD`.
+Videollamada suelta, chat individual y agente-asistente personal **existen como superficies** (consultorio Jitsi, Psychat, Agents) pero **no tienen SKU/precio en la fuente de verdad**. En copy: nombrarlos como disponibles en la ruta; no poner cifra hasta que el equipo la cierre. Placeholder interno: `TBD`.
 
 ---
 
@@ -210,7 +210,7 @@ Lead: `La tecnología procesa, organiza y amplifica. El criterio profesional per
 | Servicio | Qué es | Precio en UI |
 |---|---|---|
 | Consultorio / videollamada | Sala MotusDAO (Jitsi) para sesión | Disponible en la ruta. Precio individual TBD. |
-| Chat / MotusAI | Apoyo entre sesiones. No sustituye juicio clínico. | Disponible en la ruta. Precio individual TBD. |
+| Psychat | Apoyo entre sesiones. No sustituye juicio clínico. | Disponible en la ruta. Precio individual TBD. |
 | Agente asistente | Asistente del profesional (operación, no clínica). | Disponible en la ruta. Precio individual TBD. |
 | Perfil y agenda | Presencia profesional y horarios. | Crear perfil: en Génesis, sin costo. |
 
@@ -394,7 +394,7 @@ Objetivo: explicar videollamada, chat y agente **sin** tercer mapa y **sin** pre
 **Hecho cuando:**
 
 - [ ] No existe sección Ecosistema con 6 capas
-- [ ] Videollamada, chat/MotusAI y agente están nombrados como servicios
+- [ ] Videollamada, Psychat y agente están nombrados como servicios
 - [ ] Ninguna card de herramienta muestra un USD inventado
 - [ ] Browser: nav y anclas no 404 / no apuntan a `#ecosistema`
 

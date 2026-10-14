@@ -12,7 +12,7 @@ describe("APD packaging", () => {
   it("APD block copy matches locked brief", () => {
     assert.equal(LANDING_APD.eyebrow, "Acompañamiento Personalizado Digital");
     assert.equal(LANDING_APD.heading, "Formación que te acompaña.");
-    assert.match(LANDING_APD.how, /MotusAI/);
+    assert.match(LANDING_APD.how, /Psychat/);
     assert.match(LANDING_APD.limit, /no sustituye supervisión humana/i);
   });
 
@@ -23,10 +23,11 @@ describe("APD packaging", () => {
     );
   });
 
-  it("MotusAI module aligns with APD without rewriting clinical claims", () => {
-    const motusai = APP_MODULES.find((m) => m.id === "motusai");
-    assert.ok(motusai);
-    assert.match(motusai.line, /Acompañamiento Personalizado Digital/);
-    assert.match(motusai.aside ?? "", /No sustituye/);
+  it("Psychat module aligns with APD without rewriting clinical claims", () => {
+    const psychat = APP_MODULES.find((m) => m.id === "psychat");
+    assert.ok(psychat);
+    assert.equal(psychat.title, "Psychat");
+    assert.match(psychat.line, /Acompañamiento Personalizado Digital/);
+    assert.match(psychat.aside ?? "", /No sustituye/);
   });
 });
