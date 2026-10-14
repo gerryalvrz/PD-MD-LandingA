@@ -55,6 +55,8 @@ export function AgentPromptCard({
               href={LANDING_AGENT_PROMPT.skillHref}
               className={styles.skillLink}
               style={{ color: tok.t3 }}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={(event) => event.stopPropagation()}
             >
               {LANDING_AGENT_PROMPT.skillLabel}

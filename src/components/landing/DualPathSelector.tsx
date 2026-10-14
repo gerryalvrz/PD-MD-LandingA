@@ -1,11 +1,76 @@
 "use client"
 
+import { BookOpen, CircleUserRound } from "lucide-react"
 import { GlassCta } from "@/components/ui/glass-cta"
 import { LANDING_JOURNEY } from "@/content/landing"
 import { ACCENT, T } from "@/lib/landing-theme"
+import { newTabProps } from "@/lib/new-tab"
 import styles from "./DualPathSelector.module.css"
 
 const SHARED_NODES = ["Validación", "Aprobación", "Invitación", "Portal Clínico"] as const
+
+function DottedBookWatermark({
+  className,
+  color,
+  opacity,
+}: {
+  className?: string
+  color: string
+  opacity: number
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      style={{ color, opacity }}
+    >
+      <g
+        stroke="currentColor"
+        strokeWidth={1.65}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="0.01 5.2"
+      >
+        <path d="M12 7v14" />
+        <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+      </g>
+    </svg>
+  )
+}
+
+function DottedProfileWatermark({
+  className,
+  color,
+  opacity,
+}: {
+  className?: string
+  color: string
+  opacity: number
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      style={{ color, opacity }}
+    >
+      <g
+        stroke="currentColor"
+        strokeWidth={1.65}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="0.01 5.2"
+      >
+        <path d="M17.925 20.056a6 6 0 0 0-11.851.001" />
+        <circle cx="12" cy="11" r="4" />
+        <circle cx="12" cy="12" r="10" />
+      </g>
+    </svg>
+  )
+}
 
 function FlowLine({ color }: { color: string }) {
   return <div className={styles.line} style={{ background: color }} aria-hidden />
@@ -36,11 +101,23 @@ export function DualPathSelector({ dark }: { dark: boolean }) {
   const lineCommunity = dark ? "rgba(244,114,182,0.45)" : "rgba(236,72,153,0.4)"
   const lineProfessional = dark ? "rgba(103,232,249,0.4)" : "rgba(8,145,178,0.35)"
   const lineShared = dark ? "rgba(155,138,255,0.45)" : "rgba(110,86,207,0.35)"
+  const watermarkOpacity = dark ? 0.34 : 0.22
 
   return (
     <div className={styles.wrap}>
       <div className={styles.branches}>
         <div className={styles.branch}>
+          <DottedBookWatermark
+            className={`${styles.pathWatermark} ${styles.pathWatermarkLeft}`}
+            color={communityAccent}
+            opacity={watermarkOpacity}
+          />
+          <BookOpen
+            className={styles.pathIcon}
+            style={{ color: communityAccent }}
+            strokeWidth={1.75}
+            aria-hidden
+          />
           <FlowNode weight="entry" color={communityAccent}>
             {copy.community.audience}
           </FlowNode>
@@ -55,6 +132,7 @@ export function DualPathSelector({ dark }: { dark: boolean }) {
             <a
               className={styles.secondaryLink}
               href={copy.community.secondaryCta.href}
+              {...newTabProps(copy.community.secondaryCta.href)}
               style={{ color: communityAccent }}
             >
               {copy.community.secondaryCta.label}
@@ -70,6 +148,17 @@ export function DualPathSelector({ dark }: { dark: boolean }) {
         </div>
 
         <div className={styles.branch}>
+          <DottedProfileWatermark
+            className={`${styles.pathWatermark} ${styles.pathWatermarkRight}`}
+            color={professionalAccent}
+            opacity={watermarkOpacity}
+          />
+          <CircleUserRound
+            className={styles.pathIcon}
+            style={{ color: professionalAccent }}
+            strokeWidth={1.75}
+            aria-hidden
+          />
           <FlowNode weight="entry" color={professionalAccent}>
             {copy.professional.audience}
           </FlowNode>

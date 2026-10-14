@@ -4,6 +4,7 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { GLASS_CTA_NEON_SHADOW_HOVER, glassCtaStyle, type GlassCtaVariant } from "@/lib/landing-theme"
+import { newTabProps } from "@/lib/new-tab"
 
 type GlassCtaProps = {
   children: React.ReactNode
@@ -46,6 +47,7 @@ export function GlassCta({
   const ctaMotion = motionProps(variant, dark, disabled)
 
   if (href) {
+    const tab = newTabProps(href)
     const inner = (
       <motion.span {...ctaMotion} onClick={onClick} style={style}>
         {children}
@@ -55,6 +57,7 @@ export function GlassCta({
       return (
         <Link
           href={href}
+          {...tab}
           style={{
             textDecoration: "none",
             color: style.color,
@@ -67,7 +70,7 @@ export function GlassCta({
       )
     }
     return (
-      <motion.a href={href} {...ctaMotion} onClick={onClick} style={style}>
+      <motion.a href={href} {...tab} {...ctaMotion} onClick={onClick} style={style}>
         {children}
       </motion.a>
     )

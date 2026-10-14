@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { leavesCurrentPage } from "@/lib/new-tab"
 import { cn } from "@/lib/utils"
 
 type ShiftCardProps = {
@@ -91,7 +92,7 @@ function ShiftCard({
   const fineHover = useFineHover()
 
   const expanded = hovered || focused || tapped
-  const isHashLink = Boolean(href?.startsWith("#"))
+  const openInNewTab = Boolean(href && leavesCurrentPage(href))
 
   React.useEffect(() => {
     const onPeerOpen = (event: Event) => {
@@ -195,8 +196,8 @@ function ShiftCard({
       <motion.a
         ref={rootRef as React.Ref<HTMLAnchorElement>}
         href={href}
-        target={isHashLink ? undefined : "_blank"}
-        rel={isHashLink ? undefined : "noopener noreferrer"}
+        target={openInNewTab ? "_blank" : undefined}
+        rel={openInNewTab ? "noopener noreferrer" : undefined}
         aria-label={ariaLabel}
         {...motionBind}
       >

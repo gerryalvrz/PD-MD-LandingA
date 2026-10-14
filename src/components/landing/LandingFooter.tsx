@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { LANDING_FOOTER, LANDING_META } from "@/content/landing"
 import { ACCENT, T, type Tok } from "@/lib/landing-theme"
+import { leavesCurrentPage, newTabProps } from "@/lib/new-tab"
 import styles from "./LandingFooter.module.css"
 
 const SOCIAL_PATHS: Record<(typeof LANDING_FOOTER.socials)[number]["id"], string> = {
@@ -30,11 +31,12 @@ function FooterLink({
   color: string
 }) {
   const style = { color }
-  if (external) {
+  const tab = newTabProps(href)
+  if (external || leavesCurrentPage(href)) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} style={style}>
+      <a href={href} {...tab} className={styles.link} style={style}>
         {children}
-        <span className="sr-only"> (abre otra pestaña)</span>
+        {tab.target ? <span className="sr-only"> (abre otra pestaña)</span> : null}
       </a>
     )
   }
