@@ -1,5 +1,6 @@
 "use client"
 
+import { ApdMottyChat } from "@/components/landing/ApdMottyChat"
 import { LANDING_APD } from "@/content/landing"
 import { ACCENT, T } from "@/lib/landing-theme"
 
@@ -16,7 +17,7 @@ export function ApdBridge({ dark }: { dark: boolean }) {
         scrollMarginTop: 88,
       }}
     >
-      <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
         <p
           style={{
             margin: "0 0 12px",
@@ -79,6 +80,8 @@ export function ApdBridge({ dark }: { dark: boolean }) {
         >
           {LANDING_APD.limit}
         </p>
+
+        <ApdMottyChat dark={dark} />
       </div>
     </section>
   )
