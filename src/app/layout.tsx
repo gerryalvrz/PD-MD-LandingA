@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Jura, Inter, Geist } from "next/font/google"
 import "./globals.css"
+import "dots-swarm/ui.css"
 import ConvexClientProvider from "@/components/ConvexClientProvider"
 import { PostHogProvider } from "@/components/PostHogProvider"
 import { MottyWidget } from "@/components/motty/MottyWidget"
