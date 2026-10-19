@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Loader2, Send, X } from "lucide-react";
-import { MottyAvatar } from "@/components/motty/MottyAvatar";
+import {
+  MottyAvatar,
+  type MottyAvatarHandle,
+  type MottyExpression,
+} from "@/components/motty/MottyAvatar";
 import { MottyMarkdown } from "@/components/motty/MottyMarkdown";
 import { useLandingThemeDark } from "@/components/motty/useLandingThemeDark";
 import { ACCENT_GRAD } from "@/lib/landing-theme";
@@ -13,6 +17,7 @@ const REVEAL_MS = 4500;
 const REVEAL_SCROLL_RATIO = 0.7;
 /** Above landing sticky CTA (z-95) so FAB stays visible and tappable. */
 const MOTTY_Z = 100;
+const DIZZY_HOLD_MS = 1600;
 
 type ChatLine = MottyMessage;
 
@@ -25,9 +30,21 @@ export function MottyWidget() {
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const [lines, setLines] = useState<ChatLine[]>([]);
+  const [expression, setExpression] = useState<MottyExpression>("curious");
+  const [exploding, setExploding] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fabAvatarRef = useRef<MottyAvatarHandle>(null);
+  const headerAvatarRef = useRef<MottyAvatarHandle>(null);
+  const dizzyTimerRef = useRef(0);
+  const fabClickTimerRef = useRef(0);
+  const pendingRef = useRef(pending);
+  pendingRef.current = pending;
   const titleId = useId();
+
+  const restExpression = useCallback((): MottyExpression => {
+    return pendingRef.current ? "thinking" : "curious";
+  }, []);
 
   useEffect(() => {
     let shown = false;
@@ -72,6 +89,64 @@ export function MottyWidget() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  useEffect(() => {
+    if (exploding) return;
+    setExpression((current) => {
+      if (current === "dizzy") return current;
+      if (pending) return "thinking";
+      if (current === "excited") return current;
+      return "curious";
+    });
+  }, [pending, exploding]);
+
+  useEffect(() => {
+    if (!open || exploding) return;
+    setExpression("excited");
+    const settle = window.setTimeout(() => {
+      setExpression((current) => {
+        if (current === "dizzy") return current;
+        return pendingRef.current ? "thinking" : "curious";
+      });
+    }, 900);
+    return () => window.clearTimeout(settle);
+    // Celebrate only when the panel opens; pending is read at settle time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(
+    () => () => {
+      if (dizzyTimerRef.current) window.clearTimeout(dizzyTimerRef.current);
+      if (fabClickTimerRef.current) window.clearTimeout(fabClickTimerRef.current);
+    },
+    [],
+  );
+
+  const onAvatarAction = useCallback(
+    (action: "explode" | "reform") => {
+      if (action === "explode") {
+        setExpression("dizzy");
+        return;
+      }
+      setExploding(false);
+      if (dizzyTimerRef.current) window.clearTimeout(dizzyTimerRef.current);
+      dizzyTimerRef.current = window.setTimeout(() => {
+        setExpression(restExpression());
+      }, DIZZY_HOLD_MS);
+    },
+    [restExpression],
+  );
+
+  const triggerExplode = useCallback(
+    (target: "fab" | "header") => {
+      if (exploding) return;
+      setExploding(true);
+      setExpression("excited");
+      if (target === "fab") fabAvatarRef.current?.explode();
+      else headerAvatarRef.current?.explode();
+    },
+    [exploding],
+  );
 
   const send = useCallback(async () => {
     const message = input.trim();
@@ -152,9 +227,23 @@ export function MottyWidget() {
             className="flex items-start gap-3 border-b px-4 py-3"
             style={{ borderColor: chrome.border }}
           >
-            <div className="mt-0.5 h-10 w-10 shrink-0" aria-hidden>
-              <MottyAvatar size={40} />
-            </div>
+            <button
+              type="button"
+              className="mt-0.5 h-10 w-10 shrink-0 overflow-visible rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ec4899]"
+              onDoubleClick={(event) => {
+                event.preventDefault();
+                triggerExplode("header");
+              }}
+              aria-label={`${copy.title}. Doble clic para sorprender a Motty.`}
+            >
+              <MottyAvatar
+                ref={headerAvatarRef}
+                size={40}
+                expression={expression}
+                onActionComplete={onAvatarAction}
+                label={copy.title}
+              />
+            </button>
             <div className="min-w-0 flex-1">
               <h2
                 id={titleId}
@@ -269,19 +358,51 @@ export function MottyWidget() {
 
       <button
         type="button"
-        className="pointer-events-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-black/75 ring-1 ring-white/15 transition-transform motion-safe:hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ec4899]"
+        className="pointer-events-auto flex h-16 w-16 items-center justify-center overflow-visible rounded-full bg-black/75 ring-1 ring-white/15 transition-transform motion-safe:hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ec4899] disabled:opacity-80"
         style={{
           boxShadow:
             "0 0 0 1px rgba(253,230,255,0.12), 0 8px 28px rgba(0,0,0,0.4), 0 0 32px rgba(236,72,153,0.2)",
         }}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (exploding) return;
+          if (fabClickTimerRef.current) {
+            window.clearTimeout(fabClickTimerRef.current);
+            fabClickTimerRef.current = 0;
+            return;
+          }
+          fabClickTimerRef.current = window.setTimeout(() => {
+            fabClickTimerRef.current = 0;
+            setOpen((value) => !value);
+          }, 220);
+        }}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (fabClickTimerRef.current) {
+            window.clearTimeout(fabClickTimerRef.current);
+            fabClickTimerRef.current = 0;
+          }
+          if (open) return;
+          triggerExplode("fab");
+        }}
+        disabled={exploding}
         aria-expanded={open}
-        aria-label={open ? copy.close : copy.fab}
+        aria-label={
+          open
+            ? copy.close
+            : `${copy.fab}. Doble clic para hacer explotar a Motty.`
+        }
       >
         {open ? (
           <X size={22} className="text-white" />
         ) : (
-          <MottyAvatar size={64} />
+          <MottyAvatar
+            ref={fabAvatarRef}
+            size={64}
+            expression={expression}
+            onActionComplete={onAvatarAction}
+            label="Motty"
+          />
         )}
       </button>
     </div>
