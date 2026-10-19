@@ -1124,8 +1124,8 @@ export default function LandingPage() {
           onConoce={() => handleMembership("hero")}
           onDiagnostico={() => handleDiagnostico("hero")}
         />
-        <ApdBridge dark={dark} />
         <DualPathSection dark={dark} />
+        <ApdBridge dark={dark} />
         <TrustBar dark={dark} />
         <BenefitsSection
           dark={dark}

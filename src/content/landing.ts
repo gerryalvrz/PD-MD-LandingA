@@ -78,12 +78,13 @@ export type JourneyStage = {
 
 export const LANDING_JOURNEY = {
   label: "¿Dónde estás hoy?",
-  heading: "Dos caminos. Un mismo punto de revisión.",
-  lede: "Elige cómo entrar. Ambas rutas llegan a la misma revisión humana.",
+  heading: "Una ruta profesional. Dos puntos de partida.",
+  lede:
+    "Elige cómo ingresar según tu momento actual. Ambas entradas llegan a la misma revisión humana.",
   dualPath: {
     community: {
-      audience: "Quiero construir mi práctica",
-      title: "Construye tu ruta con Motus",
+      audience: "Estoy construyendo mi práctica",
+      title: "Ruta formativa",
       steps: ["Génesis", "Fundamentos", "Praxis"] as const,
       primaryCta: { label: "Empezar mi ruta", href: "#membresia" },
       secondaryCta: {
@@ -93,15 +94,37 @@ export const LANDING_JOURNEY = {
     },
     professional: {
       audience: "Ya tengo una práctica activa",
-      title: "Ingreso profesional directo",
+      title: "Ingreso profesional",
       steps: ["Revisión de perfil", "Onboarding"] as const,
       primaryCta: {
         label: "Iniciar registro profesional",
         href: "https://app.motusdao.org/registro",
       },
     },
-    convergenceLabel: "Ambas rutas → Validación → Aprobación → Invitación → Portal Clínico",
-    microcopy: "Ninguna ruta garantiza aprobación.",
+    convergenceLabel: "Ambas rutas → Revisión humana → Validación → Aprobación → Invitación → Portal Clínico",
+    review: {
+      requirementsLabel: "La revisión puede considerar",
+      requirements: [
+        "Cédula profesional o equivalente",
+        "Identificación y país de ejercicio",
+        "Orientación y experiencia clínica",
+        "Aceptación del Código Ético",
+      ] as const,
+      note: "La validación interna y la disponibilidad de cupo también forman parte de la decisión.",
+    },
+    portal: {
+      eyebrow: "Destino",
+      title: "Portal Clínico",
+      itemsLabel: "Qué implica el Portal",
+      items: [
+        "Sin compra pública directa",
+        "Requiere Validación, aprobación e invitación",
+        "Incluido en el Pase Motus Beta durante la beta",
+        "Herramientas para operar tu práctica profesional",
+      ] as const,
+      note: "Completar la ruta o el registro no garantiza acceso. El Portal se abre solo con invitación tras revisión humana.",
+    },
+    microcopy: "La revisión es individual. Ninguna ruta garantiza aprobación ni acceso.",
   },
   stagesLabel: "Una ruta progresiva",
   stagesHeading: "Cinco bloques para avanzar contigo",

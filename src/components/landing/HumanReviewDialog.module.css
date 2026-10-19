@@ -1,0 +1,208 @@
+.swarmTransition {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  width: 100vw;
+  height: 100svh;
+  pointer-events: none;
+  /* Keep the layer in viewport space even if a parent later adds transform. */
+  transform: none;
+}
+
+.reviewTrigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 142px;
+  height: 142px;
+  border: 1px solid rgba(155, 138, 255, 0.75);
+  border-radius: 50%;
+  /* Solid sample color for material-motion particles (70% transparent). */
+  background-color: rgba(201, 192, 255, 0.3);
+  background-image:
+    radial-gradient(circle at 50% 38%, rgba(184, 167, 255, 0.26), transparent 60%),
+    linear-gradient(rgba(25, 17, 47, 0.72), rgba(25, 17, 47, 0.72));
+  box-shadow:
+    0 0 0 7px rgba(155, 138, 255, 0.035),
+    0 0 36px rgba(155, 138, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.reviewTrigger:hover,
+.reviewTrigger:focus-visible {
+  border-color: rgba(201, 192, 255, 0.96);
+  box-shadow:
+    0 0 0 7px rgba(155, 138, 255, 0.08),
+    0 0 44px rgba(155, 138, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  outline: none;
+}
+
+.reviewTrigger span,
+.contentHeader p {
+  color: #bcaeff;
+  font-family: var(--font-inter);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.reviewTrigger strong {
+  max-width: 9ch;
+  margin-top: 5px;
+  font-family: var(--font-jura);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(5, 3, 12, 0.68);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 201;
+  width: min(calc(100vw - 40px), 540px);
+  max-height: min(720px, calc(100svh - 40px));
+  overflow: auto;
+  padding: clamp(24px, 4vw, 36px);
+  border: 0.7px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  /* Solid sample color for dots-swarm material-motion (70% transparent). */
+  background-color: rgba(201, 192, 255, 0.3);
+  background-image: linear-gradient(135deg, rgba(16, 10, 30, 0.86), rgba(38, 16, 58, 0.78));
+  box-shadow:
+    0 22px 68px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+  transform: translate(-50%, -50%);
+}
+
+.content:focus {
+  outline: none;
+}
+
+.contentHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contentHeader p {
+  margin: 0 0 6px;
+}
+
+.contentHeader h2 {
+  margin: 0;
+  font-family: var(--font-jura);
+  font-size: clamp(26px, 5vw, 34px);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.close {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.74);
+  cursor: pointer;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 11px;
+}
+
+.close:hover,
+.close:focus-visible {
+  border-color: rgba(201, 192, 255, 0.68);
+  background: rgba(155, 138, 255, 0.16);
+  color: #fff;
+  outline: none;
+}
+
+.description {
+  margin: 24px 0 12px;
+  color: #bcaeff;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.requirements li {
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  align-items: start;
+  gap: 12px;
+  margin: 0;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-inter);
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.requirements li:last-child {
+  border-bottom: 0;
+}
+
+.requirements li::before {
+  width: 5px;
+  height: 5px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: #bcaeff;
+  content: "";
+  opacity: 0.9;
+}
+
+.note {
+  margin: 14px 0 0;
+  color: rgba(255, 255, 255, 0.46);
+  font-family: var(--font-inter);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .reviewTrigger {
+    width: 132px;
+    height: 132px;
+  }
+
+  .requirements li {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+}
