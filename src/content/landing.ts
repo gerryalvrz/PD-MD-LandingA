@@ -26,7 +26,7 @@ export const LANDING_APD = {
   heading: "Formación que te acompaña.",
   body:
     "No solo tomas una formación. La recorres con acompañamiento personalizado digital: preguntas a tu ritmo, orientación en la ruta y conexión con los recursos de Motus.",
-  how: "Psychat · herramientas del Hub · comunidad",
+  how: "Psychat · Herramientas del Hub · Comunidad",
   limit:
     "Psychat no sustituye supervisión humana ni valida clínicamente.",
 } as const
@@ -119,7 +119,7 @@ export const LANDING_JOURNEY = {
       items: [
         "Sin compra pública directa",
         "Requiere Validación, aprobación e invitación",
-        "Incluido en el Pase Motus Beta durante la beta",
+        "Incluido en el Pase Motus Beta.",
         "Herramientas para operar tu práctica profesional",
       ] as const,
       note: "Completar la ruta o el registro no garantiza acceso. El Portal se abre solo con invitación tras revisión humana.",

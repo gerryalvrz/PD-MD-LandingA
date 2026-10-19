@@ -101,7 +101,7 @@ export function MembershipResources({
               margin: 0,
             }}
           >
-            Todo esto está incluido en tu membresía
+            Todo esto está incluido en tu membresía de la Academia. 
           </h2>
           <p className={styles.body}>
             Recursos, formación, IA y comunidad para estructurar tu práctica digital.

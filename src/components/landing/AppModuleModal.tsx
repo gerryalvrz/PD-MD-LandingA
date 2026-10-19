@@ -91,7 +91,7 @@ export function AppModuleModal({
           </span>
           <div>
             <p className={styles.kicker} style={{ color: ACCENT.iris }}>
-              En la App MotusDAO
+              Desbloquea la App MotusDAO
             </p>
             <h2 id={titleId} className={styles.title}>
               {module.title}

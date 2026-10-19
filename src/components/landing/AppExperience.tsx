@@ -67,7 +67,7 @@ export function AppExperience({ dark, onExplore }: { dark: boolean; onExplore: (
       <div className={styles.container}>
         <p className={styles.eyebrow}>En la App MotusDAO</p>
         <h2 id="experience-title" className={styles.heading}>
-          Lo que tienes en la App MotusDAO
+          Explora de acuerdo a tu práctica digital, la App MotusDAO
         </h2>
         <p className={styles.intro}>
           Herramientas concretas para tu práctica digital: IA clínica, perfil, reputación, supervisión, academia,
