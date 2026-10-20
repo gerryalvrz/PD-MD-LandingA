@@ -19,7 +19,7 @@ const SELECTOR_IMAGES: Record<string, string> = {
   manual: "/experience/membresia/manual-clinico.jpg",
   biblioteca: "/experience/membresia/biblioteca-virtual.jpg",
   formacion: "/experience/membresia/formacion-continua.jpg",
-  psychat: "/experience/membresia/psychat.png",
+  psychat: "/experience/membresia/perfil-imagen.png",
   comunidad: "/experience/membresia/comunidad-practica.jpg",
 }
 

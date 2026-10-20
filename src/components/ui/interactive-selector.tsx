@@ -39,7 +39,7 @@ const DEFAULT_OPTIONS: InteractiveSelectorOption[] = [
   {
     title: "Perfil profesional",
     description: "Perfil profesional para presentarte con claridad en tu práctica digital.",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
+    image: "/experience/membresia/perfil-imagen.png",
     icon: <Sparkles size={22} className="text-white" aria-hidden="true" />,
   },
   {
